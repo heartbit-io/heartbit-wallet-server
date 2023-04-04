@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { QuestionInstance } from '../models/QuestionModel';
 import { HttpCodes } from '../util/HttpCodes';
+import FormatResponse from '../lib/FormatResponse';
 class QuestionsController {
   async create(req: Request, res: Response) {
     try {
@@ -8,18 +9,27 @@ class QuestionsController {
         ...req.body
       });
 
-      return res.status(HttpCodes.CREATED).json({
-        success: true,
-        status_code: HttpCodes.CREATED,
-        message: 'created question successfully',
-        data: question
-      });
+      return res
+        .status(HttpCodes.CREATED)
+        .json(
+          new FormatResponse(
+            true,
+            HttpCodes.CREATED,
+            'Question posted successfully',
+            question
+          )
+        );
     } catch (error) {
-      return res.status(HttpCodes.INTERNAL_SERVER_ERROR).json({
-        success: false,
-        status_code: HttpCodes.INTERNAL_SERVER_ERROR,
-        message: error
-      });
+      return res
+        .status(HttpCodes.INTERNAL_SERVER_ERROR)
+        .json(
+          new FormatResponse(
+            false,
+            HttpCodes.INTERNAL_SERVER_ERROR,
+            error,
+            null
+          )
+        );
     }
   }
 
@@ -32,28 +42,41 @@ class QuestionsController {
       });
 
       if (!question) {
-        return res.status(HttpCodes.NOT_FOUND).json({
-          success: false,
-          status_code: HttpCodes.NOT_FOUND,
-          message: 'Question was not found',
-          data: null
-        });
+        return res
+          .status(HttpCodes.NOT_FOUND)
+          .json(
+            new FormatResponse(
+              false,
+              HttpCodes.NOT_FOUND,
+              'Question was not found',
+              null
+            )
+          );
       }
 
-        const delete_question = await question.destroy();
+      await question.destroy();
 
-      return res.status(HttpCodes.OK).json({
-        success: true,
-        status_code: HttpCodes.OK,
-        message: 'Question deleted successfully',
-        data: delete_question
-      });
+      return res
+        .status(HttpCodes.OK)
+        .json(
+          new FormatResponse(
+            true,
+            HttpCodes.OK,
+            'Question deleted successfully',
+            null
+          )
+        );
     } catch (error) {
-      return res.status(HttpCodes.INTERNAL_SERVER_ERROR).json({
-        success: false,
-        status_code: HttpCodes.INTERNAL_SERVER_ERROR,
-        message: error
-      });
+      return res
+        .status(HttpCodes.INTERNAL_SERVER_ERROR)
+        .json(
+          new FormatResponse(
+            false,
+            HttpCodes.INTERNAL_SERVER_ERROR,
+            error,
+            null
+          )
+        );
     }
   }
 }
