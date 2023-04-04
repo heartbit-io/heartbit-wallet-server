@@ -1,4 +1,4 @@
-import { DataTypes, Model, literal } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 import dbconnection from "../util/dbconnection";
 
 enum QuesstionStatus {
