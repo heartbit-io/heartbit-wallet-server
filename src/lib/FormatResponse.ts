@@ -3,7 +3,7 @@ import {HttpCodes} from '../util/HttpCodes';
 class FormatResponse {
 	success: boolean;
 
-	status_code: HttpCodes;
+	statusCode: HttpCodes;
 
 	message: string;
 
@@ -16,7 +16,7 @@ class FormatResponse {
 		data: object | null,
 	) {
 		this.success = success;
-		this.status_code = statusCode;
+		this.statusCode = statusCode;
 		this.message = message;
 		this.data = data;
 	}
