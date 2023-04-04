@@ -3,3 +3,6 @@ build
 coverage
 .env
 logs/
+
+# OS
+.DS_Store
