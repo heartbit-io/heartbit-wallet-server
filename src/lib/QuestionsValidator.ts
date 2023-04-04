@@ -1,4 +1,5 @@
-import { body } from 'express-validator';
+import { body, param } from 'express-validator';
+import { QuestionInstance } from '../models/QuestionModel';
 
 class QuestionsValidator {
   checkCreateQuestion() {
@@ -32,7 +33,14 @@ class QuestionsValidator {
         )
     ];
   }
+  checkDelete() {
+    return [
+      param('questionId')
+        .notEmpty()
+        .isNumeric()
+        .withMessage('supply question Id to delete')
+    ];
+  }
 }
-
 
 export default new QuestionsValidator();

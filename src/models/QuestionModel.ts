@@ -7,6 +7,7 @@ enum QuesstionStatus {
 }
 
 interface QuestionAttributes {
+    id?:number,
     title: string;
     content: string;
     pubkey: string;

@@ -12,4 +12,11 @@ router.post(
   QuestionsController.create
 );
 
+router.delete(
+  '/:questionId',
+  QuestionsValidator.checkDelete(),
+  Validation.validate,
+  QuestionsController.delete
+);
+
 export { router as questionRoutes };
