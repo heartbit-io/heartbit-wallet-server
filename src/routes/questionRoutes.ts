@@ -9,14 +9,14 @@ router.post(
   '/',
   QuestionsValidator.checkCreateQuestion(),
   Validation.validate,
-  QuestionsController.create
+  QuestionsController.create,
 );
 
 router.delete(
   '/:questionId',
   QuestionsValidator.checkDelete(),
   Validation.validate,
-  QuestionsController.delete
+  QuestionsController.delete,
 );
 
 export { router as questionRoutes };

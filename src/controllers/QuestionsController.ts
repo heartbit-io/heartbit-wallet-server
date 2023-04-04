@@ -2,11 +2,12 @@ import { Request, Response } from 'express';
 import { QuestionInstance } from '../models/QuestionModel';
 import { HttpCodes } from '../util/HttpCodes';
 import FormatResponse from '../lib/FormatResponse';
+
 class QuestionsController {
   async create(req: Request, res: Response) {
     try {
       const question = await QuestionInstance.create({
-        ...req.body
+        ...req.body,
       });
 
       return res
@@ -16,8 +17,8 @@ class QuestionsController {
             true,
             HttpCodes.CREATED,
             'Question posted successfully',
-            question
-          )
+            question,
+          ),
         );
     } catch (error) {
       return res
@@ -27,18 +28,19 @@ class QuestionsController {
             false,
             HttpCodes.INTERNAL_SERVER_ERROR,
             error,
-            null
-          )
+            null,
+          ),
         );
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   async delete(req: Request, res: Response) {
     try {
       const { questionId } = req.params;
 
       const question = await QuestionInstance.findOne({
-        where: { id: questionId }
+        where: { id: questionId },
       });
 
       if (!question) {
@@ -49,8 +51,8 @@ class QuestionsController {
               false,
               HttpCodes.NOT_FOUND,
               'Question was not found',
-              null
-            )
+              null,
+            ),
           );
       }
 
@@ -63,8 +65,8 @@ class QuestionsController {
             true,
             HttpCodes.OK,
             'Question deleted successfully',
-            null
-          )
+            null,
+          ),
         );
     } catch (error) {
       return res
@@ -74,8 +76,8 @@ class QuestionsController {
             false,
             HttpCodes.INTERNAL_SERVER_ERROR,
             error,
-            null
-          )
+            null,
+          ),
         );
     }
   }
