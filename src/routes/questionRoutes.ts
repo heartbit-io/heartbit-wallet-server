@@ -13,6 +13,7 @@ router.post(
 );
 
 router.get('/', QuestionsController.getAllQuestions);
+router.get('/:questionId', QuestionsController.getQuestion);
 
 router.delete(
 	'/:questionId',

@@ -118,6 +118,54 @@ class QuestionsController {
 				);
 		}
 	}
+
+	async getQuestion(
+		req: Request,
+		res: Response,
+	): Promise<Response<FormatResponse>> {
+		try {
+			const {questionId} = req.params;
+
+			const question = await QuestionInstance.findOne({
+				where: {id: questionId},
+			});
+
+			if (!question) {
+				return res
+					.status(HttpCodes.NOT_FOUND)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.NOT_FOUND,
+							'Question was not found',
+							null,
+						),
+					);
+			}
+
+			return res
+				.status(HttpCodes.OK)
+				.json(
+					new FormatResponse(
+						false,
+						HttpCodes.OK,
+						'Successfully retrieved question details',
+						question,
+					),
+				);
+		} catch (error) {
+			return res
+				.status(HttpCodes.INTERNAL_SERVER_ERROR)
+				.json(
+					new FormatResponse(
+						false,
+						HttpCodes.INTERNAL_SERVER_ERROR,
+						error,
+						null,
+					),
+				);
+		}
+	}
 }
 
 export default new QuestionsController();
