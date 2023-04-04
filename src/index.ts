@@ -1,14 +1,15 @@
-import * as dotenv from 'dotenv';
-
+import { config } from 'dotenv';
 import express, { Application } from 'express';
-
 import cors from 'cors';
 import helmet from 'helmet';
 import { log } from 'console';
+import dbconnection from './util/dbconnection';
+import { routes } from './routes';
 
-dotenv.config();
+config();
 
 if (!process.env.PORT) {
+  log('Please set server port');
   process.exit(1);
 }
 
@@ -34,5 +35,16 @@ app.use((_req, res, next) => {
 app.listen(PORT, async () => {
   log(`Listening on port ${PORT}`);
 });
+app.use(routes);
+
+try {
+  app.listen(PORT, async () => {
+    await dbconnection.authenticate();
+    log('connected to database');
+    log(`Listening on port ${PORT}`);
+  });
+} catch (error) {
+  log(error);
+}
 
 export default app;

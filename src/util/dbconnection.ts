@@ -17,7 +17,8 @@ if (!db_name || !db_user || !db_host || !db_driver || !db_password) {
 
 const dbconnection = new Sequelize(db_name, db_user, db_password, {
   host: db_host,
-  dialect: db_driver
+  dialect: db_driver,
+  logging: false,
 });
 
 export default dbconnection;
