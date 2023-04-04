@@ -9,7 +9,7 @@
     "build": "concurrently \"rimraf ./build\" \"npx tsc -w\"",
     "lint": "eslint . --ext .ts",
     "start": "concurrently \"npm run build\" \"node build/index.js\"",
-    "format": "prettier --config .prettierrc 'src/**/*.{ts,tsx}' --write"
+    "format": "prettier --config .prettierrc 'src/**/*.ts' --write"
   },
   "keywords": [],
   "author": "",
