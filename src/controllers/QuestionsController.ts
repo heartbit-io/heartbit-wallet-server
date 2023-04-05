@@ -147,12 +147,64 @@ class QuestionsController {
 				.status(HttpCodes.OK)
 				.json(
 					new FormatResponse(
-						false,
+						true,
 						HttpCodes.OK,
 						'Successfully retrieved question details',
 						question,
 					),
 				);
+		} catch (error) {
+			return res
+				.status(HttpCodes.INTERNAL_SERVER_ERROR)
+				.json(
+					new FormatResponse(
+						false,
+						HttpCodes.INTERNAL_SERVER_ERROR,
+						error,
+						null,
+					),
+				);
+		}
+	}
+
+	async updateQuestion(req: Request, res: Response) {
+		try {
+			const {questionId} = req.params;
+
+			const question = await QuestionInstance.findOne({
+				where: {id: questionId, pubkey: req.body.pubkey, status: "Open"},
+			});
+
+			if (!question) {
+				return res
+					.status(HttpCodes.NOT_FOUND)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.NOT_FOUND,
+							'Question was not found',
+							null,
+						),
+					);
+			}
+
+			const updatedQuestion = await question.update({
+        status: req.body.status,
+        content: req.body.content,
+        bounty_amount: req.body.bounty_amount,
+        image: req.body.image
+      });
+      
+      return res.status(HttpCodes.OK)
+				.json(
+					new FormatResponse(
+						true,
+						HttpCodes.OK,
+						'Successfully update question status',
+						updatedQuestion,
+					),
+				);
+
 		} catch (error) {
 			return res
 				.status(HttpCodes.INTERNAL_SERVER_ERROR)

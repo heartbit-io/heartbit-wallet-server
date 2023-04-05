@@ -13,11 +13,23 @@ router.post(
 );
 
 router.get('/', QuestionsController.getAllQuestions);
-router.get('/:questionId', QuestionsController.getQuestion);
+router.get(
+	'/:questionId',
+	QuestionsValidator.checkQuestion(),
+	Validation.validate,
+	QuestionsController.getQuestion,
+);
+
+router.patch(
+	'/:questionId',
+	QuestionsValidator.checkQuestion(),
+	Validation.validate,
+	QuestionsController.updateQuestion,
+);
 
 router.delete(
 	'/:questionId',
-	QuestionsValidator.checkDelete(),
+	QuestionsValidator.checkQuestion(),
 	Validation.validate,
 	QuestionsController.delete,
 );
