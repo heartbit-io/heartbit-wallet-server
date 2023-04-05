@@ -6,12 +6,8 @@ import FormatResponse from '../lib/FormatResponse';
 class QuestionsController {
 	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {
     try {
-      let filepath = null;
-      if (req.file) {
-        filepath = req.file.path;
-      }
 			const question = await QuestionInstance.create({
-				...req.body, image: filepath,
+				...req.body
 			});
 
 			return res
@@ -186,17 +182,14 @@ class QuestionsController {
 						new FormatResponse(
 							false,
 							HttpCodes.NOT_FOUND,
-							'Question was not found',
+							'Check that the question exist and has not already been closed',
 							null,
 						),
 					);
 			}
 
 			const updatedQuestion = await question.update({
-        status: req.body.status,
-        content: req.body.content,
-        bounty_amount: req.body.bounty_amount,
-        image: req.body.image
+        status: req.body.status
       });
       
       return res.status(HttpCodes.OK)

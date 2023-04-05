@@ -3,12 +3,6 @@ import {body, param} from 'express-validator';
 class QuestionsValidator {
 	checkCreateQuestion() {
 		return [
-			body('title')
-				.notEmpty()
-				.isString()
-				.trim()
-				.escape()
-				.withMessage('Title should not be empty'),
 			body('pubkey')
 				.notEmpty()
 				.isAlphanumeric()

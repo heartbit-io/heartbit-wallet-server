@@ -8,7 +8,6 @@ const router = Router();
 
 router.post(
   '/',
-  uploadFile.single('image'),
 	QuestionsValidator.checkCreateQuestion(),
 	Validation.validate,
 	QuestionsController.create,
@@ -22,12 +21,6 @@ router.get(
 	QuestionsController.getQuestion,
 );
 
-router.patch(
-	'/:questionId',
-	QuestionsValidator.checkQuestion(),
-	Validation.validate,
-	QuestionsController.updateQuestion,
-);
 
 router.delete(
 	'/:questionId',
