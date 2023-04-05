@@ -1,6 +1,8 @@
 /* eslint-disable no-undef */
 /* eslint-disable @typescript-eslint/no-var-requires */
 'use strict';
+const Question = require('./question');
+
 const {
   Model
 } = require('sequelize');
@@ -16,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Reply.init({
-    post_id: DataTypes.NUMBER,
+    question_id: DataTypes.NUMBER,
     user_pubkey: DataTypes.STRING,
     content: DataTypes.STRING,
     best_reply: DataTypes.BOOLEAN

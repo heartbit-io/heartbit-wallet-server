@@ -2,12 +2,13 @@ import {Request, Response} from 'express';
 import {QuestionInstance} from '../models/QuestionModel';
 import {HttpCodes} from '../util/HttpCodes';
 import FormatResponse from '../lib/FormatResponse';
+import {ReplyInstance} from '../models/ReplyModel';
 
 class QuestionsController {
 	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {
-    try {
+		try {
 			const question = await QuestionInstance.create({
-				...req.body
+				...req.body,
 			});
 
 			return res
@@ -50,6 +51,19 @@ class QuestionsController {
 							false,
 							HttpCodes.NOT_FOUND,
 							'Question was not found',
+							null,
+						),
+					);
+			}
+
+			if (question.user_pubkey !== req.body.user_pubkey) {
+				return res
+					.status(HttpCodes.NOT_FOUND)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.NOT_FOUND,
+							'Only users who posted a question can delete the question',
 							null,
 						),
 					);
@@ -143,6 +157,12 @@ class QuestionsController {
 					);
 			}
 
+			const replies = await ReplyInstance.findAll({
+				where: {question_id: questionId},
+			});
+
+			const response = {...question.dataValues,  replies};
+
 			return res
 				.status(HttpCodes.OK)
 				.json(
@@ -150,7 +170,7 @@ class QuestionsController {
 						true,
 						HttpCodes.OK,
 						'Successfully retrieved question details',
-						question,
+						response,
 					),
 				);
 		} catch (error) {
@@ -172,7 +192,11 @@ class QuestionsController {
 			const {questionId} = req.params;
 
 			const question = await QuestionInstance.findOne({
-				where: {id: questionId, pubkey: req.body.pubkey, status: "Open"},
+				where: {
+					id: questionId,
+					user_pubkey: req.body.user_pubkey,
+					status: 'Open',
+				},
 			});
 
 			if (!question) {
@@ -189,10 +213,11 @@ class QuestionsController {
 			}
 
 			const updatedQuestion = await question.update({
-        status: req.body.status
-      });
-      
-      return res.status(HttpCodes.OK)
+				status: req.body.status,
+			});
+
+			return res
+				.status(HttpCodes.OK)
 				.json(
 					new FormatResponse(
 						true,
@@ -201,7 +226,6 @@ class QuestionsController {
 						updatedQuestion,
 					),
 				);
-
 		} catch (error) {
 			return res
 				.status(HttpCodes.INTERNAL_SERVER_ERROR)

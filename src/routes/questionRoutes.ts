@@ -2,7 +2,6 @@ import {Router} from 'express';
 import QuestionsValidator from '../lib/QuestionsValidator';
 import Validation from '../middleware/Validation';
 import QuestionsController from '../controllers/QuestionsController';
-import { uploadFile } from '../middleware/upload';
 
 const router = Router();
 

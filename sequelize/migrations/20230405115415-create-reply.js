@@ -10,7 +10,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      post_id: {
+      question_id: {
         type: Sequelize.INTEGER
       },
       user_pubkey: {

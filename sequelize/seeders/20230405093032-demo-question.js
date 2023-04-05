@@ -8,7 +8,7 @@ module.exports = {
 	async up(queryInterface, Sequelize) {
 		const data = {
 			content: faker.lorem.sentences(),
-			pubkey: faker.finance.bitcoinAddress(),
+			user_pubkey: faker.finance.bitcoinAddress(),
 			bounty_amount: faker.finance.amount(),
 			status: faker.helpers.arrayElement(['open', 'closed']),
 			createdAt: new Date(),

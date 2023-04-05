@@ -1,6 +1,5 @@
 import { DataTypes, Model } from 'sequelize';
 import dbconnection from '../util/dbconnection';
-import { ReplyInstance } from './ReplyModel';
 
 enum QuesstionStatus {
 	Open = 'Open',
@@ -10,14 +9,14 @@ enum QuesstionStatus {
 interface QuestionAttributes {
 	id?: number;
 	content: string;
-	pubkey: string;
+	user_pubkey: string;
 	bounty_amount: number;
 	status?: QuesstionStatus;
 }
 export class QuestionInstance extends Model<QuestionAttributes> {
   declare content: string;
 
-  declare pubkey: string;
+  declare user_pubkey: string;
 
   declare bounty_amount: number;
 
@@ -30,7 +29,7 @@ QuestionInstance.init(
       type: DataTypes.TEXT,
       allowNull: false,
     },
-    pubkey: {
+    user_pubkey: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -51,5 +50,3 @@ QuestionInstance.init(
   },
 );
 
-QuestionInstance.hasMany(ReplyInstance);
-ReplyInstance.belongsTo(QuestionInstance, { foreignKey: "post_id" });
