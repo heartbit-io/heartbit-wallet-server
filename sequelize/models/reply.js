@@ -5,7 +5,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Question extends Model {
+  class Reply extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -15,17 +15,14 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  Question.init({
-    id: DataTypes.NUMBER,
-    content: DataTypes.TEXT,
-    pubkey: DataTypes.STRING,
-    bounty_amount: DataTypes.NUMBER,
-    status: DataTypes.STRING
+  Reply.init({
+    post_id: DataTypes.NUMBER,
+    user_pubkey: DataTypes.STRING,
+    content: DataTypes.STRING,
+    best_reply: DataTypes.BOOLEAN
   }, {
     sequelize,
-    modelName: 'questions',
-    underscored: true,
+    modelName: 'replies',
   });
-  return Question;
+  return Reply;
 };
-

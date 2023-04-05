@@ -1,5 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import dbconnection from '../util/dbconnection';
+import { ReplyInstance } from './ReplyModel';
 
 enum QuesstionStatus {
 	Open = 'Open',
@@ -49,3 +50,6 @@ QuestionInstance.init(
     timestamps: true,
   },
 );
+
+QuestionInstance.hasMany(ReplyInstance);
+ReplyInstance.belongsTo(QuestionInstance, { foreignKey: "post_id" });
