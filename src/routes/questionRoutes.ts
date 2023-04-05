@@ -2,11 +2,13 @@ import {Router} from 'express';
 import QuestionsValidator from '../lib/QuestionsValidator';
 import Validation from '../middleware/Validation';
 import QuestionsController from '../controllers/QuestionsController';
+import { uploadFile } from '../middleware/upload';
 
 const router = Router();
 
 router.post(
-	'/',
+  '/',
+  uploadFile.single('image'),
 	QuestionsValidator.checkCreateQuestion(),
 	Validation.validate,
 	QuestionsController.create,

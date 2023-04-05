@@ -5,9 +5,13 @@ import FormatResponse from '../lib/FormatResponse';
 
 class QuestionsController {
 	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {
-		try {
+    try {
+      let filepath = null;
+      if (req.file) {
+        filepath = req.file.path;
+      }
 			const question = await QuestionInstance.create({
-				...req.body,
+				...req.body, image: filepath,
 			});
 
 			return res
