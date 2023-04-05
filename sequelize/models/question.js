@@ -17,11 +17,9 @@ module.exports = (sequelize, DataTypes) => {
   }
   Question.init({
     id: DataTypes.NUMBER,
-    title: DataTypes.STRING,
     content: DataTypes.TEXT,
     pubkey: DataTypes.STRING,
     bounty_amount: DataTypes.NUMBER,
-    image: DataTypes.STRING,
     status: DataTypes.STRING
   }, {
     sequelize,
