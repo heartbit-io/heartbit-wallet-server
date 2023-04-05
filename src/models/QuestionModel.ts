@@ -8,33 +8,23 @@ enum QuesstionStatus {
 
 interface QuestionAttributes {
 	id?: number;
-	title: string;
 	content: string;
 	pubkey: string;
 	bounty_amount: number;
-	image?: string;
 	status?: QuesstionStatus;
 }
 export class QuestionInstance extends Model<QuestionAttributes> {
-  declare title: string;
-
   declare content: string;
 
   declare pubkey: string;
 
   declare bounty_amount: number;
 
-  declare image: string | null;
-
   declare status: string;
 }
 
 QuestionInstance.init(
   {
-    title: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     content: {
       type: DataTypes.TEXT,
       allowNull: false,
@@ -46,10 +36,6 @@ QuestionInstance.init(
     bounty_amount: {
       type: DataTypes.DOUBLE,
       allowNull: false,
-    },
-    image: {
-      type: DataTypes.STRING,
-      allowNull: true,
     },
     status: {
       type: DataTypes.ENUM('Open', 'Closed'),

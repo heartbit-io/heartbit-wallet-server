@@ -11,7 +11,7 @@ export const db = {};
 
 let env_variables;
 
-if (env === 'dev') {
+if (env === 'development') {
   env_variables = config.development;
 } else if (env === 'test') {
   env_variables = config.test;

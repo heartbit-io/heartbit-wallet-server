@@ -37,7 +37,7 @@ class ChatgptService {
       return completion.data.choices[0].text;
     } catch (error) {
       // TODO(david): Sentry alert in slack
-      logger.warn(error.messase);
+      logger.warn(error);
       return;
     }
   }

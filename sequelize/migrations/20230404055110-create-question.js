@@ -1,12 +1,9 @@
 /* eslint-disable no-undef */
-'use strict';
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('questions', {
-      title: {
-        type: Sequelize.STRING
-      },
       content: {
         type: Sequelize.TEXT
       },
@@ -15,10 +12,6 @@ module.exports = {
       },
       bounty_amount: {
         type: Sequelize.DOUBLE
-      },
-      image: {
-        type: Sequelize.STRING,
-        allowNull: true,
       },
       status: {
         type: Sequelize.STRING
