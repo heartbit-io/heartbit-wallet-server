@@ -1,11 +1,11 @@
 /* eslint-disable no-undef */
 /* eslint-disable @typescript-eslint/no-var-requires */
 'use strict';
-const { faker } = require('@faker-js/faker');
+const {faker} = require('@faker-js/faker');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-	createQuestion() {
+	 createQuestion() {
 		return {
 			content: faker.lorem.sentences(),
 			user_pubkey: faker.finance.bitcoinAddress(),
@@ -19,10 +19,10 @@ module.exports = {
 	async up(queryInterface, Sequelize) {
 		const questions = [];
 
-		Array.from({ length: 50 }).forEach(() => {
+		Array.from({length: 50}).forEach(() => {
 			questions.push(this.createQuestion());
-		  });
-
+			
+		});
 		return queryInterface.bulkInsert('questions', questions);
 	},
 

@@ -1,27 +1,28 @@
 /* eslint-disable no-undef */
 /* eslint-disable @typescript-eslint/no-var-requires */
+
 'use strict';
 const {faker} = require('@faker-js/faker');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-	createReply() {
+	createUser() {
 		return {
-			question_id: faker.helpers.arrayElement([...Array(50).keys()]),
-			user_pubkey: faker.finance.bitcoinAddress(),
-			content: faker.lorem.paragraph(),
-			best_reply: faker.helpers.arrayElement([true, false]),
+			role: faker.helpers.arrayElement(['user', 'doctor', 'admin']),
+			btc_balance: faker.finance.amount(),
+			pubkey: faker.finance.bitcoinAddress() + new Date().getTime().toString(),
 			createdAt: new Date(),
 			updatedAt: new Date(),
 		};
 	},
 	async up(queryInterface, Sequelize) {
-		const replies = [];
+		let users = [];
 
 		Array.from({length: 50}).forEach(() => {
-			replies.push(this.createReply());
+			users.push(this.createUser());
 		});
-		return queryInterface.bulkInsert('replies', replies);
+
+		return queryInterface.bulkInsert('users', users);
 	},
 
 	async down(queryInterface, Sequelize) {
