@@ -2,6 +2,7 @@ import {Router} from 'express';
 import RepliesController from '../controllers/UsersController';
 import UsersValidator from '../lib/UsersValidator';
 import Validation from '../middleware/Validation';
+import UsersController from '../controllers/UsersController';
 
 const router = Router();
 
@@ -9,11 +10,9 @@ router.post(
 	'/',
 	UsersValidator.userCreate(),
 	Validation.validate,
-	RepliesController.create,
+	UsersController.create,
 );
 
-// router.delete('/:replyId', RepliesController.delete);
-
-// router.patch('/:replyId', RepliesController.update);
+router.get('/:pubkey', UsersController.getUser);
 
 export {router as userRoutes};

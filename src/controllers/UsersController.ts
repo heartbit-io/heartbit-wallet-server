@@ -1,9 +1,10 @@
 import {Request, Response} from 'express';
-import {QuestionInstance} from '../models/QuestionModel';
 import {HttpCodes} from '../util/HttpCodes';
 import FormatResponse from '../lib/FormatResponse';
+import {UserInstance} from '../models/UserModel';
+import {QuestionInstance} from '../models/QuestionModel';
 import {ReplyInstance} from '../models/ReplyModel';
-import { UserInstance } from '../models/UserModel';
+import { TransactionInstance } from '../models/TransactionModel';
 
 class UsersController {
 	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {
@@ -36,74 +37,41 @@ class UsersController {
 		}
 	}
 
-
-	async getAllQuestions(
+	async getUser(
 		req: Request,
 		res: Response,
 	): Promise<Response<FormatResponse>> {
 		try {
-			const limit = (req.query.limit as number | undefined) || 50;
-			const offset = req.query.offset as number | undefined;
+			const {pubkey} = req.params;
 
+			const user = await UserInstance.findOne({
+				where: {pubkey},
+			});
+
+			if (!user) {
+				return res
+					.status(HttpCodes.NOT_FOUND)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.NOT_FOUND,
+							'User was not found',
+							null,
+						),
+					);
+			}
+
+			//get user questions
 			const questions = await QuestionInstance.findAll({
-				where: {},
-				limit,
-				offset,
+				where: {user_pubkey: pubkey},
 			});
-
-			return res
-				.status(HttpCodes.OK)
-				.json(
-					new FormatResponse(
-						true,
-						HttpCodes.OK,
-						'Successfully retrieved all questions',
-						questions,
-					),
-				);
-		} catch (error) {
-			return res
-				.status(HttpCodes.INTERNAL_SERVER_ERROR)
-				.json(
-					new FormatResponse(
-						false,
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						error,
-						null,
-					),
-				);
-		}
-	}
-
-	async getQuestion(
-		req: Request,
-		res: Response,
-	): Promise<Response<FormatResponse>> {
-		try {
-			const {questionId} = req.params;
-
-			const question = await QuestionInstance.findOne({
-				where: {id: questionId},
-			});
-
-			if (!question) {
-				return res
-					.status(HttpCodes.NOT_FOUND)
-					.json(
-						new FormatResponse(
-							false,
-							HttpCodes.NOT_FOUND,
-							'Question was not found',
-							null,
-						),
-					);
-			}
-
 			const replies = await ReplyInstance.findAll({
-				where: {question_id: questionId},
-			});
+				where: {user_pubkey: pubkey},
+            });
+            
+            const transactions = await TransactionInstance.findAll({ where: { from_user_pubkey: pubkey } });
 
-			const response = {...question.dataValues,  replies};
+			const response = {...user.dataValues, questions, replies, transactions};
 
 			return res
 				.status(HttpCodes.OK)
@@ -111,61 +79,8 @@ class UsersController {
 					new FormatResponse(
 						true,
 						HttpCodes.OK,
-						'Successfully retrieved question details',
+						'Successfully retrieved user details',
 						response,
-					),
-				);
-		} catch (error) {
-			return res
-				.status(HttpCodes.INTERNAL_SERVER_ERROR)
-				.json(
-					new FormatResponse(
-						false,
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						error,
-						null,
-					),
-				);
-		}
-	}
-
-	async updateQuestion(req: Request, res: Response) {
-		try {
-			const {questionId} = req.params;
-
-			const question = await QuestionInstance.findOne({
-				where: {
-					id: questionId,
-					user_pubkey: req.body.user_pubkey,
-					status: 'Open',
-				},
-			});
-
-			if (!question) {
-				return res
-					.status(HttpCodes.NOT_FOUND)
-					.json(
-						new FormatResponse(
-							false,
-							HttpCodes.NOT_FOUND,
-							'Check that the question exist and has not already been closed',
-							null,
-						),
-					);
-			}
-
-			const updatedQuestion = await question.update({
-				status: req.body.status,
-			});
-
-			return res
-				.status(HttpCodes.OK)
-				.json(
-					new FormatResponse(
-						true,
-						HttpCodes.OK,
-						'Successfully update question status',
-						updatedQuestion,
 					),
 				);
 		} catch (error) {

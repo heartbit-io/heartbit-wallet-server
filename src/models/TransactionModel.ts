@@ -23,7 +23,7 @@ TransactionInstance.init(
       allowNull: false,
     },
     to_user_pubkey: {
-      type: DataTypes.ENUM,
+      type: DataTypes.STRING,
       allowNull: false,
     },
     amount: {
