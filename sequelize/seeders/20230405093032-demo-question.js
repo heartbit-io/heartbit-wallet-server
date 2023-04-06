@@ -1,12 +1,12 @@
 /* eslint-disable no-undef */
 /* eslint-disable @typescript-eslint/no-var-requires */
 'use strict';
-const { faker } = require('@faker-js/faker');
+const {faker} = require('@faker-js/faker');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-	async up(queryInterface, Sequelize) {
-		const data = {
+	 createQuestion() {
+		return {
 			content: faker.lorem.sentences(),
 			user_pubkey: faker.finance.bitcoinAddress(),
 			bounty_amount: faker.finance.amount(),
@@ -14,13 +14,16 @@ module.exports = {
 			createdAt: new Date(),
 			updatedAt: new Date(),
 		};
+	},
 
-		const dataArray = [];
-		for (let i = 0; i < 50; i++) {
-			dataArray.push(data);
-		}
+	async up(queryInterface, Sequelize) {
+		const questions = [];
 
-		return queryInterface.bulkInsert('questions', dataArray);
+		Array.from({length: 50}).forEach(() => {
+			questions.push(this.createQuestion());
+			
+		});
+		return queryInterface.bulkInsert('questions', questions);
 	},
 
 	async down(queryInterface, Sequelize) {

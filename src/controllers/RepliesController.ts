@@ -3,6 +3,7 @@ import {ReplyInstance} from '../models/ReplyModel';
 import {HttpCodes} from '../util/HttpCodes';
 import FormatResponse from '../lib/FormatResponse';
 import {QuestionInstance} from '../models/QuestionModel';
+import {UserInstance} from '../models/UserModel';
 
 class RepliesController {
 	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {
@@ -82,7 +83,7 @@ class RepliesController {
 		}
 	}
 
-	async update(req: Request, res: Response) {
+	async markAsBestReply(req: Request, res: Response) {
 		try {
 			const {replyId} = req.params;
 
@@ -119,7 +120,6 @@ class RepliesController {
 						),
 					);
 			}
-
 			if (question.user_pubkey !== req.body.user_pubkey) {
 				return res
 					.status(HttpCodes.NOT_FOUND)
@@ -155,13 +155,75 @@ class RepliesController {
 				best_reply: true,
 			});
 
+			//create a transaction
+			const user = await UserInstance.findOne({
+				where: {pubkey: question.user_pubkey},
+			});
+			const responder = await UserInstance.findOne({
+				where: {pubkey: reply.user_pubkey},
+			});
+
+			if (!user || !responder) {
+				return res
+					.status(HttpCodes.NOT_FOUND)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.NOT_FOUND,
+							'User account or responder account not found',
+							null,
+						),
+					);
+			}
+
+			//debit user bounty amount
+			const user_balance = user.btc_balance - question.bounty_amount;
+			const user_debit = await UserInstance.update({ btc_balance: user_balance }, {
+				where: {
+					pubkey: user.pubkey
+				}
+			});
+
+			if (!user_debit) {
+				return res
+					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.UNPROCESSED_CONTENT,
+							'error debit user account',
+							null,
+						),
+					);
+			}
+
+			const responder_balance = responder.btc_balance + question.bounty_amount;
+			const responder_credit = await UserInstance.update({ btc_balance: responder_balance }, {
+				where: {
+					pubkey: responder.pubkey
+				}
+			});
+
+			if (!responder_credit) {
+				return res
+					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.UNPROCESSED_CONTENT,
+							'error crediting responder account',
+							null,
+						),
+					);
+			}
+
 			return res
 				.status(HttpCodes.OK)
 				.json(
 					new FormatResponse(
 						true,
 						HttpCodes.OK,
-						'Successfully update question status',
+						'Successfully mark reply as best reply',
 						updateReply,
 					),
 				);

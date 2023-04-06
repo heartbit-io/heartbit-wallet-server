@@ -7,6 +7,6 @@ router.post('/', RepliesController.create);
 
 router.delete('/:replyId', RepliesController.delete);
 
-router.patch('/:replyId', RepliesController.update);
+router.patch('/:replyId', RepliesController.markAsBestReply);
 
 export {router as replyRoutes};

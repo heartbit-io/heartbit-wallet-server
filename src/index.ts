@@ -32,7 +32,7 @@ app.use((_req, res, next) => {
 	next();
 });
 
-app.use(routes);
+app.use('/api/v1', routes);
 
 try {
 	app.listen(PORT, async () => {
