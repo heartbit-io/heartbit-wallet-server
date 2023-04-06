@@ -1,29 +1,24 @@
 import { DataTypes, Model } from 'sequelize';
 import dbconnection from '../util/dbconnection';
 
-enum QuesstionStatus {
-	Open = 'Open',
-	Closed = 'Closed'
-}
-
-interface QuestionAttributes {
+interface RepliesAttributes {
 	id?: number;
-	content: string;
+	question_id: number;
 	user_pubkey: string;
-	bounty_amount: number;
-	status?: QuesstionStatus;
+	content: string;
+	best_reply: boolean;
 }
-export class QuestionInstance extends Model<QuestionAttributes> {
+export class ReplyInstance extends Model<RepliesAttributes> {
+  declare question_id: number;
+
   declare content: string;
 
   declare user_pubkey: string;
 
-  declare bounty_amount: number;
-
-  declare status: string;
+  declare best_reply: boolean;
 }
 
-QuestionInstance.init(
+ReplyInstance.init(
   {
     content: {
       type: DataTypes.TEXT,
@@ -33,20 +28,19 @@ QuestionInstance.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    bounty_amount: {
-      type: DataTypes.DOUBLE,
+    question_id: {
+      type: DataTypes.NUMBER,
       allowNull: false,
     },
-    status: {
-      type: DataTypes.ENUM('Open', 'Closed'),
+    best_reply: {
+      type: DataTypes.BOOLEAN,
       allowNull: false,
-      defaultValue: 'Open',
+      defaultValue: false,
     },
   },
   {
     sequelize: dbconnection,
-    tableName: 'questions',
+    tableName: 'replies',
     timestamps: true,
   },
 );
-

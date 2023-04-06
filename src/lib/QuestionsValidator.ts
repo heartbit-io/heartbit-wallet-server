@@ -3,7 +3,7 @@ import {body, param} from 'express-validator';
 class QuestionsValidator {
 	checkCreateQuestion() {
 		return [
-			body('pubkey')
+			body('user_pubkey')
 				.notEmpty()
 				.isAlphanumeric()
 				.trim()
