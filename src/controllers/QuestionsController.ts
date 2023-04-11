@@ -3,13 +3,16 @@ import {QuestionInstance} from '../models/QuestionModel';
 import {HttpCodes} from '../util/HttpCodes';
 import FormatResponse from '../lib/FormatResponse';
 import {ReplyInstance} from '../models/ReplyModel';
+import QuestionService from '../services/QuestionService';
 
 class QuestionsController {
 	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {
 		try {
-			const question = await QuestionInstance.create({
-				...req.body,
-			});
+			const user_open_bounty = await QuestionService.sumUserOpenBountyAmount(req.body.user_pubkey);
+			
+			// console.log(user_open_bounty.dataValues.total_bounty);
+
+			const question = await QuestionService.create({...req.body});
 
 			return res
 				.status(HttpCodes.CREATED)
@@ -103,11 +106,7 @@ class QuestionsController {
 			const limit = (req.query.limit as number | undefined) || 50;
 			const offset = req.query.offset as number | undefined;
 
-			const questions = await QuestionInstance.findAll({
-				where: {},
-				limit,
-				offset,
-			});
+			const questions = await QuestionService.getAll(limit, offset);
 
 			return res
 				.status(HttpCodes.OK)
@@ -161,7 +160,7 @@ class QuestionsController {
 				where: {question_id: questionId},
 			});
 
-			const response = {...question.dataValues,  replies};
+			const response = {...question.dataValues, replies};
 
 			return res
 				.status(HttpCodes.OK)

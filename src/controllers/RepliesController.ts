@@ -104,7 +104,7 @@ class RepliesController {
 					);
 			}
 
-			const question = await QuestionInstance.findOne({
+			const question = await ReplyInstance.findOne({
 				where: {id: reply.question_id},
 			});
 
@@ -178,11 +178,14 @@ class RepliesController {
 
 			//debit user bounty amount
 			const user_balance = user.btc_balance - question.bounty_amount;
-			const user_debit = await UserInstance.update({ btc_balance: user_balance }, {
-				where: {
-					pubkey: user.pubkey
-				}
-			});
+			const user_debit = await UserInstance.update(
+				{btc_balance: user_balance},
+				{
+					where: {
+						pubkey: user.pubkey,
+					},
+				},
+			);
 
 			if (!user_debit) {
 				return res
@@ -198,11 +201,14 @@ class RepliesController {
 			}
 
 			const responder_balance = responder.btc_balance + question.bounty_amount;
-			const responder_credit = await UserInstance.update({ btc_balance: responder_balance }, {
-				where: {
-					pubkey: responder.pubkey
-				}
-			});
+			const responder_credit = await UserInstance.update(
+				{btc_balance: responder_balance},
+				{
+					where: {
+						pubkey: responder.pubkey,
+					},
+				},
+			);
 
 			if (!responder_credit) {
 				return res

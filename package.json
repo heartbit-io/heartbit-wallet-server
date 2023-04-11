@@ -10,10 +10,10 @@
     "lint": "eslint . --ext .ts",
     "start": "concurrently \"npm run build\" \"node build/index.js\"",
     "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
-    "db:migrate": "cd sequelize && npx sequelize-cli db:migrate && cd ..",
-    "undo:migration": "cd sequelize && npx sequelize-cli db:migrate:undo:all && cd ..",
-    "db:seed": "cd sequelize && npx sequelize-cli db:seed:all && cd ..",
-    "db:migrate-seed": "cd sequelize && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all && cd .."
+    "db:migrate": "npx sequelize-cli db:migrate",
+    "undo:migration": "npx sequelize-cli db:migrate:undo:all",
+    "db:seed": "npx sequelize-cli db:seed:all",
+    "db:migrate-seed": "npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all"
   },
   "keywords": [],
   "author": "",
