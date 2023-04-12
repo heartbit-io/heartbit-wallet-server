@@ -1,4 +1,4 @@
-import { DataTypes, Model } from 'sequelize';
+import {DataTypes, Model} from 'sequelize';
 import dbconnection from '../util/dbconnection';
 
 interface TransactionAttributes {
@@ -8,32 +8,43 @@ interface TransactionAttributes {
 	amount: number;
 }
 export class TransactionInstance extends Model<TransactionAttributes> {
+	declare from_user_pubkey: string;
 
-  declare from_user_pubkey: string;
+	declare to_user_pubkey: string;
 
-  declare to_user_pubkey: string;
+	declare amount: number;
 
-  declare amount: number;
+	static associate(models: any) {
+		// define association here
+	}
 }
 
 TransactionInstance.init(
-  {
-    from_user_pubkey: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    to_user_pubkey: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    amount: {
-      type: DataTypes.DOUBLE,
-      allowNull: false,
-    }
-  },
-  {
-    sequelize: dbconnection,
-    tableName: 'transactions',
-    timestamps: true,
-  },
+	{
+		from_user_pubkey: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			references: {
+				model: 'users',
+				key: 'pubkey',
+			},
+		},
+		to_user_pubkey: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			references: {
+				model: 'users',
+				key: 'pubkey',
+			},
+		},
+		amount: {
+			type: DataTypes.DOUBLE,
+			allowNull: false,
+		},
+	},
+	{
+		sequelize: dbconnection,
+		tableName: 'transactions',
+		timestamps: true,
+	},
 );

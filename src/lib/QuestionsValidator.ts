@@ -32,7 +32,7 @@ class QuestionsValidator {
 				.withMessage(
 					'indicate the amount of bounty you want to place for this question',
 				)
-				.custom(async (value, {req}) => {
+				.custom(async (value, { req }) => {
 					const user_btc_balance = await UserInstance.findOne({
 						where: {pubkey: req.body.user_pubkey},
 					});

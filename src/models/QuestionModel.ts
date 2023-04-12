@@ -1,9 +1,10 @@
-import { DataTypes, Model } from 'sequelize';
+import {DataTypes, Model} from 'sequelize';
 import dbconnection from '../util/dbconnection';
+import { UserInstance } from './UserModel';
 
-enum QuesstionStatus {
+export enum QuestionStatus {
 	Open = 'Open',
-	Closed = 'Closed'
+	Closed = 'Closed',
 }
 
 interface QuestionAttributes {
@@ -11,42 +12,49 @@ interface QuestionAttributes {
 	content: string;
 	user_pubkey: string;
 	bounty_amount: number;
-	status?: QuesstionStatus;
+	status?: QuestionStatus;
 }
 export class QuestionInstance extends Model<QuestionAttributes> {
-  declare content: string;
+	declare content: string;
 
-  declare user_pubkey: string;
+	declare user_pubkey: string;
 
-  declare bounty_amount: number;
+	declare bounty_amount: number;
 
-  declare status: string;
+	declare status: string;
+	static UserInstance: any;
+
+	static associate(models: any) {
+		// define association here
+		// QuestionInstance.belongsTo(models.users, {
+		// 	foreignKey: 'user_pubkey',
+		// });
+	}
 }
 
 QuestionInstance.init(
-  {
-    content: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-    },
-    user_pubkey: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    bounty_amount: {
-      type: DataTypes.DOUBLE,
-      allowNull: false,
-    },
-    status: {
-      type: DataTypes.ENUM('Open', 'Closed'),
-      allowNull: false,
-      defaultValue: 'Open',
-    },
-  },
-  {
-    sequelize: dbconnection,
-    tableName: 'questions',
-    timestamps: true,
-  },
+	{
+		content: {
+			type: DataTypes.TEXT,
+			allowNull: false,
+		},
+		user_pubkey: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		bounty_amount: {
+			type: DataTypes.DOUBLE,
+			allowNull: false,
+		},
+		status: {
+			type: DataTypes.ENUM('Open', 'Closed'),
+			allowNull: false,
+			defaultValue: 'Open',
+		},
+	},
+	{
+		sequelize: dbconnection,
+		tableName: 'questions',
+		timestamps: true,
+	},
 );
-

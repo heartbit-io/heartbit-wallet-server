@@ -65,7 +65,7 @@ class UsersController {
 			const questions = await QuestionInstance.findAll({
 				where: {user_pubkey: pubkey},
 			});
-			const replies = await ReplyInstance.findAll({
+			const replies = await QuestionInstance.findAll({
 				where: {user_pubkey: pubkey},
             });
             
