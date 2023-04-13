@@ -1,6 +1,7 @@
 import {log} from 'console';
 import {config} from 'dotenv';
-import {createUser, createUserBody, getUser, internalError} from './users';
+import { createUser, createUserBody, getUser, internalError } from './users';
+import { createQuestion, createQuestionBody, getQuestion, getAllQuestions, deleteQuestion } from './questions';
 
 config();
 
@@ -56,12 +57,22 @@ const apiDocumentation = {
         },
         'users/ { pubkey }': {
             get: getUser,
-        }
+		},
+		questions: {
+			post: createQuestion,
+			get: getAllQuestions,
+		},
+		'questions/{id}': {
+			get: getQuestion,
+			delete: deleteQuestion,
+		},
 	},
 	components: {
 		schemas: {
 			createUserBody,
 			internalError,
+			createQuestion,
+			createQuestionBody
 		},
 	},
 };

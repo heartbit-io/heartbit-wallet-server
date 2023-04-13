@@ -44,8 +44,8 @@ const createUser = {
 										example: '3cX325ViRWa2R9Mfqf1BCQxCc1s',
 									},
 									role: {
-                                        type: 'string',
-                                        enum: ['user', 'doctor', 'admin'],
+										type: 'string',
+										enum: ['user', 'doctor', 'admin'],
 										example: 'user',
 									},
 									btc_balance: {
@@ -162,15 +162,15 @@ const getUser = {
 										type: 'string',
 										example: '3cX325ViRWa2R9Mfqf1BCQxCc1s',
 									},
-                                    role: {
-                                        type: 'string',
-                                        enum: ['user', 'admin', 'doctor'],
-                                        example: 'user'
-                                    },
-                                    btc_balance: {
-                                        type: 'string',
-                                        example: 10000
-                                    },
+									role: {
+										type: 'string',
+										enum: ['user', 'admin', 'doctor'],
+										example: 'user',
+									},
+									btc_balance: {
+										type: 'string',
+										example: 10000,
+									},
 									createdAt: {
 										type: 'string',
 										example: '2023-04-12T21:36:10.115Z',
@@ -181,8 +181,9 @@ const getUser = {
 									},
 									questions: {
 										type: 'array',
-										properties: [
-											{
+										items: {
+											type: 'object',
+											properties: {
 												id: {
 													type: 'number',
 													example: 1,
@@ -190,7 +191,7 @@ const getUser = {
 												content: {
 													type: 'string',
 													example:
-														'Molestiae officiis ex porro aliquam magnam ex aperiam. Ipsam quis consequuntur perspiciatis quidem repudiandae. Recusandae ullam praesentium dolores odit quis exercitationem exercitationem. Alias repellat illum nisi. Explicabo mollitia quis soluta dolorum recusandae dolores. Sint enim ex tenetur earum et aperiam ipsum.',
+														'Molestiae officiis ex porro aliquam magnam ex aperiam. Ipsam quis consequuntur perspiciatis quidem repudiandae.',
 												},
 												user_pubkey: {
 													type: 'string',
@@ -201,8 +202,8 @@ const getUser = {
 													example: 281.33,
 												},
 												status: {
-                                                    type: 'string',
-                                                    enum: ['closed', 'open'],
+													type: 'string',
+													enum: ['closed', 'open'],
 													example: 'closed',
 												},
 												createdAt: {
@@ -214,15 +215,76 @@ const getUser = {
 													example: '2023-04-11T11:49:39.200Z',
 												},
 											},
-										],
+										},
 									},
 									replies: {
 										type: 'array',
-										properties: {},
+										items: {
+											type: 'object',
+											properties: {
+												id: {
+													type: 'number',
+													example: 29,
+												},
+												content: {
+													type: 'string',
+													example:
+														'Molestiae officiis ex porro aliquam magnam ex aperiam. Ipsam quis consequuntur perspiciatis quidem repudiandae.',
+												},
+												question_id: {
+													type: 'number',
+													example: 51,
+												},
+												user_pubkey: {
+													type: 'string',
+													example: '15ATBNadTpqu696fQe8yGtJGjYAkUG',
+												},
+												best_reply: {
+													type: 'boolean',
+													example: false,
+												},
+												createdAt: {
+													type: 'string',
+													example: '2023-04-11T11:49:39.200Z',
+												},
+												updatedAt: {
+													type: 'string',
+													example: '2023-04-11T11:49:39.200Z',
+												},
+											},
+										},
 									},
 									transactions: {
 										type: 'array',
-										properties: {},
+										items: {
+											type: 'object',
+											properties: {
+												id: {
+													type: 'number',
+													example: 8,
+												},
+												from_user_pubkey: {
+													type: 'string',
+													example: '3cX325ViRWa2R9Mfqf1BCQxCc1s',
+												},
+												to_user_pubkey: {
+													type: 'string',
+													example: '1Bwp51hh1iAtBKtMgB2JJvoPTEiYDSA',
+												},
+												amount: {
+													type: 'number',
+													example: 205.24,
+												},
+												createdAt: {
+													type: 'string',
+													example: '2023-04-11T11:49:39.215Z',
+												},
+												updatedAt: {
+													type: 'string',
+													example: '2023-04-11T11:49:39.215Z',
+												},
+											},
+										},
 									},
 								},
 							},
@@ -283,7 +345,5 @@ const internalError = {
 		},
 	},
 };
-
-
 
 export {createUser, createUserBody, getUser, internalError};
