@@ -133,10 +133,7 @@ const deleteReply = {
 		content: {
 			'application/json': {
 				schema: {
-					user_pubkey: {
-						type: 'string',
-						example: '9DAKDADADAJIKADADADJIAK0OAEADADDA',
-					},
+					$ref: '#/components/schemas/pubkeyRequestBody',
 				},
 			},
 		},
@@ -274,10 +271,7 @@ const updateReply = {
 		content: {
 			'application/json': {
 				schema: {
-					user_pubkey: {
-						type: 'string',
-						example: '9DAKDADADAJIKADADADJIAK0OAEADADDA',
-					},
+					$ref: '#/components/schemas/pubkeyRequestBody',
 				},
 			},
 		},
@@ -476,4 +470,20 @@ const createReplyBody = {
 	},
 };
 
-export {createReply, createReplyBody, deleteReply, updateReply};
+const pubkeyRequestBody = {
+	type: 'object',
+	properties: {
+		user_pubkey: {
+			type: 'string',
+			example: '3cX325ViRWa2R9Mfqf1BCQxCc1s',
+		},
+	},
+};
+
+export {
+	createReply,
+	createReplyBody,
+	deleteReply,
+	updateReply,
+	pubkeyRequestBody,
+};

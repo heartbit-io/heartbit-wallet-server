@@ -298,42 +298,42 @@ const getAllQuestions = {
 								example: 'Successfully retrieved questions',
 							},
 							data: {
-                                type: 'array',
-                                items: {
-                                    type: 'object',
-                                    properties: {
-                                        id: {
-                                            type: 'number',
-                                            example: 51,
-                                        },
-                                        user_pubkey: {
-                                            type: 'string',
-                                            example: '3cX325ViRWa2R9Mfqf1BCQxCc1s',
-                                        },
-                                        content: {
-                                            type: 'string',
-                                            example:
-                                                'Itaque ratione aperiam doloribus est. Inventore minus exercitationem. Quasi at nam delectus fugit corporis',
-                                        },
-                                        bounty_amount: {
-                                            type: 'number',
-                                            example: 10000,
-                                        },
-                                        status: {
-                                            type: 'string',
-                                            enum: ['open', 'closed'],
-                                            example: 'closed',
-                                        },
-                                        createdAt: {
-                                            type: 'string',
-                                            example: '2023-04-12T21:36:10.115Z',
-                                        },
-                                        updatedAt: {
-                                            type: 'string',
-                                            example: '2023-04-12T21:36:10.115Z',
-                                        },
-                                    },
-                                },
+								type: 'array',
+								items: {
+									type: 'object',
+									properties: {
+										id: {
+											type: 'number',
+											example: 51,
+										},
+										user_pubkey: {
+											type: 'string',
+											example: '3cX325ViRWa2R9Mfqf1BCQxCc1s',
+										},
+										content: {
+											type: 'string',
+											example:
+												'Itaque ratione aperiam doloribus est. Inventore minus exercitationem. Quasi at nam delectus fugit corporis',
+										},
+										bounty_amount: {
+											type: 'number',
+											example: 10000,
+										},
+										status: {
+											type: 'string',
+											enum: ['open', 'closed'],
+											example: 'closed',
+										},
+										createdAt: {
+											type: 'string',
+											example: '2023-04-12T21:36:10.115Z',
+										},
+										updatedAt: {
+											type: 'string',
+											example: '2023-04-12T21:36:10.115Z',
+										},
+									},
+								},
 							},
 						},
 					},
@@ -365,16 +365,13 @@ const deleteQuestion = {
 			required: true,
 			type: 'number',
 		},
-    ],
-    requestBody: {
+	],
+	requestBody: {
 		content: {
 			'application/json': {
-                    schema: {
-                        user_pubkey: {
-                            type: 'string',
-                            example: '3cX325ViRWa2R9Mfqf1BCQxCc1s'
-                        }
-                    }
+				schema: {
+					$ref: '#/components/schemas/pubkeyRequestBody',
+				},
 			},
 		},
 		required: true,
@@ -400,8 +397,8 @@ const deleteQuestion = {
 								example: 'Successfully deleted question',
 							},
 							data: {
-                                type: 'string',
-                                example: 'null',
+								type: 'string',
+								example: 'null',
 							},
 						},
 					},
@@ -449,7 +446,6 @@ const deleteQuestion = {
 	},
 };
 
-
 const createQuestionBody = {
 	type: 'object',
 	properties: {
@@ -469,4 +465,10 @@ const createQuestionBody = {
 	},
 };
 
-export {createQuestion, getQuestion, createQuestionBody, getAllQuestions, deleteQuestion};
+export {
+	createQuestion,
+	getQuestion,
+	createQuestionBody,
+	getAllQuestions,
+	deleteQuestion,
+};

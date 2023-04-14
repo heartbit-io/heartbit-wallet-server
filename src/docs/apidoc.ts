@@ -1,7 +1,7 @@
 import {log} from 'console';
 import {config} from 'dotenv';
-import { createUser, createUserBody, getUser, internalError } from './users';
-import { getUserTransactions } from './transactions';
+import {createUser, createUserBody, getUser, internalError} from './users';
+import {getUserTransactions} from './transactions';
 import {
 	createQuestion,
 	createQuestionBody,
@@ -14,6 +14,7 @@ import {
 	createReplyBody,
 	updateReply,
 	deleteReply,
+	pubkeyRequestBody,
 } from './replies';
 
 config();
@@ -65,21 +66,21 @@ const apiDocumentation = {
 		},
 	],
 	paths: {
-		users: {
+		'/users': {
 			post: createUser,
 		},
-		'users/ { pubkey }': {
+		'users/{ pubkey }': {
 			get: getUser,
 		},
-		questions: {
+		'/questions': {
 			post: createQuestion,
 			get: getAllQuestions,
 		},
-		'questions/{id}': {
+		'/questions/{questionId}': {
 			get: getQuestion,
 			delete: deleteQuestion,
 		},
-		replies: {
+		'/replies': {
 			post: createReply,
 		},
 		'replies/{replyId}': {
@@ -97,6 +98,7 @@ const apiDocumentation = {
 			createQuestion,
 			createQuestionBody,
 			createReplyBody,
+			pubkeyRequestBody,
 		},
 	},
 };
