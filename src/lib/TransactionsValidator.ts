@@ -2,7 +2,7 @@ import {param} from 'express-validator';
 import {UserInstance} from '../models/UserModel';
 
 class TransactionsValidator {
-	userCreate() {
+	user() {
 		return [
 			param('pubkey')
                 .notEmpty()

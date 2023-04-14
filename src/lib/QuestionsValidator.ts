@@ -14,7 +14,7 @@ class QuestionsValidator {
 					const user = await UserInstance.findOne({where: {pubkey: value}});
 
 					if (!user) {
-						throw new Error('User does not have an account');
+						throw new Error('User with given public key does not exit');
 					}
 				}),
 			body('content')
@@ -24,7 +24,7 @@ class QuestionsValidator {
 				.escape()
 				.isLength({min: 50})
 				.withMessage(
-					'sufficient description of your health question is required',
+					'sufficiently describe your health issue',
 				),
 			body('bounty_amount')
 				.isNumeric()
