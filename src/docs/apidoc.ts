@@ -1,7 +1,19 @@
 import {log} from 'console';
 import {config} from 'dotenv';
-import { createUser, createUserBody, getUser, internalError } from './users';
-import { createQuestion, createQuestionBody, getQuestion, getAllQuestions, deleteQuestion } from './questions';
+import {createUser, createUserBody, getUser, internalError} from './users';
+import {
+	createQuestion,
+	createQuestionBody,
+	getQuestion,
+	getAllQuestions,
+	deleteQuestion,
+} from './questions';
+import {
+	createReply,
+	createReplyBody,
+	updateReply,
+	deleteReply,
+} from './replies';
 
 config();
 
@@ -53,10 +65,10 @@ const apiDocumentation = {
 	],
 	paths: {
 		users: {
-            post: createUser,
-        },
-        'users/ { pubkey }': {
-            get: getUser,
+			post: createUser,
+		},
+		'users/ { pubkey }': {
+			get: getUser,
 		},
 		questions: {
 			post: createQuestion,
@@ -66,13 +78,21 @@ const apiDocumentation = {
 			get: getQuestion,
 			delete: deleteQuestion,
 		},
+		replies: {
+			post: createReply,
+		},
+		'replies/{replyId}': {
+			patch: updateReply,
+			delete: deleteReply,
+		},
 	},
 	components: {
 		schemas: {
 			createUserBody,
 			internalError,
 			createQuestion,
-			createQuestionBody
+			createQuestionBody,
+			createReplyBody,
 		},
 	},
 };

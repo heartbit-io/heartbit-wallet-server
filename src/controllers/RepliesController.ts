@@ -86,7 +86,6 @@ class RepliesController {
 	async markAsBestReply(req: Request, res: Response) {
 		try {
 			const {replyId} = req.params;
-
 			const reply = await ReplyInstance.findOne({
 				where: {id: replyId},
 			});
@@ -98,13 +97,12 @@ class RepliesController {
 						new FormatResponse(
 							false,
 							HttpCodes.NOT_FOUND,
-							'Check that the rely exist',
+							'Check that the reply exist',
 							null,
 						),
 					);
 			}
-
-			const question = await ReplyInstance.findOne({
+			const question = await QuestionInstance.findOne({
 				where: {id: reply.question_id},
 			});
 
@@ -122,11 +120,11 @@ class RepliesController {
 			}
 			if (question.user_pubkey !== req.body.user_pubkey) {
 				return res
-					.status(HttpCodes.NOT_FOUND)
+					.status(HttpCodes.UNPROCESSED_CONTENT)
 					.json(
 						new FormatResponse(
 							false,
-							HttpCodes.NOT_FOUND,
+							HttpCodes.UNPROCESSED_CONTENT,
 							'Only the user that posted a question can mark a reply as best reply',
 							null,
 						),
@@ -150,10 +148,6 @@ class RepliesController {
 						),
 					);
 			}
-
-			const updateReply = await reply.update({
-				best_reply: true,
-			});
 
 			//create a transaction
 			const user = await UserInstance.findOne({
@@ -223,6 +217,10 @@ class RepliesController {
 					);
 			}
 
+			const updateReply = await reply.update({
+				best_reply: true,
+			});
+			
 			return res
 				.status(HttpCodes.OK)
 				.json(

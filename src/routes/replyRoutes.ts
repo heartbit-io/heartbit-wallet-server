@@ -1,11 +1,23 @@
 import {Router} from 'express';
 import RepliesController from '../controllers/RepliesController';
+import RepliesValidator from '../lib/RepliesValidator';
+import Validation from '../middleware/Validation';
 
 const router = Router();
 
-router.post('/', RepliesController.create);
+router.post(
+	'/',
+	RepliesValidator.checkCreateReply(),
+	Validation.validate,
+	RepliesController.create,
+);
 
-router.delete('/:replyId', RepliesController.delete);
+router.delete(
+	'/:replyId',
+	RepliesValidator.checkDeleteReply(),
+	Validation.validate,
+	RepliesController.delete,
+);
 
 router.patch('/:replyId', RepliesController.markAsBestReply);
 
