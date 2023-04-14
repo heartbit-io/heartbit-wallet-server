@@ -1,6 +1,7 @@
 import {log} from 'console';
 import {config} from 'dotenv';
-import {createUser, createUserBody, getUser, internalError} from './users';
+import { createUser, createUserBody, getUser, internalError } from './users';
+import { getUserTransactions } from './transactions';
 import {
 	createQuestion,
 	createQuestionBody,
@@ -84,6 +85,9 @@ const apiDocumentation = {
 		'replies/{replyId}': {
 			patch: updateReply,
 			delete: deleteReply,
+		},
+		'transactions/{pubkey}': {
+			get: getUserTransactions,
 		},
 	},
 	components: {

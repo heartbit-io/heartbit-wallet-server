@@ -7,7 +7,7 @@ const router = Router();
 
 router.get(
 	'/:pubkey',
-	TransactionsValidator.userCreate(),
+	TransactionsValidator.user(),
 	Validation.validate,
 	TransactionsController.getUserTransactions,
 );
