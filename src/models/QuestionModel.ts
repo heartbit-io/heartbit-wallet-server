@@ -1,13 +1,12 @@
 import {DataTypes, Model} from 'sequelize';
 import dbconnection from '../util/dbconnection';
-import {UserInstance} from './UserModel';
 
 export enum QuestionStatus {
 	Open = 'Open',
 	Closed = 'Closed',
 }
 
-interface QuestionAttributes {
+export interface QuestionAttributes {
 	total_bounty?: unknown;
 	id?: number;
 	content: string;

@@ -1,12 +1,21 @@
-import {Sequelize} from 'sequelize';
-import { UserInstance } from '../models/UserModel';
+import {UserAttributes, UserInstance} from '../models/UserModel';
 
 class UserService {
-
-    async getUserBalance(pubkey: string) {
-        return await UserInstance.findOne({ where: { pubkey }, attributes: ['btc_balance'], plain: true });
+	async getUserDetails(pubkey: string): Promise<UserInstance | null> {
+		return await UserInstance.findOne({where: {pubkey}});
     }
+    
+    async createUser(user: UserAttributes) {
+        return await UserInstance.create({ ...user});
+    }
+
+	async getUserBalance(pubkey: string): Promise<UserInstance | null> {
+		return await UserInstance.findOne({
+			where: {pubkey},
+			attributes: ['btc_balance'],
+			plain: true,
+		});
+	}
 }
 
-
-export default new UserService;
+export default new UserService();

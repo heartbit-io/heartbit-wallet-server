@@ -1,7 +1,7 @@
 import {DataTypes, Model} from 'sequelize';
 import dbconnection from '../util/dbconnection';
 
-interface UserAttributes {
+export interface UserAttributes {
 	id?: number;
 	pubkey: string;
 	role: string;
