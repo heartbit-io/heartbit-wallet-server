@@ -1,6 +1,6 @@
 import {DataTypes, Model} from 'sequelize';
 import dbconnection from '../util/dbconnection';
-import { UserInstance } from './UserModel';
+import {UserInstance} from './UserModel';
 
 export enum QuestionStatus {
 	Open = 'Open',
@@ -8,6 +8,7 @@ export enum QuestionStatus {
 }
 
 interface QuestionAttributes {
+	total_bounty?: unknown;
 	id?: number;
 	content: string;
 	user_pubkey: string;
@@ -22,7 +23,8 @@ export class QuestionInstance extends Model<QuestionAttributes> {
 	declare bounty_amount: number;
 
 	declare status: string;
-	static UserInstance: any;
+
+	declare dataValues: QuestionAttributes;
 
 	static associate(models: any) {
 		// define association here
@@ -51,6 +53,7 @@ QuestionInstance.init(
 			allowNull: false,
 			defaultValue: 'Open',
 		},
+
 	},
 	{
 		sequelize: dbconnection,
