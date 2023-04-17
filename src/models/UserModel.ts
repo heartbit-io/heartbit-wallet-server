@@ -50,7 +50,7 @@ UserInstance.init(
 		sequelize: dbconnection,
 		tableName: 'users',
 		timestamps: true,
-		paranoid: true,
+		// paranoid: true,
 	},
 );
 

@@ -27,9 +27,6 @@ export class QuestionInstance extends Model<QuestionAttributes> {
 
 	static associate(models: any) {
 		// define association here
-		// QuestionInstance.belongsTo(models.users, {
-		// 	foreignKey: 'user_pubkey',
-		// });
 	}
 }
 
@@ -58,6 +55,6 @@ QuestionInstance.init(
 		sequelize: dbconnection,
 		tableName: 'questions',
 		timestamps: true,
-		paranoid: true,
+		// paranoid: true,
 	},
 );
