@@ -1,9 +1,9 @@
 import {Request, Response} from 'express';
 import {HttpCodes} from '../util/HttpCodes';
 import FormatResponse from '../lib/FormatResponse';
-import {ReplyInstance} from '../models/ReplyModel';
 import QuestionService from '../services/QuestionService';
 import UserService from '../services/UserService';
+import ReplyService from '../services/ReplyService';
 
 class QuestionsController {
 	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {
@@ -188,9 +188,7 @@ class QuestionsController {
 					);
 			}
 
-			const replies = await ReplyInstance.findAll({
-				where: {question_id: questionId},
-			});
+			const replies = await ReplyService.getQuestionReplies(Number(questionId));
 
 			const response = {...question.dataValues, replies};
 

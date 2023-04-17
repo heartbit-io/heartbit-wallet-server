@@ -58,5 +58,6 @@ QuestionInstance.init(
 		sequelize: dbconnection,
 		tableName: 'questions',
 		timestamps: true,
+		paranoid: true,
 	},
 );

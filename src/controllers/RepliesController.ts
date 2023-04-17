@@ -1,16 +1,14 @@
 import {Request, Response} from 'express';
-import {ReplyInstance} from '../models/ReplyModel';
 import {HttpCodes} from '../util/HttpCodes';
 import FormatResponse from '../lib/FormatResponse';
-import {QuestionInstance} from '../models/QuestionModel';
-import {UserInstance} from '../models/UserModel';
+import ReplyService from '../services/ReplyService';
+import QuestionService from '../services/QuestionService';
+import UserService from '../services/UserService';
 
 class RepliesController {
 	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {
 		try {
-			const question = await ReplyInstance.create({
-				...req.body,
-			});
+			const question = await ReplyService.createReply({...req.body});
 
 			return res
 				.status(HttpCodes.CREATED)
@@ -40,10 +38,10 @@ class RepliesController {
 		try {
 			const {replyId} = req.params;
 
-			const reply = await ReplyInstance.findOne({
-				where: {id: replyId, user_pubkey: req.body.user_pubkey},
-			});
-
+			const reply = await ReplyService.getUserReply(
+				Number(replyId),
+				req.body.user_pubkey,
+			);
 			if (!reply) {
 				return res
 					.status(HttpCodes.NOT_FOUND)
@@ -57,7 +55,7 @@ class RepliesController {
 					);
 			}
 
-			await reply.destroy();
+			await ReplyService.deleteReply(reply);
 
 			return res
 				.status(HttpCodes.OK)
@@ -86,9 +84,7 @@ class RepliesController {
 	async markAsBestReply(req: Request, res: Response) {
 		try {
 			const {replyId} = req.params;
-			const reply = await ReplyInstance.findOne({
-				where: {id: replyId},
-			});
+			const reply = await ReplyService.getReplyById(Number(replyId));
 
 			if (!reply) {
 				return res
@@ -102,10 +98,7 @@ class RepliesController {
 						),
 					);
 			}
-			const question = await QuestionInstance.findOne({
-				where: {id: reply.question_id},
-			});
-
+			const question = await QuestionService.getQuestion(reply.question_id);
 			if (!question) {
 				return res
 					.status(HttpCodes.NOT_FOUND)
@@ -132,10 +125,9 @@ class RepliesController {
 			}
 
 			//check if question already has a best reply
-			const existingBestReply = await ReplyInstance.findOne({
-				where: {question_id: reply.question_id, best_reply: true},
-			});
-
+			const existingBestReply = await ReplyService.getQuestionBestReply(
+				reply.question_id,
+			);
 			if (existingBestReply) {
 				return res
 					.status(HttpCodes.UNPROCESSED_CONTENT)
@@ -150,12 +142,8 @@ class RepliesController {
 			}
 
 			//create a transaction
-			const user = await UserInstance.findOne({
-				where: {pubkey: question.user_pubkey},
-			});
-			const responder = await UserInstance.findOne({
-				where: {pubkey: reply.user_pubkey},
-			});
+			const user = await UserService.getUserDetails(question.user_pubkey);
+			const responder = await UserService.getUserDetails(reply.user_pubkey);
 
 			if (!user || !responder) {
 				return res
@@ -172,13 +160,10 @@ class RepliesController {
 
 			//debit user bounty amount
 			const user_balance = user.btc_balance - question.bounty_amount;
-			const user_debit = await UserInstance.update(
-				{btc_balance: user_balance},
-				{
-					where: {
-						pubkey: user.pubkey,
-					},
-				},
+
+			const user_debit = UserService.updateUserBtcBalance(
+				user_balance,
+				user.pubkey,
 			);
 
 			if (!user_debit) {
@@ -195,13 +180,9 @@ class RepliesController {
 			}
 
 			const responder_balance = responder.btc_balance + question.bounty_amount;
-			const responder_credit = await UserInstance.update(
-				{btc_balance: responder_balance},
-				{
-					where: {
-						pubkey: responder.pubkey,
-					},
-				},
+			const responder_credit = await UserService.updateUserBtcBalance(
+				responder_balance,
+				responder.pubkey,
 			);
 
 			if (!responder_credit) {
@@ -217,10 +198,8 @@ class RepliesController {
 					);
 			}
 
-			const updateReply = await reply.update({
-				best_reply: true,
-			});
-			
+			const updateReply = await ReplyService.updateReply(reply);
+
 			return res
 				.status(HttpCodes.OK)
 				.json(
