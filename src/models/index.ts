@@ -36,8 +36,20 @@ const db = {
 	ReplyInstance,
 };
 
-Object.values(db).forEach((model: any) => {
-	if (model.associate) {
-		model.associate(db);
-	}
+// Object.values(db).forEach((model: any) => {
+// 	if (model.associate) {
+// 		model.associate(db);
+// 	}
+// });
+
+QuestionInstance.belongsTo(UserInstance, {
+	as: 'User',
+	onDelete: 'CASCADE',
+	foreignKey: 'user_pubkey',
+});
+
+UserInstance.hasMany(QuestionInstance, {
+	as: 'Questions',
+	onDelete: 'CASCADE',
+	foreignKey: 'user_pubkey',
 });

@@ -1,7 +1,7 @@
 import {CreationOptional, DataTypes, Model} from 'sequelize';
 import dbconnection from '../util/dbconnection';
 
-interface RepliesAttributes {
+export interface RepliesAttributes {
 	id?: number;
 	question_id: number;
 	user_pubkey: string;
@@ -53,5 +53,6 @@ ReplyInstance.init(
 		sequelize: dbconnection,
 		tableName: 'replies',
 		timestamps: true,
+		// paranoid: true,
 	},
 );

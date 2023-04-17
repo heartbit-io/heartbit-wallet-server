@@ -1,5 +1,5 @@
 import {param} from 'express-validator';
-import {UserInstance} from '../models/UserModel';
+import UserService from '../services/UserService';
 
 class TransactionsValidator {
 	user() {
@@ -11,8 +11,8 @@ class TransactionsValidator {
 				.escape()
 				.withMessage('User public key is required to get their transactions')
 				.custom(async value => {
-					const checkUser = await UserInstance.findOne({where: {pubkey: value}});
-					if (!checkUser) {
+					const user = await UserService.getUserDetails(value);
+					if (!user) {
 						throw new Error('User with given public key does not exits');
 					}
 				}),

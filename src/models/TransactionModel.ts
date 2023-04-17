@@ -46,5 +46,6 @@ TransactionInstance.init(
 		sequelize: dbconnection,
 		tableName: 'transactions',
 		timestamps: true,
+		// paranoid: true,
 	},
 );

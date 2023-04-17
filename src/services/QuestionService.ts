@@ -1,13 +1,8 @@
-import { Sequelize } from 'sequelize';
-import { QuestionStatus, QuestionInstance } from '../models/QuestionModel';
+import {Sequelize} from 'sequelize';
+import {QuestionStatus, QuestionInstance, QuestionAttributes} from '../models/QuestionModel';
 
-export interface QuestionInterface {
-	content: string;
-	user_pubkey: string;
-	bounty_amount: number;
-}
 class QuestionService {
-	async create(question: QuestionInterface) {
+	async create(question: QuestionAttributes) {
 		return await QuestionInstance.create({...question});
 	}
 
@@ -24,10 +19,29 @@ class QuestionService {
 			where: {user_pubkey, status: QuestionStatus.Open},
 			attributes: [
 				[Sequelize.fn('sum', Sequelize.col('bounty_amount')), 'total_bounty'],
-            ],
-            group: ['user_pubkey'],
-        });
-        
+			],
+			group: ['user_pubkey'],
+		});
+	}
+
+	async getQuestion(id: number) {
+		return await QuestionInstance.findOne({
+			where: {id},
+		});
+	}
+
+	async getUserOpenQuestion(id: number, user_pubkey: string) {
+		return await QuestionInstance.findOne({
+			where: {
+				id,
+				user_pubkey,
+				status: QuestionStatus.Open,
+			},
+		});
+	}
+
+	async getUserQuestions(user_pubkey: string): Promise<QuestionInstance[]> {
+		return await QuestionInstance.findAll({where: {user_pubkey}});
 	}
 }
 

@@ -1,8 +1,7 @@
 import {Request, Response} from 'express';
 import {HttpCodes} from '../util/HttpCodes';
 import FormatResponse from '../lib/FormatResponse';
-import { TransactionInstance } from '../models/TransactionModel';
-import { Op } from 'sequelize';
+import TransactionService from '../services/TransactionService';
 
 class RepliesController {
 
@@ -10,10 +9,7 @@ class RepliesController {
 		try {
 			const {pubkey} = req.params;
 
-			const transactions = await TransactionInstance.findAll({
-				where: { [Op.or]: [ { from_user_pubkey: pubkey}, { to_user_pubkey: pubkey} ]},
-			});
-
+			const transactions = await TransactionService.getUserTransactions(pubkey);
 			if (!transactions || transactions.length === 0) {
 				return res
 					.status(HttpCodes.NOT_FOUND)

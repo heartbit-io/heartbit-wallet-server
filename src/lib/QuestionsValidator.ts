@@ -1,5 +1,5 @@
 import {body, param} from 'express-validator';
-import {UserInstance} from '../models/UserModel';
+import UserService from '../services/UserService';
 
 class QuestionsValidator {
 	checkCreateQuestion() {
@@ -11,7 +11,7 @@ class QuestionsValidator {
 				.escape()
 				.withMessage('User public key is required to post a question')
 				.custom(async value => {
-					const user = await UserInstance.findOne({where: {pubkey: value}});
+					const user = await UserService.getUserDetails(value);
 
 					if (!user) {
 						throw new Error('User with given public key does not exit');
@@ -33,13 +33,13 @@ class QuestionsValidator {
 					'indicate the amount of bounty you want to place for this question',
 				)
 				.custom(async (value, { req }) => {
-					const user_btc_balance = await UserInstance.findOne({
-						where: {pubkey: req.body.user_pubkey},
-					});
-					if (!user_btc_balance) {
+					
+
+					const user_balance = await UserService.getUserBalance(req.body.user_pubkey);
+					if (!user_balance) {
 						throw new Error('User does not exist');
 					}
-					if (value >= user_btc_balance.btc_balance) {
+					if (value >= user_balance.btc_balance) {
 						throw new Error(
 							'You do not have sufficient balance for this bounty amount',
 						);

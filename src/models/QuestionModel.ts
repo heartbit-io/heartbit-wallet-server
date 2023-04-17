@@ -1,13 +1,13 @@
 import {DataTypes, Model} from 'sequelize';
 import dbconnection from '../util/dbconnection';
-import { UserInstance } from './UserModel';
 
 export enum QuestionStatus {
 	Open = 'Open',
 	Closed = 'Closed',
 }
 
-interface QuestionAttributes {
+export interface QuestionAttributes {
+	total_bounty?: unknown;
 	id?: number;
 	content: string;
 	user_pubkey: string;
@@ -22,13 +22,11 @@ export class QuestionInstance extends Model<QuestionAttributes> {
 	declare bounty_amount: number;
 
 	declare status: string;
-	static UserInstance: any;
+
+	declare dataValues: QuestionAttributes;
 
 	static associate(models: any) {
 		// define association here
-		// QuestionInstance.belongsTo(models.users, {
-		// 	foreignKey: 'user_pubkey',
-		// });
 	}
 }
 
@@ -51,10 +49,12 @@ QuestionInstance.init(
 			allowNull: false,
 			defaultValue: 'Open',
 		},
+
 	},
 	{
 		sequelize: dbconnection,
 		tableName: 'questions',
 		timestamps: true,
+		// paranoid: true,
 	},
 );

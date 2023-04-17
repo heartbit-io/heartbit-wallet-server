@@ -1,16 +1,53 @@
 import {Request, Response} from 'express';
-import {QuestionInstance} from '../models/QuestionModel';
 import {HttpCodes} from '../util/HttpCodes';
 import FormatResponse from '../lib/FormatResponse';
-import {ReplyInstance} from '../models/ReplyModel';
 import QuestionService from '../services/QuestionService';
+import UserService from '../services/UserService';
+import ReplyService from '../services/ReplyService';
 
 class QuestionsController {
 	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {
 		try {
-			const user_open_bounty = await QuestionService.sumUserOpenBountyAmount(req.body.user_pubkey);
-			
-			// console.log(user_open_bounty.dataValues.total_bounty);
+			const user_open_bounty = await QuestionService.sumUserOpenBountyAmount(
+				req.body.user_pubkey,
+			);
+
+			const user_open_bounty_total = user_open_bounty[0]
+				? user_open_bounty[0].dataValues.total_bounty
+				: 0;
+
+			const total_bounty =
+				Number(user_open_bounty_total) + Number(req.body.bounty_amount);
+
+			const user_balance = await UserService.getUserBalance(
+				req.body.user_pubkey,
+			);
+
+			if (!user_balance) {
+				return res
+					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.UNPROCESSED_CONTENT,
+							'Error getting user balance',
+							null,
+						),
+					);
+			}
+
+			if (total_bounty >= Number(user_balance.btc_balance)) {
+				return res
+					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.UNPROCESSED_CONTENT,
+							'You do not have enough sats to post a new question',
+							null,
+						),
+					);
+			}
 
 			const question = await QuestionService.create({...req.body});
 
@@ -42,9 +79,7 @@ class QuestionsController {
 		try {
 			const {questionId} = req.params;
 
-			const question = await QuestionInstance.findOne({
-				where: {id: questionId},
-			});
+			const question = await QuestionService.getQuestion(Number(questionId));
 
 			if (!question) {
 				return res
@@ -139,10 +174,7 @@ class QuestionsController {
 		try {
 			const {questionId} = req.params;
 
-			const question = await QuestionInstance.findOne({
-				where: {id: questionId},
-			});
-
+			const question = await QuestionService.getQuestion(Number(questionId));
 			if (!question) {
 				return res
 					.status(HttpCodes.NOT_FOUND)
@@ -156,9 +188,7 @@ class QuestionsController {
 					);
 			}
 
-			const replies = await ReplyInstance.findAll({
-				where: {question_id: questionId},
-			});
+			const replies = await ReplyService.getQuestionReplies(Number(questionId));
 
 			const response = {...question.dataValues, replies};
 
@@ -190,13 +220,10 @@ class QuestionsController {
 		try {
 			const {questionId} = req.params;
 
-			const question = await QuestionInstance.findOne({
-				where: {
-					id: questionId,
-					user_pubkey: req.body.user_pubkey,
-					status: 'Open',
-				},
-			});
+			const question = await QuestionService.getUserOpenQuestion(
+				Number(questionId),
+				req.body.user_pubkey,
+			);
 
 			if (!question) {
 				return res

@@ -1,17 +1,15 @@
 import {Request, Response} from 'express';
 import {HttpCodes} from '../util/HttpCodes';
 import FormatResponse from '../lib/FormatResponse';
-import {UserInstance} from '../models/UserModel';
-import {QuestionInstance} from '../models/QuestionModel';
-import {ReplyInstance} from '../models/ReplyModel';
-import { TransactionInstance } from '../models/TransactionModel';
+import ReplyService from '../services/ReplyService';
+import QuestionService from '../services/QuestionService';
+import TransactionService from '../services/TransactionService';
+import UserService from '../services/UserService';
 
 class UsersController {
 	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {
 		try {
-			const question = await UserInstance.create({
-				...req.body,
-			});
+			const question = await UserService.createUser({...req.body});
 
 			return res
 				.status(HttpCodes.CREATED)
@@ -44,9 +42,7 @@ class UsersController {
 		try {
 			const {pubkey} = req.params;
 
-			const user = await UserInstance.findOne({
-				where: {pubkey},
-			});
+			const user = await UserService.getUserDetails(pubkey);
 
 			if (!user) {
 				return res
@@ -61,17 +57,18 @@ class UsersController {
 					);
 			}
 
-			//get user questions
-			const questions = await QuestionInstance.findAll({
-				where: {user_pubkey: pubkey},
-			});
-			const replies = await QuestionInstance.findAll({
-				where: {user_pubkey: pubkey},
-            });
-            
-            const transactions = await TransactionInstance.findAll({ where: { from_user_pubkey: pubkey } });
+			const user_questions = await QuestionService.getUserQuestions(pubkey);
+			const user_replies = await ReplyService.getUserReplies(pubkey);
+			const user_transactions = await TransactionService.getUserTransactions(
+				pubkey,
+			);
 
-			const response = {...user.dataValues, questions, replies, transactions};
+			const response = {
+				...user.dataValues,
+				questions: user_questions,
+				replies: user_replies,
+				transactions: user_transactions,
+			};
 
 			return res
 				.status(HttpCodes.OK)
