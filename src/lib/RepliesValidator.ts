@@ -1,6 +1,4 @@
 import {body, param} from 'express-validator';
-import {UserInstance} from '../models/UserModel';
-import {ReplyInstance} from '../models/ReplyModel';
 import UserService from '../services/UserService';
 import QuestionService from '../services/QuestionService';
 import ReplyService from '../services/ReplyService';

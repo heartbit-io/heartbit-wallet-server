@@ -1,5 +1,4 @@
 import {body} from 'express-validator';
-import {UserInstance} from '../models/UserModel';
 import UserService from '../services/UserService';
 
 class UsersValidator {
