@@ -4,6 +4,7 @@ import {agent as request} from 'supertest';
 import {HttpCodes} from '../src/util/HttpCodes';
 import {UserInstance} from '../src/models/UserModel';
 import {faker} from '@faker-js/faker';
+import {UserAttributes} from '../src/models/UserModel';
 
 const base_url = '/api/v1';
 
@@ -16,6 +17,14 @@ describe('User endpoints', () => {
 		};
 	};
 
+	const createUser = async (user: UserAttributes) => {
+		const result = await request(app)
+			.post(base_url + '/users')
+			.send({...user})
+			.set('Accept', 'application/json');
+		return result;
+	};
+
 	describe('create user', () => {
 		afterEach(async () => {
 			await UserInstance.destroy({where: {}, truncate: true});
@@ -23,10 +32,7 @@ describe('User endpoints', () => {
 
 		it('should register a user', async () => {
 			const user = newUser();
-			const response = await request(app)
-				.post(base_url + '/users')
-				.send({...user})
-				.set('Accept', 'application/json');
+			const response = await createUser(user);
 			expect(response.status).to.equal(HttpCodes.CREATED);
 			expect(response.body).to.include({
 				success: true,
@@ -40,15 +46,8 @@ describe('User endpoints', () => {
 
 		it('should return validator error if public key is not unique', async () => {
 			const user = newUser();
-			await request(app)
-				.post(base_url + '/users')
-				.send({...user})
-				.set('Accept', 'application/json');
-
-			const response = await request(app)
-				.post(base_url + '/users')
-				.send({...user})
-				.set('Accept', 'application/json');
+			await createUser(user);
+			const response = await createUser(user);
 			expect(response.status).to.equal(HttpCodes.BAD_REQUEST);
 			expect(response.body).to.include({
 				success: false,
@@ -58,10 +57,8 @@ describe('User endpoints', () => {
 
 		it('should return validator error role is not user or admin or doctor', async () => {
 			const user = newUser();
-			const response = await request(app)
-				.post(base_url + '/users')
-				.send({...user, role: 'none'})
-				.set('Accept', 'application/json');
+			const request_body = {...user, role: 'none'};
+			const response = await createUser(request_body);
 
 			expect(response.status).to.equal(HttpCodes.BAD_REQUEST);
 			expect(response.body).to.include({
@@ -73,10 +70,7 @@ describe('User endpoints', () => {
 	describe('get user details', () => {
 		it('should return user details', async () => {
 			const user = newUser();
-			await request(app)
-				.post(base_url + '/users')
-				.send({...user})
-				.set('Accept', 'application/json');
+			await createUser(user);
 
 			const response = await request(app).get(
 				`${base_url}/users/${user.pubkey}`,
@@ -88,11 +82,11 @@ describe('User endpoints', () => {
 				message: 'Successfully retrieved user details',
 			});
 			expect(response.body.data).to.include({...user});
-        });
-        
-        it('should not return data if user is not found', async () => {
+		});
+
+		it('should not return data if user is not found', async () => {
 			const user = newUser();
-	
+
 			const response = await request(app).get(
 				`${base_url}/users/${user.pubkey}`,
 			);
@@ -100,9 +94,9 @@ describe('User endpoints', () => {
 			expect(response.body).to.include({
 				success: false,
 				statusCode: HttpCodes.NOT_FOUND,
-                message: 'User was not found',
-                data: null
+				message: 'User was not found',
+				data: null,
 			});
 		});
-    });
+	});
 });

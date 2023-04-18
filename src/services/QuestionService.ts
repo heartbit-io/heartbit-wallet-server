@@ -1,5 +1,9 @@
 import {Sequelize} from 'sequelize';
-import {QuestionStatus, QuestionInstance, QuestionAttributes} from '../models/QuestionModel';
+import {
+	QuestionStatus,
+	QuestionInstance,
+	QuestionAttributes,
+} from '../models/QuestionModel';
 
 class QuestionService {
 	async create(question: QuestionAttributes) {
@@ -47,7 +51,10 @@ class QuestionService {
 	async getOpenQuestionsOrderByBounty() {
 		return await QuestionInstance.findAll({
 			where: {status: QuestionStatus.Open},
-			order: [['bounty_amount', 'DESC']],
+			order: [
+				['bounty_amount', 'DESC'],
+				['createdAt', 'ASC'],
+			],
 		});
 	}
 }

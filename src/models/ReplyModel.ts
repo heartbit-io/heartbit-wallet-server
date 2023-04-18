@@ -6,7 +6,7 @@ export interface RepliesAttributes {
 	question_id: number;
 	user_pubkey: string;
 	content: string;
-	best_reply: boolean;
+	best_reply?: boolean;
 }
 
 export class ReplyInstance extends Model<RepliesAttributes> {
