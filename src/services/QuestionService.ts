@@ -43,6 +43,13 @@ class QuestionService {
 	async getUserQuestions(user_pubkey: string): Promise<QuestionInstance[]> {
 		return await QuestionInstance.findAll({where: {user_pubkey}});
 	}
+
+	async getOpenQuestionsOrderByBounty() {
+		return await QuestionInstance.findAll({
+			where: {status: QuestionStatus.Open},
+			order: [['bounty_amount', 'DESC']],
+		});
+	}
 }
 
 export default new QuestionService();

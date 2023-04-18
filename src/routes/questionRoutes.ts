@@ -13,6 +13,7 @@ router.post(
 );
 
 router.get('/', QuestionsController.getAllQuestions);
+router.get('/open', QuestionsController.getOpenQuestionsOrderByBounty);
 router.get(
 	'/:questionId',
 	QuestionsValidator.checkQuestion(),

@@ -7,6 +7,7 @@ import {
 	createQuestionBody,
 	getQuestion,
 	getAllQuestions,
+	getOpenQuestionsOrderByBounty,
 	deleteQuestion,
 } from './questions';
 import {
@@ -75,6 +76,9 @@ const apiDocumentation = {
 		'/questions': {
 			post: createQuestion,
 			get: getAllQuestions,
+		},
+		'/questions/open': {
+			get: getOpenQuestionsOrderByBounty,
 		},
 		'/questions/{questionId}': {
 			get: getQuestion,

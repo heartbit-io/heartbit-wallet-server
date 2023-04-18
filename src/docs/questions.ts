@@ -353,6 +353,87 @@ const getAllQuestions = {
 	},
 };
 
+
+const getOpenQuestionsOrderByBounty = {
+	tags: ['Questions'],
+	description: 'Get all open questions',
+	operationId: 'getAllOpenQuestions',
+	responses: {
+		'200': {
+			description: 'Successfully retrieved questions',
+			content: {
+				'application/json': {
+					schema: {
+						type: 'object',
+						properties: {
+							success: {
+								type: 'boolean',
+								example: true,
+							},
+							statusCode: {
+								type: 'number',
+								example: 200,
+							},
+							message: {
+								type: 'string',
+								example: 'Successfully retrieved all open questions',
+							},
+							data: {
+								type: 'array',
+								items: {
+									type: 'object',
+									properties: {
+										id: {
+											type: 'number',
+											example: 51,
+										},
+										user_pubkey: {
+											type: 'string',
+											example: '3cX325ViRWa2R9Mfqf1BCQxCc1s',
+										},
+										content: {
+											type: 'string',
+											example:
+												'Itaque ratione aperiam doloribus est. Inventore minus exercitationem. Quasi at nam delectus fugit corporis',
+										},
+										bounty_amount: {
+											type: 'number',
+											example: 10000,
+										},
+										status: {
+											type: 'string',
+											enum: ['open', 'closed'],
+											example: 'open',
+										},
+										createdAt: {
+											type: 'string',
+											example: '2023-04-12T21:36:10.115Z',
+										},
+										updatedAt: {
+											type: 'string',
+											example: '2023-04-12T21:36:10.115Z',
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		'500': {
+			description: 'Internal Server Error',
+			content: {
+				'application/json': {
+					schema: {
+						$ref: '#/components/schemas/internalError',
+					},
+				},
+			},
+		},
+	},
+};
+
 const deleteQuestion = {
 	tags: ['Questions'],
 	description: 'Delete given question',
@@ -470,5 +551,6 @@ export {
 	getQuestion,
 	createQuestionBody,
 	getAllQuestions,
+	getOpenQuestionsOrderByBounty,
 	deleteQuestion,
 };

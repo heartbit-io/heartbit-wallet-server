@@ -167,6 +167,34 @@ class QuestionsController {
 		}
 	}
 
+	async getOpenQuestionsOrderByBounty(req: Request, res: Response) {
+		try {
+			const questions = await QuestionService.getOpenQuestionsOrderByBounty();
+
+			return res
+				.status(HttpCodes.OK)
+				.json(
+					new FormatResponse(
+						true,
+						HttpCodes.OK,
+						'Successfully retrieved all open questions',
+						questions,
+					),
+				);
+		} catch (error) {
+			return res
+				.status(HttpCodes.INTERNAL_SERVER_ERROR)
+				.json(
+					new FormatResponse(
+						false,
+						HttpCodes.INTERNAL_SERVER_ERROR,
+						error,
+						null,
+					),
+				);
+		}
+	}
+
 	async getQuestion(
 		req: Request,
 		res: Response,
