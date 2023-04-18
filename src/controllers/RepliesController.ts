@@ -4,6 +4,7 @@ import FormatResponse from '../lib/FormatResponse';
 import ReplyService from '../services/ReplyService';
 import QuestionService from '../services/QuestionService';
 import UserService from '../services/UserService';
+import TransactionService from '../services/TransactionService';
 
 class RepliesController {
 	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {
@@ -197,6 +198,13 @@ class RepliesController {
 						),
 					);
 			}
+
+			//create a transaction
+			await TransactionService.createTransaction({
+				amount: question.bounty_amount,
+				to_user_pubkey: responder.pubkey,
+				from_user_pubkey: user.pubkey,
+			});
 
 			const updateReply = await ReplyService.updateReply(reply);
 

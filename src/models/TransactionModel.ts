@@ -1,8 +1,7 @@
 import {DataTypes, Model} from 'sequelize';
 import dbconnection from '../util/dbconnection';
 
-interface TransactionAttributes {
-	id?: number;
+export interface TransactionAttributes {
 	from_user_pubkey: string;
 	to_user_pubkey: string;
 	amount: number;

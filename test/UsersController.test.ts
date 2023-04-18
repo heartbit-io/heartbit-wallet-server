@@ -2,9 +2,8 @@ import app from '../src/index';
 import {expect} from 'chai';
 import {agent as request} from 'supertest';
 import {HttpCodes} from '../src/util/HttpCodes';
-import {UserInstance} from '../src/models/UserModel';
+import {UserInstance, UserAttributes} from '../src/models/UserModel';
 import {faker} from '@faker-js/faker';
-import {UserAttributes} from '../src/models/UserModel';
 
 const base_url = '/api/v1';
 
