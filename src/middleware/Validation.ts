@@ -13,7 +13,7 @@ class Validation {
 					new FormatResponse(
 						false,
 						HttpCodes.BAD_REQUEST,
-						error.array()[0],
+						error.array(),
 						null,
 					),
 				);

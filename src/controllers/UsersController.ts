@@ -10,7 +10,7 @@ class UsersController {
 	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {
 		try {
 			const question = await UserService.createUser({...req.body});
-
+			
 			return res
 				.status(HttpCodes.CREATED)
 				.json(
