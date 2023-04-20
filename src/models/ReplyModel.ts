@@ -1,4 +1,5 @@
 import {CreationOptional, DataTypes, Model} from 'sequelize';
+
 import dbconnection from '../util/dbconnection';
 
 export interface RepliesAttributes {
@@ -40,7 +41,7 @@ ReplyInstance.init(
 			allowNull: false,
 		},
 		question_id: {
-			type: DataTypes.NUMBER,
+			type: DataTypes.INTEGER,
 			allowNull: false,
 		},
 		best_reply: {
