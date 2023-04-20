@@ -43,6 +43,10 @@ const createUser = {
 										type: 'string',
 										example: '3cX325ViRWa2R9Mfqf1BCQxCc1s',
 									},
+									email: {
+										type: 'string',
+										example: 'david@heartbit.io',
+									},
 									role: {
 										type: 'string',
 										enum: ['user', 'doctor', 'admin'],
@@ -161,6 +165,10 @@ const getUser = {
 									pubkey: {
 										type: 'string',
 										example: '3cX325ViRWa2R9Mfqf1BCQxCc1s',
+									},
+									email: {
+										type: 'string',
+										example: 'david@heartbit.io',
 									},
 									role: {
 										type: 'string',
@@ -312,6 +320,10 @@ const createUserBody = {
 		pubkey: {
 			type: 'string',
 			example: '3cX325ViRWa2R9Mfqf1BCQxCc1s',
+		},
+		email: {
+			type: 'string',
+			example: 'david@heartbit.io',
 		},
 		role: {
 			type: 'string',
