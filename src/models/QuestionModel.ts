@@ -15,6 +15,7 @@ export interface QuestionAttributes {
 	status?: QuestionStatus;
 }
 export class QuestionInstance extends Model<QuestionAttributes> {
+	declare id: number;
 	declare content: string;
 
 	declare user_pubkey: string;
