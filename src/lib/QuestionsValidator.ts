@@ -1,10 +1,11 @@
 import {body, param} from 'express-validator';
+
 import UserService from '../services/UserService';
 
 class QuestionsValidator {
 	checkCreateQuestion() {
 		return [
-			body('user_pubkey')
+			body('user_email')
 				.notEmpty()
 				.isAlphanumeric()
 				.trim()
@@ -23,19 +24,17 @@ class QuestionsValidator {
 				.rtrim()
 				.escape()
 				.isLength({min: 50})
-				.withMessage(
-					'sufficiently describe your health issue',
-				),
+				.withMessage('sufficiently describe your health issue'),
 			body('bounty_amount')
 				.isNumeric()
 				.notEmpty()
 				.withMessage(
 					'indicate the amount of bounty you want to place for this question',
 				)
-				.custom(async (value, { req }) => {
-					
-
-					const user_balance = await UserService.getUserBalance(req.body.user_pubkey);
+				.custom(async (value, {req}) => {
+					const user_balance = await UserService.getUserBalance(
+						req.body.user_email,
+					);
 					if (!user_balance) {
 						throw new Error('User does not exist');
 					}

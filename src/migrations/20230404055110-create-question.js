@@ -13,7 +13,7 @@ module.exports = {
 			content: {
 				type: Sequelize.TEXT,
 			},
-			user_pubkey: {
+			user_email: {
 				type: Sequelize.STRING,
 			},
 			bounty_amount: {

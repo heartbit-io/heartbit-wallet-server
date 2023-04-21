@@ -11,7 +11,7 @@ class QuestionsController {
 	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {
 		try {
 			const user_open_bounty = await QuestionService.sumUserOpenBountyAmount(
-				req.body.user_pubkey,
+				req.body.user_email,
 			);
 
 			const user_open_bounty_total = user_open_bounty[0]
@@ -22,7 +22,7 @@ class QuestionsController {
 				Number(user_open_bounty_total) + Number(req.body.bounty_amount);
 
 			const user_balance = await UserService.getUserBalance(
-				req.body.user_pubkey,
+				req.body.user_email,
 			);
 
 			if (!user_balance) {
@@ -105,7 +105,7 @@ class QuestionsController {
 					);
 			}
 
-			if (question.user_pubkey !== req.body.user_pubkey) {
+			if (question.user_email !== req.body.user_email) {
 				return res
 					.status(HttpCodes.NOT_FOUND)
 					.json(
@@ -261,7 +261,7 @@ class QuestionsController {
 
 			const question = await QuestionService.getUserOpenQuestion(
 				Number(questionId),
-				req.body.user_pubkey,
+				req.body.user_email,
 			);
 
 			if (!question) {

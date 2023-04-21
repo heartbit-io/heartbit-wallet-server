@@ -23,7 +23,7 @@ export class UserInstance extends Model<UserAttributes> {
 		// define association here
 		// UserInstance.hasMany(models.questions, {
 		// 	sourceKey: 'pubkey',
-		// 	foreignKey: 'user_pubkey',
+		// 	foreignKey: 'user_email',
 		// });
 	}
 }

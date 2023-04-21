@@ -1,15 +1,16 @@
-import app from '../src/index';
-import {expect} from 'chai';
-import {agent as request} from 'supertest';
-import {HttpCodes} from '../src/util/HttpCodes';
-import {faker} from '@faker-js/faker';
 import {
-	QuestionInstance,
 	QuestionAttributes,
+	QuestionInstance,
 } from '../src/models/QuestionModel';
-import {UserInstance, UserAttributes} from '../src/models/UserModel';
+import {UserAttributes, UserInstance} from '../src/models/UserModel';
+
+import {HttpCodes} from '../src/util/HttpCodes';
 import {RepliesAttributes} from '../src/models/ReplyModel';
 import {ReplyInstance} from '../src/models/ReplyModel';
+import app from '../src/index';
+import {expect} from 'chai';
+import {faker} from '@faker-js/faker';
+import {agent as request} from 'supertest';
 
 const base_url = '/api/v1';
 
@@ -22,7 +23,7 @@ describe('Replies endpoints', () => {
 
 	const newUser = () => {
 		return {
-			pubkey: faker.finance.bitcoinAddress() + new Date().getTime().toString(),
+			email: faker.internet.email(),
 			role: faker.helpers.arrayElement(['user', 'admin', 'doctor']),
 			btc_balance: Number(faker.finance.amount()),
 		};
@@ -32,8 +33,7 @@ describe('Replies endpoints', () => {
 		return {
 			content: faker.lorem.sentences(),
 			bounty_amount: Number(faker.finance.amount()),
-			user_pubkey:
-				faker.finance.bitcoinAddress() + new Date().getTime().toString(),
+			user_email: faker.internet.email(),
 		};
 	};
 
@@ -73,14 +73,14 @@ describe('Replies endpoints', () => {
 			const question = newQuestion();
 			const question_body = {
 				...question,
-				user_pubkey: user.pubkey,
+				user_email: user.email,
 				bounty_amount: user.btc_balance / 2,
 			};
 			const create_question = await createQuestion(question_body);
 
 			const reply_request = {
 				question_id: create_question.body.data.id,
-				user_pubkey: second_user.pubkey,
+				user_email: second_user.email,
 				content: faker.lorem.paragraph(),
 			};
 
@@ -94,7 +94,7 @@ describe('Replies endpoints', () => {
 			});
 			expect(response.body.data).to.include({
 				question_id: create_question.body.data.id,
-				user_pubkey: second_user.pubkey,
+				user_email: second_user.email,
 			});
 		});
 
@@ -105,7 +105,7 @@ describe('Replies endpoints', () => {
 			await createUser(second_user);
 
 			const reply_request = {
-				user_pubkey: second_user.pubkey,
+				user_email: second_user.email,
 				content: faker.lorem.paragraph(),
 			};
 
@@ -129,7 +129,7 @@ describe('Replies endpoints', () => {
 			await createQuestion(question);
 
 			const reply_request = {
-				user_pubkey: null,
+				user_email: null,
 				content: faker.lorem.paragraph(),
 			};
 
@@ -154,14 +154,14 @@ describe('Replies endpoints', () => {
 			const question = newQuestion();
 			const question_body = {
 				...question,
-				user_pubkey: user.pubkey,
+				user_email: user.email,
 				bounty_amount: user.btc_balance / 2,
 			};
 			const create_question = await createQuestion(question_body);
 
 			const reply_request = {
 				question_id: create_question.body.data.id,
-				user_pubkey: second_user.pubkey,
+				user_email: second_user.email,
 			};
 
 			const response = await request(app)
@@ -186,22 +186,22 @@ describe('Replies endpoints', () => {
 			const question = newQuestion();
 			const question_body = {
 				...question,
-				user_pubkey: user.pubkey,
+				user_email: user.email,
 				bounty_amount: user.btc_balance / 2,
 			};
 			const create_question = await createQuestion(question_body);
 
 			const reply_request = {
 				question_id: create_question.body.data.id,
-				user_pubkey: second_user.pubkey,
+				user_email: second_user.email,
 				content: faker.lorem.paragraph(),
 			};
 
 			const reply = await createReply(reply_request);
 			const response = await request(app)
-				.patch(base_url + '/replies/' + reply.body.data.id )
+				.patch(base_url + '/replies/' + reply.body.data.id)
 				.send({
-					user_pubkey: user.pubkey,
+					user_email: user.email,
 				})
 				.set('Accept', 'application/json');
 
@@ -213,9 +213,9 @@ describe('Replies endpoints', () => {
 			});
 			expect(response.body.data).to.include({
 				question_id: create_question.body.data.id,
-				user_pubkey: second_user.pubkey,
+				user_email: second_user.email,
 				best_reply: true,
-			})
+			});
 		});
 	});
 });

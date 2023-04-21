@@ -96,7 +96,7 @@ const createQuestion = {
 									},
 									param: {
 										type: 'string',
-										example: 'user_pubkey',
+										example: 'user_email',
 									},
 									location: {
 										type: 'string',
@@ -162,9 +162,9 @@ const getQuestion = {
 										type: 'number',
 										example: 51,
 									},
-									user_pubkey: {
+									user_email: {
 										type: 'string',
-										example: '3cX325ViRWa2R9Mfqf1BCQxCc1s',
+										example: 'david@heartbit.io',
 									},
 									content: {
 										type: 'string',
@@ -206,9 +206,9 @@ const getQuestion = {
 													type: 'number',
 													example: 51,
 												},
-												user_pubkey: {
+												user_email: {
 													type: 'string',
-													example: '15ATBNadTpqu696fQe8yGtJGjYAkUG',
+													example: 'david@heartbit.io',
 												},
 												best_reply: {
 													type: 'boolean',
@@ -306,9 +306,9 @@ const getAllQuestions = {
 											type: 'number',
 											example: 51,
 										},
-										user_pubkey: {
+										user_email: {
 											type: 'string',
-											example: '3cX325ViRWa2R9Mfqf1BCQxCc1s',
+											example: 'david@heartbit.io',
 										},
 										content: {
 											type: 'string',
@@ -387,9 +387,9 @@ const getOpenQuestionsOrderByBounty = {
 											type: 'number',
 											example: 51,
 										},
-										user_pubkey: {
+										user_email: {
 											type: 'string',
-											example: '3cX325ViRWa2R9Mfqf1BCQxCc1s',
+											example: 'david@heartbit.io',
 										},
 										content: {
 											type: 'string',
@@ -530,9 +530,9 @@ const deleteQuestion = {
 const createQuestionBody = {
 	type: 'object',
 	properties: {
-		user_pubkey: {
+		user_email: {
 			type: 'string',
-			example: '3cX325ViRWa2R9Mfqf1BCQxCc1s',
+			example: 'david@heartbit.io',
 		},
 		content: {
 			type: 'string',

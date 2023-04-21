@@ -8,7 +8,7 @@ module.exports = {
 	createReply() {
 		return {
 			question_id: faker.helpers.arrayElement([...Array(50).keys()]),
-			user_pubkey: faker.finance.bitcoinAddress(),
+			user_email: faker.finance.bitcoinAddress(),
 			content: faker.lorem.paragraph(),
 			best_reply: faker.helpers.arrayElement([true, false]),
 			createdAt: new Date(),

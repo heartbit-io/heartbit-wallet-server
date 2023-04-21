@@ -47,9 +47,9 @@ const createReply = {
 										type: 'number',
 										example: 51,
 									},
-									user_pubkey: {
+									user_email: {
 										type: 'string',
-										example: '9DAKDADADAJIKADADADJIAK0OAEADADDA',
+										example: 'david@heartbit.io',
 									},
 									content: {
 										type: 'string',
@@ -196,7 +196,7 @@ const deleteReply = {
 									},
 									param: {
 										type: 'string',
-										example: 'user_pubkey',
+										example: 'user_email',
 									},
 									location: {
 										type: 'string',
@@ -309,9 +309,9 @@ const updateReply = {
 										example:
 											'Tempora eligendi tenetur porro deserunt optio tempore eveniet laboriosam. Voluptatum iure autem commodi voluptates.',
 									},
-									user_pubkey: {
+									user_email: {
 										type: 'string',
-										example: '1cNT3k2g7MPK9CyixQtzmha7sjhjwfg8Kq',
+										example: 'david@heartbit.io',
 									},
 									question_id: {
 										type: 'string',
@@ -364,7 +364,7 @@ const updateReply = {
 									},
 									param: {
 										type: 'string',
-										example: 'user_pubkey',
+										example: 'user_email',
 									},
 									location: {
 										type: 'string',
@@ -454,9 +454,9 @@ const updateReply = {
 const createReplyBody = {
 	type: 'object',
 	properties: {
-		user_pubkey: {
+		user_email: {
 			type: 'string',
-			example: '9DAKDADADAJIKADADADJIAK0OAEADADDA',
+			example: 'david@heartbit.io',
 		},
 		content: {
 			type: 'string',
@@ -473,9 +473,9 @@ const createReplyBody = {
 const pubkeyRequestBody = {
 	type: 'object',
 	properties: {
-		user_pubkey: {
+		user_email: {
 			type: 'string',
-			example: '3cX325ViRWa2R9Mfqf1BCQxCc1s',
+			example: 'david@heartbit.io',
 		},
 	},
 };

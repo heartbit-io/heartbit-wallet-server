@@ -201,9 +201,9 @@ const getUser = {
 													example:
 														'Molestiae officiis ex porro aliquam magnam ex aperiam. Ipsam quis consequuntur perspiciatis quidem repudiandae.',
 												},
-												user_pubkey: {
+												user_email: {
 													type: 'string',
-													example: '3cX325ViRWa2R9Mfqf1BCQxCc1s',
+													example: 'david@heartbit.io',
 												},
 												bounty_amount: {
 													type: 'number',
@@ -243,9 +243,9 @@ const getUser = {
 													type: 'number',
 													example: 51,
 												},
-												user_pubkey: {
+												user_email: {
 													type: 'string',
-													example: '15ATBNadTpqu696fQe8yGtJGjYAkUG',
+													example: 'david@heartbit.io',
 												},
 												best_reply: {
 													type: 'boolean',

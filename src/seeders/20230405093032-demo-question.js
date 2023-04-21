@@ -5,10 +5,10 @@ const {faker} = require('@faker-js/faker');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-	 createQuestion() {
+	createQuestion() {
 		return {
 			content: faker.lorem.sentences(),
-			user_pubkey: faker.finance.bitcoinAddress(),
+			user_email: faker.finance.bitcoinAddress(),
 			bounty_amount: faker.finance.amount(),
 			status: faker.helpers.arrayElement(['open', 'closed']),
 			createdAt: new Date(),

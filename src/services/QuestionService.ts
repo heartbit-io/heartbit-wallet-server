@@ -18,13 +18,13 @@ class QuestionService {
 		});
 	}
 
-	async sumUserOpenBountyAmount(user_pubkey: string) {
+	async sumUserOpenBountyAmount(user_email: string) {
 		return await QuestionInstance.findAll({
-			where: {user_pubkey, status: QuestionStatus.Open},
+			where: {user_email, status: QuestionStatus.Open},
 			attributes: [
 				[Sequelize.fn('sum', Sequelize.col('bounty_amount')), 'total_bounty'],
 			],
-			group: ['user_pubkey'],
+			group: ['user_email'],
 		});
 	}
 
@@ -34,18 +34,18 @@ class QuestionService {
 		});
 	}
 
-	async getUserOpenQuestion(id: number, user_pubkey: string) {
+	async getUserOpenQuestion(id: number, user_email: string) {
 		return await QuestionInstance.findOne({
 			where: {
 				id,
-				user_pubkey,
+				user_email,
 				status: QuestionStatus.Open,
 			},
 		});
 	}
 
-	async getUserQuestions(user_pubkey: string): Promise<QuestionInstance[]> {
-		return await QuestionInstance.findAll({where: {user_pubkey}});
+	async getUserQuestions(user_email: string): Promise<QuestionInstance[]> {
+		return await QuestionInstance.findAll({where: {user_email}});
 	}
 
 	async getOpenQuestionsOrderByBounty() {

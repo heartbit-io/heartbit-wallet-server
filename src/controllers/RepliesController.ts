@@ -41,7 +41,7 @@ class RepliesController {
 
 			const reply = await ReplyService.getUserReply(
 				Number(replyId),
-				req.body.user_pubkey,
+				req.body.user_email,
 			);
 			if (!reply) {
 				return res
@@ -112,7 +112,7 @@ class RepliesController {
 						),
 					);
 			}
-			if (question.user_pubkey !== req.body.user_pubkey) {
+			if (question.user_email !== req.body.user_email) {
 				return res
 					.status(HttpCodes.UNPROCESSED_CONTENT)
 					.json(
@@ -143,8 +143,8 @@ class RepliesController {
 			}
 
 			//create a transaction
-			const user = await UserService.getUserDetails(question.user_pubkey);
-			const responder = await UserService.getUserDetails(reply.user_pubkey);
+			const user = await UserService.getUserDetails(question.user_email);
+			const responder = await UserService.getUserDetails(reply.user_email);
 
 			if (!user || !responder) {
 				return res

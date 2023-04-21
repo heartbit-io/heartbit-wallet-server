@@ -1,4 +1,4 @@
-import {ReplyInstance, RepliesAttributes} from '../models/ReplyModel';
+import {RepliesAttributes, ReplyInstance} from '../models/ReplyModel';
 
 class ReplyService {
 	async createReply(reply: RepliesAttributes) {
@@ -13,17 +13,17 @@ class ReplyService {
 		});
 	}
 
-	async getUserReplies(user_pubkey: string) {
-		return await ReplyInstance.findAll({where: {user_pubkey}});
+	async getUserReplies(user_email: string) {
+		return await ReplyInstance.findAll({where: {user_email}});
 	}
 
 	async getQuestionReplies(question_id: number) {
 		return await ReplyInstance.findAll({where: {question_id}});
 	}
 
-	async getUserReply(id: number, user_pubkey: string) {
+	async getUserReply(id: number, user_email: string) {
 		return await ReplyInstance.findOne({
-			where: {id, user_pubkey},
+			where: {id, user_email},
 		});
 	}
 
@@ -38,7 +38,7 @@ class ReplyService {
 	}
 
 	async updateReply(reply: ReplyInstance) {
-		return await reply.update({ best_reply: true });
+		return await reply.update({best_reply: true});
 	}
 }
 

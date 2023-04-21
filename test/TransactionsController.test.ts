@@ -1,14 +1,14 @@
-import app from '../src/index';
-import {expect} from 'chai';
-import {agent as request} from 'supertest';
 import {HttpCodes} from '../src/util/HttpCodes';
-import {faker} from '@faker-js/faker';
-import {QuestionInstance} from '../src/models/QuestionModel';
-import {UserInstance} from '../src/models/UserModel';
 import {QuestionAttributes} from '../src/models/QuestionModel';
-import {UserAttributes} from '../src/models/UserModel';
+import {QuestionInstance} from '../src/models/QuestionModel';
 import {RepliesAttributes} from '../src/models/ReplyModel';
 import {TransactionInstance} from '../src/models/TransactionModel';
+import {UserAttributes} from '../src/models/UserModel';
+import {UserInstance} from '../src/models/UserModel';
+import app from '../src/index';
+import {expect} from 'chai';
+import {faker} from '@faker-js/faker';
+import {agent as request} from 'supertest';
 
 const base_url = '/api/v1';
 
@@ -21,8 +21,9 @@ describe('Transactions endpoints', () => {
 
 	const newUser = () => {
 		return {
-			pubkey: faker.finance.bitcoinAddress() + new Date().getTime().toString(),
+			email: faker.internet.email(),
 			role: faker.helpers.arrayElement(['user', 'admin', 'doctor']),
+			pubkey: faker.finance.bitcoinAddress() + new Date().getTime().toString(),
 			btc_balance: Number(faker.finance.amount()),
 		};
 	};
@@ -31,8 +32,7 @@ describe('Transactions endpoints', () => {
 		return {
 			content: faker.lorem.sentences(),
 			bounty_amount: Number(faker.finance.amount()),
-			user_pubkey:
-				faker.finance.bitcoinAddress() + new Date().getTime().toString(),
+			user_email: faker.internet.email(),
 		};
 	};
 
@@ -71,31 +71,31 @@ describe('Transactions endpoints', () => {
 			const question = newQuestion();
 			const question_body = {
 				...question,
-				user_pubkey: user.pubkey,
+				user_email: user.email,
 				bounty_amount: user.btc_balance / 2,
 			};
 			const create_question = await createQuestion(question_body);
 
 			const reply_request = {
 				question_id: create_question.body.data.id,
-				user_pubkey: second_user.pubkey,
+				user_email: second_user.email,
 				content: faker.lorem.paragraph(),
 			};
 
 			const reply = await createReply(reply_request);
 			await request(app)
-				.patch(base_url + '/replies/' + reply.body.data.id )
+				.patch(base_url + '/replies/' + reply.body.data.id)
 				.send({
-					user_pubkey: user.pubkey,
+					user_email: user.email,
 				})
-                .set('Accept', 'application/json');
-            
-            const response = await request(app)
-                .get(base_url + '/transactions/' + user.pubkey)
-                .set('Accept', 'application/json');
+				.set('Accept', 'application/json');
+
+			const response = await request(app)
+				.get(base_url + '/transactions/' + user.pubkey)
+				.set('Accept', 'application/json');
 
 			expect(response.status).to.equal(HttpCodes.OK);
-            expect(response.body.data).to.be.an('array');
+			expect(response.body.data).to.be.an('array');
 		});
 	});
 });

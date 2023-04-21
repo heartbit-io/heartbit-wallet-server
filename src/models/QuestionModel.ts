@@ -10,7 +10,7 @@ export interface QuestionAttributes {
 	total_bounty?: unknown;
 	id?: number;
 	content: string;
-	user_pubkey: string;
+	user_email: string;
 	bounty_amount: number;
 	status?: QuestionStatus;
 }
@@ -18,7 +18,7 @@ export class QuestionInstance extends Model<QuestionAttributes> {
 	declare id: number;
 	declare content: string;
 
-	declare user_pubkey: string;
+	declare user_email: string;
 
 	declare bounty_amount: number;
 
@@ -37,7 +37,7 @@ QuestionInstance.init(
 			type: DataTypes.TEXT,
 			allowNull: false,
 		},
-		user_pubkey: {
+		user_email: {
 			type: DataTypes.STRING,
 			allowNull: false,
 		},

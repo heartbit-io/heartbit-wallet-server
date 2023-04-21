@@ -5,7 +5,7 @@ import dbconnection from '../util/dbconnection';
 export interface RepliesAttributes {
 	id?: number;
 	question_id: number;
-	user_pubkey: string;
+	user_email: string;
 	content: string;
 	best_reply?: boolean;
 }
@@ -15,7 +15,7 @@ export class ReplyInstance extends Model<RepliesAttributes> {
 
 	declare content: string;
 
-	declare user_pubkey: string;
+	declare user_email: string;
 
 	declare best_reply: boolean;
 
@@ -36,7 +36,7 @@ ReplyInstance.init(
 			type: DataTypes.TEXT,
 			allowNull: false,
 		},
-		user_pubkey: {
+		user_email: {
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
