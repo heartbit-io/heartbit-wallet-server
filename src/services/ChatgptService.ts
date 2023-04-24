@@ -1,14 +1,9 @@
-import * as dotenv from 'dotenv';
-
 import {Configuration, OpenAIApi} from 'openai';
 import {makeAnswerToJson, makePrompt} from '../util/chatgpt';
-
 import {ChatgptReplyInstance} from '../models/ChatgptReplyModel';
 import logger from '../util/logger';
+import env from '../config/env';
 
-dotenv.config();
-
-const OPEN_AI_API_KEY = process.env.OPEN_AI_API_KEY as string;
 export interface AnswerInterface {
 	role: string;
 	content: string;
@@ -74,4 +69,4 @@ class ChatgptService {
 	}
 }
 
-export default new ChatgptService(OPEN_AI_API_KEY);
+export default new ChatgptService(env.OPEN_AI_API_KEY);

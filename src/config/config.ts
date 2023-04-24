@@ -1,10 +1,12 @@
-const env = process.env.NODE_ENV || 'development';
+import { env as env_setup } from "./env";
+
+const env = env_setup.NODE_ENV;
 
 const config = {
 	development: {
-		username: process.env.DB_USER,
-		password: process.env.DB_PASSWORD,
-		database: process.env.DB_NAME,
+		username: env_setup.DB_USER,
+		password: env_setup.DB_PASSWORD,
+		database: env_setup.DB_NAME,
 		host: 'localhost',
 		dialect: 'postgres',
 		firebase: {
@@ -12,9 +14,9 @@ const config = {
 		},
 	},
 	test: {
-		username: process.env.DB_USER,
-		password: process.env.DB_PASSWORD,
-		database: process.env.DB_NAME,
+		username: env_setup.DB_USER,
+		password: env_setup.DB_PASSWORD,
+		database: env_setup.DB_NAME,
 		host: 'localhost',
 		dialect: 'postgres',
 		firebase: {
@@ -22,9 +24,9 @@ const config = {
 		},
 	},
 	production: {
-		username: process.env.DB_USER,
-		password: process.env.DB_PASSWORD,
-		database: process.env.DB_NAME,
+		username: env_setup.DB_USER,
+		password: env_setup.DB_PASSWORD,
+		database: env_setup.DB_NAME,
 		host: 'localhost',
 		dialect: 'postgres',
 		firebase: {

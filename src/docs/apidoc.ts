@@ -1,7 +1,8 @@
 import {log} from 'console';
-import {config} from 'dotenv';
 import {createUser, createUserBody, getUser, internalError} from './users';
-import {getUserTransactions} from './transactions';
+import { getUserTransactions } from './transactions';
+import env from '../config/env';
+
 import {
 	createQuestion,
 	createQuestionBody,
@@ -18,9 +19,8 @@ import {
 	pubkeyRequestBody,
 } from './replies';
 
-config();
 
-if (!process.env.PORT) {
+if (!env.PORT) {
 	log('Set server port');
 	process.exit(1);
 }
@@ -46,7 +46,7 @@ const apiDocumentation = {
 	},
 	servers: [
 		{
-			url: `http://localhost:${process.env.PORT}/${apiVersion}`,
+			url: `http://localhost:${env.PORT}/${apiVersion}`,
 			description: 'Local Server',
 		},
 		{

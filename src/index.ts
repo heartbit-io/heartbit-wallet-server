@@ -1,19 +1,13 @@
-import {config} from 'dotenv';
 import express, {Application} from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import {log} from 'console';
 import dbconnection from './util/dbconnection';
-import {routes} from './routes';
+import { routes } from './routes';
+import env from './config/env';
 
-config();
 
-if (!process.env.PORT) {
-	log('Please set server port');
-	process.exit(1);
-}
-
-const PORT = Number(process.env.PORT);
+const PORT = Number(env.PORT);
 
 const app: Application = express();
 
