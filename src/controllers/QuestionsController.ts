@@ -1,15 +1,17 @@
 import {Request, Response} from 'express';
-import {HttpCodes} from '../util/HttpCodes';
+
+import ChatgptService from '../services/ChatgptService';
 import FormatResponse from '../lib/FormatResponse';
+import {HttpCodes} from '../util/HttpCodes';
 import QuestionService from '../services/QuestionService';
-import UserService from '../services/UserService';
 import ReplyService from '../services/ReplyService';
+import UserService from '../services/UserService';
 
 class QuestionsController {
 	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {
 		try {
 			const user_open_bounty = await QuestionService.sumUserOpenBountyAmount(
-				req.body.user_pubkey,
+				req.body.user_email,
 			);
 
 			const user_open_bounty_total = user_open_bounty[0]
@@ -20,7 +22,7 @@ class QuestionsController {
 				Number(user_open_bounty_total) + Number(req.body.bounty_amount);
 
 			const user_balance = await UserService.getUserBalance(
-				req.body.user_pubkey,
+				req.body.user_email,
 			);
 
 			if (!user_balance) {
@@ -50,6 +52,15 @@ class QuestionsController {
 			}
 
 			const question = await QuestionService.create({...req.body});
+
+			const model = 'gpt-3.5-turbo';
+			const maxTokens = 2048;
+			await ChatgptService.create(
+				question.id,
+				question.content,
+				model,
+				maxTokens,
+			);
 
 			return res
 				.status(HttpCodes.CREATED)
@@ -94,7 +105,7 @@ class QuestionsController {
 					);
 			}
 
-			if (question.user_pubkey !== req.body.user_pubkey) {
+			if (question.user_email !== req.body.user_email) {
 				return res
 					.status(HttpCodes.NOT_FOUND)
 					.json(
@@ -250,7 +261,7 @@ class QuestionsController {
 
 			const question = await QuestionService.getUserOpenQuestion(
 				Number(questionId),
-				req.body.user_pubkey,
+				req.body.user_email,
 			);
 
 			if (!question) {

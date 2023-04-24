@@ -48,11 +48,11 @@ const db = {
 QuestionInstance.belongsTo(UserInstance, {
 	as: 'User',
 	onDelete: 'CASCADE',
-	foreignKey: 'user_pubkey',
+	foreignKey: 'user_email',
 });
 
 UserInstance.hasMany(QuestionInstance, {
 	as: 'Questions',
 	onDelete: 'CASCADE',
-	foreignKey: 'user_pubkey',
+	foreignKey: 'user_email',
 });

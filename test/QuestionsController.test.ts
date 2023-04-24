@@ -1,14 +1,15 @@
-import app from '../src/index';
-import {expect} from 'chai';
-import {agent as request} from 'supertest';
-import {HttpCodes} from '../src/util/HttpCodes';
-import {faker} from '@faker-js/faker';
 import {
 	QuestionAttributes,
 	QuestionInstance,
 	QuestionStatus,
 } from '../src/models/QuestionModel';
 import {UserAttributes, UserInstance} from '../src/models/UserModel';
+
+import {HttpCodes} from '../src/util/HttpCodes';
+import app from '../src/index';
+import {expect} from 'chai';
+import {faker} from '@faker-js/faker';
+import {agent as request} from 'supertest';
 
 const base_url = '/api/v1';
 
@@ -21,6 +22,7 @@ describe('Questions endpoints', () => {
 	const newUser = () => {
 		return {
 			pubkey: faker.finance.bitcoinAddress() + new Date().getTime().toString(),
+			email: faker.internet.email(),
 			role: faker.helpers.arrayElement(['user', 'admin', 'doctor']),
 			btc_balance: Number(faker.finance.amount()),
 		};
@@ -55,8 +57,7 @@ describe('Questions endpoints', () => {
 		return {
 			content: faker.lorem.sentences(),
 			bounty_amount: Number(faker.finance.amount()),
-			user_pubkey:
-				faker.finance.bitcoinAddress() + new Date().getTime().toString(),
+			user_email: faker.internet.email(),
 		};
 	};
 	const createQuestion = async (question: QuestionAttributes) => {
@@ -76,7 +77,7 @@ describe('Questions endpoints', () => {
 			const question = newQuestion();
 			const question_request = {
 				...question,
-				user_pubkey: user.pubkey,
+				user_email: user.email,
 				bounty_amount: user.btc_balance / 2,
 			};
 
@@ -109,7 +110,7 @@ describe('Questions endpoints', () => {
 			const question = newQuestion();
 			const question_request = {
 				...question,
-				user_pubkey: user.pubkey,
+				user_email: user.email,
 				bounty_amount: user.btc_balance + 2,
 			};
 			const response = await createQuestion(question_request);
@@ -126,7 +127,7 @@ describe('Questions endpoints', () => {
 			const question = newQuestion();
 			const question_request = {
 				...question,
-				user_pubkey: null,
+				user_email: null,
 				bounty_amount: user.btc_balance / 2,
 			};
 			const response = await request(app)
@@ -145,14 +146,14 @@ describe('Questions endpoints', () => {
 			await createUser(user);
 
 			const question = newQuestion();
-			const user_pubkey = user.pubkey;
+			const user_email = user.email;
 			const content = null;
 			const bounty_amount = user.btc_balance / 2;
 			const response = await request(app)
 				.post(base_url + '/questions')
 				.send({
 					...question,
-					user_pubkey,
+					user_email,
 					content,
 					bounty_amount,
 				})
@@ -169,13 +170,13 @@ describe('Questions endpoints', () => {
 			await createUser(user);
 
 			const question = newQuestion();
-			const user_pubkey = user.pubkey;
+			const user_email = user.email;
 			const bounty_amount = null;
 			const response = await request(app)
 				.post(base_url + '/questions')
 				.send({
 					...question,
-					user_pubkey,
+					user_email,
 					bounty_amount,
 				})
 				.set('Accept', 'application/json');
@@ -193,7 +194,7 @@ describe('Questions endpoints', () => {
 			const question = newQuestion();
 			const question_request = {
 				...question,
-				user_pubkey: user.pubkey,
+				user_email: user.email,
 				bounty_amount: user.btc_balance / 2,
 			};
 			await createQuestion(question_request);
@@ -216,7 +217,7 @@ describe('Questions endpoints', () => {
 			const question = newQuestion();
 			const question_body = {
 				...question,
-				user_pubkey: user.pubkey,
+				user_email: user.email,
 				status: QuestionStatus.Open,
 				bounty_amount: user.btc_balance / 2,
 			};
@@ -242,7 +243,7 @@ describe('Questions endpoints', () => {
 			const question = newQuestion();
 			const question_body = {
 				...question,
-				user_pubkey: user.pubkey,
+				user_email: user.email,
 				status: QuestionStatus.Open,
 				bounty_amount: user.btc_balance / 2,
 			};
@@ -273,7 +274,7 @@ describe('Questions endpoints', () => {
 			const question = newQuestion();
 			const question_body = {
 				...question,
-				user_pubkey: user.pubkey,
+				user_email: user.email,
 				status: QuestionStatus.Open,
 				bounty_amount: user.btc_balance / 2,
 			};
@@ -283,7 +284,7 @@ describe('Questions endpoints', () => {
 			const response = await request(app)
 				.delete(`${base_url}/questions/${create_question.body.data.id}`)
 				.send({
-					user_pubkey: question_body.user_pubkey,
+					user_email: question_body.user_email,
 				})
 				.set('Accept', 'application/json');
 			expect(response.status).to.equal(HttpCodes.OK);

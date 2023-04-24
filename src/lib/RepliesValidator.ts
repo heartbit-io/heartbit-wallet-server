@@ -6,7 +6,7 @@ import ReplyService from '../services/ReplyService';
 class RepliesValidator {
 	checkCreateReply() {
 		return [
-			body('user_pubkey')
+			body('user_email')
 				.notEmpty()
 				.isAlphanumeric()
 				.trim()
@@ -42,7 +42,7 @@ class RepliesValidator {
 
 	checkDeleteReply() {
 		return [
-			body('user_pubkey')
+			body('user_email')
 				.notEmpty()
 				.isAlphanumeric()
 				.trim()

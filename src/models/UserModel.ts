@@ -1,23 +1,21 @@
 import {DataTypes, Model} from 'sequelize';
+
+import {UserRoles} from '../util/enums';
 import dbconnection from '../util/dbconnection';
 
 export interface UserAttributes {
 	id?: number;
 	pubkey: string;
-	role: string;
+	email: string;
+	role: UserRoles;
 	btc_balance: number;
 }
 
-export enum UserRoles {
-	USER = 'user',
-	ADMIN = 'admin',
-	DOCTOR = 'doctor',
-}
 export class UserInstance extends Model<UserAttributes> {
 	declare pubkey: string;
+	declare email: string;
 
-	declare role: string;
-
+	declare role: UserRoles;
 	declare btc_balance: number;
 	static questions: any;
 
@@ -25,7 +23,7 @@ export class UserInstance extends Model<UserAttributes> {
 		// define association here
 		// UserInstance.hasMany(models.questions, {
 		// 	sourceKey: 'pubkey',
-		// 	foreignKey: 'user_pubkey',
+		// 	foreignKey: 'user_email',
 		// });
 	}
 }
@@ -37,8 +35,13 @@ UserInstance.init(
 			allowNull: false,
 			unique: true,
 		},
+		email: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			unique: true,
+		},
 		role: {
-			type: DataTypes.ENUM(''),
+			type: DataTypes.ENUM(...Object.values(UserRoles)),
 			allowNull: false,
 		},
 		btc_balance: {
@@ -53,4 +56,3 @@ UserInstance.init(
 		// paranoid: true,
 	},
 );
-

@@ -25,6 +25,8 @@ if (!process.env.PORT) {
 	process.exit(1);
 }
 
+const apiVersion = 'api/v1';
+
 const apiDocumentation = {
 	openapi: '3.0.1',
 	info: {
@@ -44,7 +46,7 @@ const apiDocumentation = {
 	},
 	servers: [
 		{
-			url: `http://localhost:${process.env.PORT}/`,
+			url: `http://localhost:${process.env.PORT}/${apiVersion}`,
 			description: 'Local Server',
 		},
 		{
@@ -70,7 +72,7 @@ const apiDocumentation = {
 		'/users': {
 			post: createUser,
 		},
-		'users/{ pubkey }': {
+		'/users/{pubkey}': {
 			get: getUser,
 		},
 		'/questions': {
@@ -87,11 +89,11 @@ const apiDocumentation = {
 		'/replies': {
 			post: createReply,
 		},
-		'replies/{replyId}': {
+		'/replies/{replyId}': {
 			patch: updateReply,
 			delete: deleteReply,
 		},
-		'transactions/{pubkey}': {
+		'/transactions/{pubkey}': {
 			get: getUserTransactions,
 		},
 	},
