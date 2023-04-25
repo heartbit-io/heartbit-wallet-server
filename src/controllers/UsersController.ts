@@ -5,12 +5,18 @@ import ReplyService from '../services/ReplyService';
 import QuestionService from '../services/QuestionService';
 import TransactionService from '../services/TransactionService';
 import UserService from '../services/UserService';
+import admin from '../config/firebase-config';
 
 class UsersController {
 	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {
 		try {
-			const question = await UserService.createUser({...req.body});
+			const user = await UserService.createUser({ ...req.body });
 			
+			//add user details to firebase
+			await admin
+			.auth()
+			.createUser({email: req.body.email, password: req.body.pubkey});
+
 			return res
 				.status(HttpCodes.CREATED)
 				.json(
@@ -18,7 +24,7 @@ class UsersController {
 						true,
 						HttpCodes.CREATED,
 						'User created successfully',
-						question,
+						user,
 					),
 				);
 		} catch (error) {
