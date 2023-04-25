@@ -2,6 +2,7 @@ import {Router} from 'express';
 import UsersValidator from '../lib/UsersValidator';
 import Validation from '../middleware/Validation';
 import UsersController from '../controllers/UsersController';
+import Auth from '../middleware/Auth';
 
 const router = Router();
 
@@ -12,6 +13,6 @@ router.post(
 	UsersController.create,
 );
 
-router.get('/:pubkey', UsersController.getUser);
+router.get('/:pubkey', Auth.verifyToken, UsersController.getUser);
 
 export {router as userRoutes};

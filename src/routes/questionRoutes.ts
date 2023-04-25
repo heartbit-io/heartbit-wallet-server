@@ -6,7 +6,7 @@ import QuestionsController from '../controllers/QuestionsController';
 const router = Router();
 
 router.post(
-  '/',
+	'/',
 	QuestionsValidator.checkCreateQuestion(),
 	Validation.validate,
 	QuestionsController.create,
