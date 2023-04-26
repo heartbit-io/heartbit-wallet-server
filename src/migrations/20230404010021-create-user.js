@@ -20,6 +20,14 @@ module.exports = {
       btc_balance: {
         type: Sequelize.DOUBLE
       },
+      email: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true,
+        validate: {
+          isEmail: true
+        }
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
