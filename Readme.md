@@ -2,6 +2,9 @@
 # heartbit-wallet-server
 HeartBit wallet server
 
+## API endpoint
+- DEV, TEST: https://dev-wallet-api.heartbit.io
+- PROD: (TODO)
 
 ## Getting started 🐣
 #### Dependencies
@@ -46,4 +49,43 @@ npm run dev
 # then visit the url:
 {host}:{PORT}/api/v1/documentation/
 ```
+
+## Deploy(Prod is not yet)
+
+### Cloud Infra
+- Cloudflare
+- AWS Elastic beanstalk
+  - DEV, TEST 
+    - Region: Seoul
+    - t3.nano / t3.small
+  - PROD
+    - (TODO)
+- AWS RDS
+  - DEV, TEST 
+    - Region: Seoul
+    - Aurora PostgreSQL
+    - db.r5.large
+  - PROD
+    - (TODO)
+
+### Description
+- .ebextensions/proxy.config: Port forwarding 8080 to 3000.
+- .elasticbeanstalk/config.yml: elasticbeanstalk deploy config
+
+### Pre-requisites
+- Follow [eb setup script](https://github.com/aws/aws-elastic-beanstalk-cli-setup) with aws heartbit account
+- setup .elasticbeanstalk/config.yml from 1password(name: [dev] elasticbeanstalk config)
+
+### Process
+1. Move to heartbit-wallet-server directory
+2. Checkout develop branch for deploy
+2. Terminal command
+
+```bash
+eb deploy [enviroment-name]
+```
+
+- Replace [enviroment-name] to
+    - DEV, TEST: dev-heartbit-wallet-server-env
+    - PROD: (TODO)
 
