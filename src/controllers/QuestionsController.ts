@@ -6,12 +6,29 @@ import {HttpCodes} from '../util/HttpCodes';
 import QuestionService from '../services/QuestionService';
 import ReplyService from '../services/ReplyService';
 import UserService from '../services/UserService';
+import {DecodedRequest} from '../middleware/Auth';
 
 class QuestionsController {
-	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {
+	async create(req: DecodedRequest, res: Response): Promise<Response<FormatResponse>> {
 		try {
+			
+			if (!req.email) { 
+				return res
+					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.UNPROCESSED_CONTENT,
+							'Error getting user email',
+							null,
+						),
+					);
+			};
+
+			const email = req.email;
+
 			const user_open_bounty = await QuestionService.sumUserOpenBountyAmount(
-				req.body.user_email,
+				email,
 			);
 
 			const user_open_bounty_total = user_open_bounty[0]
@@ -21,9 +38,7 @@ class QuestionsController {
 			const total_bounty =
 				Number(user_open_bounty_total) + Number(req.body.bounty_amount);
 
-			const user_balance = await UserService.getUserBalance(
-				req.body.user_email,
-			);
+			const user_balance = await UserService.getUserBalance(req.email);
 
 			if (!user_balance) {
 				return res
@@ -51,7 +66,7 @@ class QuestionsController {
 					);
 			}
 
-			const question = await QuestionService.create({...req.body});
+			const question = await QuestionService.create({...req.body, user_email: email});
 
 			const model = 'gpt-3.5-turbo';
 			const maxTokens = 2048;

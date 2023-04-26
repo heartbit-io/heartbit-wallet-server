@@ -5,19 +5,6 @@ import UserService from '../services/UserService';
 class QuestionsValidator {
 	checkCreateQuestion() {
 		return [
-			body('user_email')
-				.notEmpty()
-				.isAlphanumeric()
-				.trim()
-				.escape()
-				.withMessage('User public key is required to post a question')
-				.custom(async value => {
-					const user = await UserService.getUserDetails(value);
-
-					if (!user) {
-						throw new Error('User with given public key does not exit');
-					}
-				}),
 			body('content')
 				.isString()
 				.notEmpty()
@@ -31,19 +18,6 @@ class QuestionsValidator {
 				.withMessage(
 					'indicate the amount of bounty you want to place for this question',
 				)
-				.custom(async (value, {req}) => {
-					const user_balance = await UserService.getUserBalance(
-						req.body.user_email,
-					);
-					if (!user_balance) {
-						throw new Error('User does not exist');
-					}
-					if (value >= user_balance.btc_balance) {
-						throw new Error(
-							'You do not have sufficient balance for this bounty amount',
-						);
-					}
-				}),
 		];
 	}
 	checkQuestion() {

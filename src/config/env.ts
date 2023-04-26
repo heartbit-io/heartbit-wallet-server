@@ -21,6 +21,12 @@ export const env = {
     FB_TOKEN_URI: process.env.FB_TOKEN_URI as string,
     FB_AUTH_PROVIDER_X509_CERT_URL: process.env.FB_AUTH_PROVIDER_X509_CERT_URL as string,
     FB_CLIENT_X509_CERT_URL: process.env.FB_CLIENT_X509_CERT_URL as string,
+    FB_API_KEY: process.env.FB_API_KEY as string,
+    FB_AUTH_DOMAIN: process.env.FB_AUTH_DOMAIN as string,
+    FB_STORAGE_BUCKET: process.env.FB_STORAGE_BUCKET as string,
+    FB_MESSAGING_SENDER_ID: process.env.FB_MESSAGING_SENDER_ID as string,
+    FB_APP_ID: process.env.FB_APP_ID as string,
+    FB_MEASUREMENT_ID: process.env.FB_MEASUREMENT_ID as string,
 };
 
 Object.entries(env).forEach(([key, value]) => {
