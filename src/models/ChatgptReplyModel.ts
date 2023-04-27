@@ -29,6 +29,8 @@ export class ChatgptReplyInstance extends Model<ChatgptRepliesAttributes> {
 	declare prompt: string;
 	declare rawAnswer: string;
 	declare jsonAnswer: JsonAnswerInterface;
+	declare createdAt: Date;
+	declare updatedAt: Date;
 
 	static associate(models: any) {
 		// define association here
