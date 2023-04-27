@@ -67,6 +67,29 @@ class ChatgptService {
 			return;
 		}
 	}
+
+	/**
+	 * @description - Get ChatGPT Completion for prompt
+	 * @param questionId - Question ID
+	 */
+	async getChatGptReplyByQuestionId(
+		questionId: number,
+	): Promise<ChatgptReplyInstance | undefined> {
+		try {
+			const chatGptReply = await ChatgptReplyInstance.findOne({
+				where: {question_id: questionId},
+				attributes: ['model', 'jsonAnswer'],
+			});
+
+			if (!chatGptReply) return;
+
+			return chatGptReply;
+		} catch (error) {
+			// TODO(david): Sentry alert in slack
+			logger.warn(error);
+			return;
+		}
+	}
 }
 
 export default new ChatgptService(env.OPEN_AI_API_KEY);
