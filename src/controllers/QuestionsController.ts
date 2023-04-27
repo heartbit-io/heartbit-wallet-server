@@ -173,23 +173,41 @@ class QuestionsController {
 		}
 	}
 
+	//get user questions and their status
 	async getAllQuestions(
-		req: Request,
+		req: DecodedRequest,
 		res: Response,
 	): Promise<Response<FormatResponse>> {
 		try {
 			const limit = (req.query.limit as number | undefined) || 50;
 			const offset = req.query.offset as number | undefined;
+			const order = (req.query.order as string | undefined) || 'DESC';
 
-			const questions = await QuestionService.getAll(limit, offset);
+			console.log(req.email);
+			if (!req.email) { 
+				return res
+					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.UNPROCESSED_CONTENT,
+							'Error getting user email',
+							null,
+						),
+					);
+			}
 
+			const email = req.email;
+			
+			const questions = await QuestionService.getAll(email, limit, offset, order);
+				
 			return res
 				.status(HttpCodes.OK)
 				.json(
 					new FormatResponse(
 						true,
 						HttpCodes.OK,
-						'Successfully retrieved all questions',
+						'Successfully retrieved all user questions',
 						questions,
 					),
 				);

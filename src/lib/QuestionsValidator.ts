@@ -1,4 +1,4 @@
-import {body, param} from 'express-validator';
+import {body, param, query} from 'express-validator';
 
 class QuestionsValidator {
 	checkCreateQuestion() {
@@ -15,7 +15,7 @@ class QuestionsValidator {
 				.notEmpty()
 				.withMessage(
 					'indicate the amount of bounty you want to place for this question',
-				)
+				),
 		];
 	}
 	checkQuestion() {
@@ -24,6 +24,26 @@ class QuestionsValidator {
 				.notEmpty()
 				.isNumeric()
 				.withMessage('supply question Id to delete'),
+		];
+	}
+	getAllQuestions() {
+		return [
+			query('limit')
+				.optional()
+				.isNumeric()
+				.withMessage('limit must be a number'),
+			query('offset')
+				.optional()
+				.isNumeric()
+				.withMessage('offset must be a number'),
+			query('order')
+				.optional()
+				.isString()
+				.toUpperCase()
+				.isIn(['ASC', 'DESC'])
+				.withMessage('order must be ASC or DESC')
+				.trim()
+				.escape(),
 		];
 	}
 }
