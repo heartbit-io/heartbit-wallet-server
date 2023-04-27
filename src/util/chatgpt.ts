@@ -9,7 +9,7 @@ export function makePrompt(prompt: string, patientProfile: string): string {
         
         Second, write a kind note titled 'Doctor's note' to the patient, including a summary of the 'Heath record'.
         Now write answers to the following patient's story:
-        - Consider the patient's profile; ${patientProfile} 
+        - Consider the patient's profile: ${patientProfile} 
         - Patient's description: ${prompt}
         
         Comments
@@ -42,7 +42,7 @@ export function makeAnswerToJson(answer: string): JsonAnswerInterface {
 		currentMedication: /Current medication:\s*([\s\S]*)Accessment:/,
 		accessment: /Accessment:\s*([\s\S]*)Plan:/,
 		plan: /Plan:\s*([\s\S]*)Doctor's Note:/,
-		docktorNote: /Doctor's Note:\s*([\s\S]*)/,
+		doctorNote: /Doctor's Note:\s*([\s\S]*)/,
 	};
 
 	const toJson = (answer: string) => {
