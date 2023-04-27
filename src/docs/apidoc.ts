@@ -1,23 +1,25 @@
-import {log} from 'console';
-import {createUser, createUserBody, getUser, internalError} from './users';
-import {getUserTransactions} from './transactions';
-import env from '../config/env';
-
 import {
 	createQuestion,
 	createQuestionBody,
-	getQuestion,
+	deleteQuestion,
 	getAllQuestions,
 	getOpenQuestionsOrderByBounty,
-	deleteQuestion,
+	getQuestion,
 } from './questions';
 import {
 	createReply,
 	createReplyBody,
-	updateReply,
 	deleteReply,
+	getChatgptReply,
+	getReply,
 	pubkeyRequestBody,
+	updateReply,
 } from './replies';
+import {createUser, createUserBody, getUser, internalError} from './users';
+
+import env from '../config/env';
+import {getUserTransactions} from './transactions';
+import {log} from 'console';
 
 if (!env.PORT) {
 	log('Set server port');
@@ -96,6 +98,12 @@ const apiDocumentation = {
 		'/replies/{replyId}': {
 			patch: updateReply,
 			delete: deleteReply,
+		},
+		'/replies/{questionId}': {
+			get: getReply,
+		},
+		'/replies/{questionId}/chatGptReply': {
+			get: getChatgptReply,
 		},
 		'/transactions/{pubkey}': {
 			get: getUserTransactions,
