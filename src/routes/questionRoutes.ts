@@ -28,6 +28,12 @@ router.get(
 );
 router.get('/open', QuestionsController.getOpenQuestionsOrderByBounty);
 router.get(
+	'/status',
+	QuestionsValidator.getUserQuestionsBystatus(),
+	Validation.validate,
+	QuestionsController.getUserQuestionsByStatus,
+);
+router.get(
 	'/:questionId',
 	QuestionsValidator.checkQuestion(),
 	Validation.validate,

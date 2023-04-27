@@ -6,6 +6,7 @@ import {HttpCodes} from '../util/HttpCodes';
 import QuestionService from '../services/QuestionService';
 import ReplyService from '../services/ReplyService';
 import UserService from '../services/UserService';
+import { QuestionStatus } from '../models/QuestionModel';
 
 class QuestionsController {
 	async create(
@@ -15,11 +16,11 @@ class QuestionsController {
 		try {
 			if (!req.email) {
 				return res
-					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.status(HttpCodes.UNAUTHORIZED)
 					.json(
 						new FormatResponse(
 							false,
-							HttpCodes.UNPROCESSED_CONTENT,
+							HttpCodes.UNAUTHORIZED,
 							'Error getting user email',
 							null,
 						),
@@ -211,11 +212,11 @@ class QuestionsController {
 
 			if (!req.email) {
 				return res
-					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.status(HttpCodes.UNAUTHORIZED)
 					.json(
 						new FormatResponse(
 							false,
-							HttpCodes.UNPROCESSED_CONTENT,
+							HttpCodes.UNAUTHORIZED,
 							'Error getting user email',
 							null,
 						),
@@ -252,7 +253,7 @@ class QuestionsController {
 					new FormatResponse(
 						true,
 						HttpCodes.OK,
-						'Successfully retrieved all user questions',
+						`Successfully retrieved all user questions according to: limit: ${limit}, offset: ${limit}, order: ${order}`,
 						questions,
 					),
 				);
@@ -270,7 +271,8 @@ class QuestionsController {
 		}
 	}
 
-	async getOpenQuestionsOrderByBounty(req: Request, res: Response) {
+	//get user open questions
+	async getOpenQuestionsOrderByBounty(req: DecodedRequest, res: Response) {
 		try {
 			const questions = await QuestionService.getOpenQuestionsOrderByBounty();
 
@@ -280,7 +282,7 @@ class QuestionsController {
 					new FormatResponse(
 						true,
 						HttpCodes.OK,
-						'Successfully retrieved all open questions',
+						'Successfully retrieved all user open questions',
 						questions,
 					),
 				);
@@ -298,6 +300,64 @@ class QuestionsController {
 		}
 	}
 
+	async getUserQuestionsByStatus(req: DecodedRequest, res: Response) { 
+		try {
+			if (!req.email) { 
+				return res
+					.status(HttpCodes.UNAUTHORIZED)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.UNAUTHORIZED,
+							'Error getting user email',
+							null,
+						),
+					);
+			}
+			const { email } = req.params;
+
+			const user = await UserService.getUserDetailsByEmail(email);
+
+			if (!user) { 
+				return res
+					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.UNPROCESSED_CONTENT,
+							'Error getting user details',
+							null,
+						),
+					);
+			}
+
+			const status = req.query.status as QuestionStatus;
+
+			const questions = await QuestionService.getUserQuestionsByStatus(user.id, status);
+
+			return res
+				.status(HttpCodes.OK)
+				.json(
+					new FormatResponse(
+						true,
+						HttpCodes.OK,
+						'Successfully retrieved all user open questions',
+						questions,
+					),
+				);
+		} catch (error) {
+			return res
+				.status(HttpCodes.INTERNAL_SERVER_ERROR)
+				.json(
+					new FormatResponse(
+						false,
+						HttpCodes.INTERNAL_SERVER_ERROR,
+						error,
+						null,
+					),
+				);
+		}
+	}
 	async getQuestion(
 		req: Request,
 		res: Response,
