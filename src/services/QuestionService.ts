@@ -10,13 +10,16 @@ class QuestionService {
 		return await QuestionInstance.create({...question});
 	}
 
-	async getAll(limit: number | undefined, offset: number | undefined) {
+	//get all user questions
+	async getAll(user_email: string, limit: number | undefined, offset: number | undefined, order: string ) {
 		return await QuestionInstance.findAll({
-			where: {},
+			where: {user_email},
 			limit,
 			offset,
+			order: [['createdAt', order]],
 		});
 	}
+
 
 	async sumUserOpenBountyAmount(user_email: string) {
 		return await QuestionInstance.findAll({

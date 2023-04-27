@@ -1,6 +1,6 @@
 import {log} from 'console';
 import {createUser, createUserBody, getUser, internalError} from './users';
-import { getUserTransactions } from './transactions';
+import {getUserTransactions} from './transactions';
 import env from '../config/env';
 
 import {
@@ -18,7 +18,6 @@ import {
 	deleteReply,
 	pubkeyRequestBody,
 } from './replies';
-
 
 if (!env.PORT) {
 	log('Set server port');
@@ -44,6 +43,7 @@ const apiDocumentation = {
 			url: 'https://www.apache.org/licenses/LICENSE-2.0.html',
 		},
 	},
+	security: [{bearerAuth: []}],
 	servers: [
 		{
 			url: `http://localhost:${env.PORT}/${apiVersion}`,
@@ -105,6 +105,16 @@ const apiDocumentation = {
 			createQuestionBody,
 			createReplyBody,
 			pubkeyRequestBody,
+			securitySchemes: {
+				bearerAuth: {
+					type: 'http',
+					in: 'header',
+					name: 'Authorization',
+					description: 'Bearer Token',
+					scheme: 'bearer',
+					bearerFormat: 'JWT',
+				},
+			},
 		},
 	},
 };

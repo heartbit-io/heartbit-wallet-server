@@ -1,17 +1,33 @@
 import {Request, Response} from 'express';
-
 import ChatgptService from '../services/ChatgptService';
 import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
 import QuestionService from '../services/QuestionService';
 import ReplyService from '../services/ReplyService';
 import UserService from '../services/UserService';
+import {DecodedRequest} from '../middleware/Auth';
 
 class QuestionsController {
-	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {
+	async create(req: DecodedRequest, res: Response): Promise<Response<FormatResponse>> {
 		try {
+
+			if (!req.email) { 
+				return res
+					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.UNPROCESSED_CONTENT,
+							'Error getting user email',
+							null,
+						),
+					);
+			}
+
+			const email = req.email;
+
 			const user_open_bounty = await QuestionService.sumUserOpenBountyAmount(
-				req.body.user_email,
+				email,
 			);
 
 			const user_open_bounty_total = user_open_bounty[0]
@@ -21,9 +37,7 @@ class QuestionsController {
 			const total_bounty =
 				Number(user_open_bounty_total) + Number(req.body.bounty_amount);
 
-			const user_balance = await UserService.getUserBalance(
-				req.body.user_email,
-			);
+			const user_balance = await UserService.getUserBalance(req.email);
 
 			if (!user_balance) {
 				return res
@@ -51,7 +65,7 @@ class QuestionsController {
 					);
 			}
 
-			const question = await QuestionService.create({...req.body});
+			const question = await QuestionService.create({...req.body, user_email: email});
 
 			const model = 'gpt-3.5-turbo';
 			const maxTokens = 2048;
@@ -86,7 +100,7 @@ class QuestionsController {
 		}
 	}
 
-	async delete(req: Request, res: Response): Promise<Response<FormatResponse>> {
+	async delete(req: DecodedRequest, res: Response): Promise<Response<FormatResponse>> {
 		try {
 			const {questionId} = req.params;
 
@@ -105,13 +119,28 @@ class QuestionsController {
 					);
 			}
 
-			if (question.user_email !== req.body.user_email) {
+			if (!req.email) { 
 				return res
-					.status(HttpCodes.NOT_FOUND)
+					.status(HttpCodes.UNPROCESSED_CONTENT)
 					.json(
 						new FormatResponse(
 							false,
-							HttpCodes.NOT_FOUND,
+							HttpCodes.UNPROCESSED_CONTENT,
+							'Error getting user email',
+							null,
+						),
+					);
+			}
+
+			const email = req.email;
+
+			if (question.user_email !== email) {
+				return res
+					.status(HttpCodes.UNAUTHORIZED)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.UNAUTHORIZED,
 							'Only users who posted a question can delete the question',
 							null,
 						),
@@ -144,23 +173,41 @@ class QuestionsController {
 		}
 	}
 
+	//get user questions and their status
 	async getAllQuestions(
-		req: Request,
+		req: DecodedRequest,
 		res: Response,
 	): Promise<Response<FormatResponse>> {
 		try {
 			const limit = (req.query.limit as number | undefined) || 50;
 			const offset = req.query.offset as number | undefined;
+			const order = (req.query.order as string | undefined) || 'DESC';
 
-			const questions = await QuestionService.getAll(limit, offset);
+			console.log(req.email);
+			if (!req.email) { 
+				return res
+					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.UNPROCESSED_CONTENT,
+							'Error getting user email',
+							null,
+						),
+					);
+			}
 
+			const email = req.email;
+			
+			const questions = await QuestionService.getAll(email, limit, offset, order);
+				
 			return res
 				.status(HttpCodes.OK)
 				.json(
 					new FormatResponse(
 						true,
 						HttpCodes.OK,
-						'Successfully retrieved all questions',
+						'Successfully retrieved all user questions',
 						questions,
 					),
 				);
@@ -255,7 +302,7 @@ class QuestionsController {
 		}
 	}
 
-	async updateQuestion(req: Request, res: Response) {
+	async updateQuestion(req: DecodedRequest, res: Response) {
 		try {
 			const {questionId} = req.params;
 

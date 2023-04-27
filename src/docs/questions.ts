@@ -2,6 +2,11 @@ const createQuestion = {
 	tags: ['Questions'],
 	description: 'Create a new question',
 	operationId: 'createQuestion',
+	security: [
+		{
+			bearerAuth: {},
+		},
+	],
 	requestBody: {
 		content: {
 			'application/json': {
@@ -353,7 +358,6 @@ const getAllQuestions = {
 	},
 };
 
-
 const getOpenQuestionsOrderByBounty = {
 	tags: ['Questions'],
 	description: 'Get all open questions',
@@ -447,16 +451,6 @@ const deleteQuestion = {
 			type: 'number',
 		},
 	],
-	requestBody: {
-		content: {
-			'application/json': {
-				schema: {
-					$ref: '#/components/schemas/pubkeyRequestBody',
-				},
-			},
-		},
-		required: true,
-	},
 	responses: {
 		'200': {
 			description: 'Successfully deleted question',
@@ -530,10 +524,6 @@ const deleteQuestion = {
 const createQuestionBody = {
 	type: 'object',
 	properties: {
-		user_email: {
-			type: 'string',
-			example: 'david@heartbit.io',
-		},
 		content: {
 			type: 'string',
 			example:

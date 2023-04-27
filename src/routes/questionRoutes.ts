@@ -12,7 +12,12 @@ router.post(
 	QuestionsController.create,
 );
 
-router.get('/', QuestionsController.getAllQuestions);
+router.get(
+	'/',
+	QuestionsValidator.getAllQuestions(),
+	Validation.validate,
+	QuestionsController.getAllQuestions,
+);
 router.get('/open', QuestionsController.getOpenQuestionsOrderByBounty);
 router.get(
 	'/:questionId',
@@ -20,7 +25,6 @@ router.get(
 	Validation.validate,
 	QuestionsController.getQuestion,
 );
-
 
 router.delete(
 	'/:questionId',
