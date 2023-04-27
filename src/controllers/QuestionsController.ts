@@ -1,11 +1,11 @@
 import {Request, Response} from 'express';
-import ChatgptService from '../services/ChatgptService';
+
+import {DecodedRequest} from '../middleware/Auth';
 import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
 import QuestionService from '../services/QuestionService';
 import ReplyService from '../services/ReplyService';
 import UserService from '../services/UserService';
-import {DecodedRequest} from '../middleware/Auth';
 
 class QuestionsController {
 	async create(req: DecodedRequest, res: Response): Promise<Response<FormatResponse>> {
@@ -66,15 +66,6 @@ class QuestionsController {
 			}
 
 			const question = await QuestionService.create({...req.body, user_email: email});
-
-			const model = 'gpt-3.5-turbo';
-			const maxTokens = 2048;
-			await ChatgptService.create(
-				question.id,
-				question.content,
-				model,
-				maxTokens,
-			);
 
 			return res
 				.status(HttpCodes.CREATED)
