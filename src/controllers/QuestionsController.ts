@@ -119,13 +119,28 @@ class QuestionsController {
 					);
 			}
 
-			if (question.user_email !== req.email) {
+			if (!req.email) { 
 				return res
-					.status(HttpCodes.NOT_FOUND)
+					.status(HttpCodes.UNPROCESSED_CONTENT)
 					.json(
 						new FormatResponse(
 							false,
-							HttpCodes.NOT_FOUND,
+							HttpCodes.UNPROCESSED_CONTENT,
+							'Error getting user email',
+							null,
+						),
+					);
+			}
+
+			const email = req.email;
+
+			if (question.user_email !== email) {
+				return res
+					.status(HttpCodes.UNAUTHORIZED)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.UNAUTHORIZED,
 							'Only users who posted a question can delete the question',
 							null,
 						),

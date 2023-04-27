@@ -451,16 +451,6 @@ const deleteQuestion = {
 			type: 'number',
 		},
 	],
-	requestBody: {
-		content: {
-			'application/json': {
-				schema: {
-					$ref: '#/components/schemas/pubkeyRequestBody',
-				},
-			},
-		},
-		required: true,
-	},
 	responses: {
 		'200': {
 			description: 'Successfully deleted question',
