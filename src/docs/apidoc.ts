@@ -3,15 +3,15 @@ import {
 	createQuestionBody,
 	deleteQuestion,
 	getAllQuestions,
+	getChatgptReply,
 	getOpenQuestionsOrderByBounty,
 	getQuestion,
+	getReply,
 } from './questions';
 import {
 	createReply,
 	createReplyBody,
 	deleteReply,
-	getChatgptReply,
-	getReply,
 	pubkeyRequestBody,
 	updateReply,
 } from './replies';
@@ -92,18 +92,18 @@ const apiDocumentation = {
 			get: getQuestion,
 			delete: deleteQuestion,
 		},
+		'/questions/{questionId}/reply': {
+			get: getReply,
+		},
+		'/questions/{questionId}/chatGptReply': {
+			get: getChatgptReply,
+		},
 		'/replies': {
 			post: createReply,
 		},
 		'/replies/{replyId}': {
 			patch: updateReply,
 			delete: deleteReply,
-		},
-		'/replies/{questionId}': {
-			get: getReply,
-		},
-		'/replies/{questionId}/chatGptReply': {
-			get: getChatgptReply,
 		},
 		'/transactions/{pubkey}': {
 			get: getUserTransactions,
