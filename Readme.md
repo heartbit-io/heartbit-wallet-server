@@ -79,7 +79,7 @@ npm run dev
 ### Process
 1. Move to heartbit-wallet-server directory
 2. Checkout develop branch for deploy
-2. Terminal command
+3. Terminal command
 
 ```bash
 eb deploy [enviroment-name]
