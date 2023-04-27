@@ -98,7 +98,7 @@ class RepliesController {
 						);
 				}
 				replyType = ReplyTypes.AI;
-				name = 'Trage by GPT-3.5';
+				name = 'Trage by ' + replyForChatGpt.model;
 				reply = replyForChatGpt.jsonAnswer.triageGuide;
 				classification = 'Open AI';
 				updatedAt = replyForChatGpt.updatedAt;
