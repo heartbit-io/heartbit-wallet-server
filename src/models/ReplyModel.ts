@@ -1,5 +1,6 @@
 import {CreationOptional, DataTypes, Model} from 'sequelize';
 
+import {ReplyStatus} from '../util/enums';
 import dbconnection from '../util/dbconnection';
 
 export interface RepliesAttributes {
@@ -7,19 +8,19 @@ export interface RepliesAttributes {
 	question_id: number;
 	user_email: string;
 	content: string;
+	status: ReplyStatus;
 	best_reply?: boolean;
 }
 
 export class ReplyInstance extends Model<RepliesAttributes> {
 	declare question_id: CreationOptional<number>;
-
 	declare content: string;
-
+	declare status: ReplyStatus;
 	declare user_email: string;
-
 	declare best_reply: boolean;
-
 	declare bounty_amount: number;
+	declare createdAt: Date;
+	declare updatedAt: Date;
 
 	static associate(models: any) {
 		// define association here
@@ -35,6 +36,11 @@ ReplyInstance.init(
 		content: {
 			type: DataTypes.TEXT,
 			allowNull: false,
+		},
+		status: {
+			type: DataTypes.ENUM(...Object.values(ReplyStatus)),
+			allowNull: false,
+			defaultValue: ReplyStatus.DRAFT,
 		},
 		user_email: {
 			type: DataTypes.STRING,

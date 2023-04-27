@@ -1,23 +1,25 @@
-import {log} from 'console';
-import {createUser, createUserBody, getUser, internalError} from './users';
-import {getUserTransactions} from './transactions';
-import env from '../config/env';
-
 import {
 	createQuestion,
 	createQuestionBody,
-	getQuestion,
-	getAllQuestions,
-	getOpenQuestionsOrderByBounty,
 	deleteQuestion,
+	getAllQuestions,
+	getChatgptReply,
+	getOpenQuestionsOrderByBounty,
+	getQuestion,
+	getReply,
 } from './questions';
 import {
 	createReply,
 	createReplyBody,
-	updateReply,
 	deleteReply,
 	pubkeyRequestBody,
+	updateReply,
 } from './replies';
+import {createUser, createUserBody, getUser, internalError} from './users';
+
+import env from '../config/env';
+import {getUserTransactions} from './transactions';
+import {log} from 'console';
 
 if (!env.PORT) {
 	log('Set server port');
@@ -48,6 +50,10 @@ const apiDocumentation = {
 		{
 			url: `http://localhost:${env.PORT}/${apiVersion}`,
 			description: 'Local Server',
+		},
+		{
+			url: `https://dev-wallet-api.heartbit.io/${apiVersion}`,
+			description: 'Deveploment Server',
 		},
 		{
 			url: '',
@@ -85,6 +91,12 @@ const apiDocumentation = {
 		'/questions/{questionId}': {
 			get: getQuestion,
 			delete: deleteQuestion,
+		},
+		'/questions/{questionId}/reply': {
+			get: getReply,
+		},
+		'/questions/{questionId}/chatGptReply': {
+			get: getChatgptReply,
 		},
 		'/replies': {
 			post: createReply,

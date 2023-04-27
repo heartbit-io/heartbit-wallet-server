@@ -21,6 +21,12 @@ class ReplyService {
 		return await ReplyInstance.findAll({where: {question_id}});
 	}
 
+	async getReplyByQuestionId(question_id: number) {
+		return await ReplyInstance.findOne({
+			where: {question_id},
+		});
+	}
+
 	async getUserReply(id: number, user_email: string) {
 		return await ReplyInstance.findOne({
 			where: {id, user_email},
