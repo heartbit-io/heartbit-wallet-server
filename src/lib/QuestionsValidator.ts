@@ -1,7 +1,5 @@
 import {body, param} from 'express-validator';
 
-import UserService from '../services/UserService';
-
 class QuestionsValidator {
 	checkCreateQuestion() {
 		return [

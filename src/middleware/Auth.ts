@@ -15,16 +15,16 @@ class Auth {
 		try {
 			const decodeValue = await admin.auth().verifyIdToken(token);
 
-			if (decodeValue ) {
+			if (decodeValue) {
 				req.email = decodeValue.email;
 				return next();
 			}
 
-			return res.json(
+			return res.status(HttpCodes.UNAUTHORIZED).json(
 				new FormatResponse(false, HttpCodes.UNAUTHORIZED, 'Unauthorized', null),
 			);
 		} catch (error) {
-			return res.json(
+			return res.status(HttpCodes.INTERNAL_SERVER_ERROR).json(
 				new FormatResponse(false, HttpCodes.INTERNAL_SERVER_ERROR, error, null),
 			);
 		}

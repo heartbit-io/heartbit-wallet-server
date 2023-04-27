@@ -1,5 +1,4 @@
 import {Request, Response} from 'express';
-
 import ChatgptService from '../services/ChatgptService';
 import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
@@ -11,7 +10,7 @@ import {DecodedRequest} from '../middleware/Auth';
 class QuestionsController {
 	async create(req: DecodedRequest, res: Response): Promise<Response<FormatResponse>> {
 		try {
-			
+
 			if (!req.email) { 
 				return res
 					.status(HttpCodes.UNPROCESSED_CONTENT)
@@ -23,7 +22,7 @@ class QuestionsController {
 							null,
 						),
 					);
-			};
+			}
 
 			const email = req.email;
 
@@ -101,7 +100,7 @@ class QuestionsController {
 		}
 	}
 
-	async delete(req: Request, res: Response): Promise<Response<FormatResponse>> {
+	async delete(req: DecodedRequest, res: Response): Promise<Response<FormatResponse>> {
 		try {
 			const {questionId} = req.params;
 
@@ -120,7 +119,7 @@ class QuestionsController {
 					);
 			}
 
-			if (question.user_email !== req.body.user_email) {
+			if (question.user_email !== req.email) {
 				return res
 					.status(HttpCodes.NOT_FOUND)
 					.json(
@@ -270,7 +269,7 @@ class QuestionsController {
 		}
 	}
 
-	async updateQuestion(req: Request, res: Response) {
+	async updateQuestion(req: DecodedRequest, res: Response) {
 		try {
 			const {questionId} = req.params;
 
