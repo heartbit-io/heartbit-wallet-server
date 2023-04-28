@@ -408,7 +408,6 @@ const getQuestion = {
 							success: {
 								type: 'boolean',
 								example: false,
-								x,
 							},
 							statusCode: {
 								type: 'number',
