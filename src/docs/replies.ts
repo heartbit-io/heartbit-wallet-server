@@ -35,7 +35,7 @@ const createReply = {
 							data: {
 								type: 'object',
 								properties: {
-									best_reply: {
+									bestReply: {
 										type: 'boolean',
 										example: false,
 									},
@@ -43,13 +43,13 @@ const createReply = {
 										type: 'number',
 										example: 12,
 									},
-									question_id: {
+									questionId: {
 										type: 'number',
 										example: 51,
 									},
-									user_email: {
-										type: 'string',
-										example: 'david@heartbit.io',
+									userId: {
+										type: 'number',
+										example: 12,
 									},
 									content: {
 										type: 'string',
@@ -93,7 +93,7 @@ const createReply = {
 										example: 99,
 									},
 									msg: {type: 'string', example: 'Question does not exist'},
-									param: {type: 'string', example: 'question_id'},
+									param: {type: 'string', example: 'questionId'},
 									location: {type: 'string', example: 'body'},
 								},
 							},
@@ -195,8 +195,8 @@ const deleteReply = {
 										example: 'User with given public key does not exit',
 									},
 									param: {
-										type: 'string',
-										example: 'user_email',
+										type: 'number',
+										example: 'userId',
 									},
 									location: {
 										type: 'string',
@@ -309,15 +309,15 @@ const updateReply = {
 										example:
 											'Tempora eligendi tenetur porro deserunt optio tempore eveniet laboriosam. Voluptatum iure autem commodi voluptates.',
 									},
-									user_email: {
-										type: 'string',
-										example: 'david@heartbit.io',
+									userId: {
+										type: 'number',
+										example: 12,
 									},
-									question_id: {
+									questionId: {
 										type: 'string',
 										example: 5,
 									},
-									best_reply: {
+									bestReply: {
 										type: 'boolean',
 										example: true,
 									},
@@ -363,8 +363,8 @@ const updateReply = {
 										example: 'User with given public key does not exit',
 									},
 									param: {
-										type: 'string',
-										example: 'user_email',
+										type: 'number',
+										example: 'userId',
 									},
 									location: {
 										type: 'string',
@@ -454,16 +454,16 @@ const updateReply = {
 const createReplyBody = {
 	type: 'object',
 	properties: {
-		user_email: {
-			type: 'string',
-			example: 'david@heartbit.io',
+		userId: {
+			type: 'number',
+			example: 12,
 		},
 		content: {
 			type: 'string',
 			example:
 				'This is a reply to your question and it has the following content',
 		},
-		question_id: {
+		questionId: {
 			type: 'number',
 			example: 51,
 		},
@@ -473,9 +473,9 @@ const createReplyBody = {
 const pubkeyRequestBody = {
 	type: 'object',
 	properties: {
-		user_email: {
-			type: 'string',
-			example: 'david@heartbit.io',
+		userId: {
+			type: 'number',
+			example: 12,
 		},
 	},
 };

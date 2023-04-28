@@ -40,11 +40,11 @@ const getUserTransactions = {
 											type: 'number',
 											example: 51,
 										},
-										from_user_pubkey: {
+										fromUserPubkey: {
 											type: 'string',
 											example: '3cX325ViRWa2R9Mfqf1BCQxCc1s',
 										},
-										to_user_pubkey: {
+										toUserPubkey: {
 											type: 'string',
 											example: '1Bwp51hh1iAtBKtMgB2JJvoPTEiYDSA',
 										},
