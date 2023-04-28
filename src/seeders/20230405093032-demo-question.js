@@ -8,8 +8,8 @@ module.exports = {
 	createQuestion() {
 		return {
 			content: faker.lorem.sentences(),
-			user_email: faker.finance.bitcoinAddress(),
-			bounty_amount: faker.finance.amount(),
+			userId: faker.datatype.number({min: 1, max: 50}),
+			bountyAmount: faker.finance.amount(),
 			status: faker.helpers.arrayElement(['open', 'closed']),
 			createdAt: new Date(),
 			updatedAt: new Date(),
@@ -21,7 +21,6 @@ module.exports = {
 
 		Array.from({length: 50}).forEach(() => {
 			questions.push(this.createQuestion());
-			
 		});
 		return queryInterface.bulkInsert('questions', questions);
 	},

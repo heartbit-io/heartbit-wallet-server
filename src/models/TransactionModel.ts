@@ -3,15 +3,13 @@ import {DataTypes, Model} from 'sequelize';
 import dbconnection from '../util/dbconnection';
 
 export interface TransactionAttributes {
-	from_user_pubkey: string;
-	to_user_pubkey: string;
+	fromUserPubkey: string;
+	toUserPubkey: string;
 	amount: number;
 }
 export class TransactionInstance extends Model<TransactionAttributes> {
-	declare from_user_pubkey: string;
-
-	declare to_user_pubkey: string;
-
+	declare fromUserPubkey: string;
+	declare toUserPubkey: string;
 	declare amount: number;
 
 	static associate(models: any) {
@@ -21,7 +19,7 @@ export class TransactionInstance extends Model<TransactionAttributes> {
 
 TransactionInstance.init(
 	{
-		from_user_pubkey: {
+		fromUserPubkey: {
 			type: DataTypes.STRING,
 			allowNull: false,
 			references: {
@@ -29,7 +27,7 @@ TransactionInstance.init(
 				key: 'pubkey',
 			},
 		},
-		to_user_pubkey: {
+		toUserPubkey: {
 			type: DataTypes.STRING,
 			allowNull: false,
 			references: {

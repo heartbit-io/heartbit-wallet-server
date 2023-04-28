@@ -8,10 +8,12 @@ import ReplyService from '../services/ReplyService';
 import UserService from '../services/UserService';
 
 class QuestionsController {
-	async create(req: DecodedRequest, res: Response): Promise<Response<FormatResponse>> {
+	async create(
+		req: DecodedRequest,
+		res: Response,
+	): Promise<Response<FormatResponse>> {
 		try {
-
-			if (!req.email) { 
+			if (!req.id) {
 				return res
 					.status(HttpCodes.UNPROCESSED_CONTENT)
 					.json(
@@ -24,22 +26,22 @@ class QuestionsController {
 					);
 			}
 
-			const email = req.email;
+			const userId: number = req.id;
 
-			const user_open_bounty = await QuestionService.sumUserOpenBountyAmount(
-				email,
+			const userOpenBounty = await QuestionService.sumUserOpenBountyAmount(
+				userId,
 			);
 
-			const user_open_bounty_total = user_open_bounty[0]
-				? user_open_bounty[0].dataValues.total_bounty
+			const userOpenBountyTotal = userOpenBounty[0]
+				? userOpenBounty[0].dataValues.totalBounty
 				: 0;
 
-			const total_bounty =
-				Number(user_open_bounty_total) + Number(req.body.bounty_amount);
+			const totalBounty =
+				Number(userOpenBountyTotal) + Number(req.body.bountyAmount);
 
-			const user_balance = await UserService.getUserBalance(req.email);
+			const userBalance = await UserService.getUserBalance(userId);
 
-			if (!user_balance) {
+			if (!userBalance) {
 				return res
 					.status(HttpCodes.UNPROCESSED_CONTENT)
 					.json(
@@ -52,7 +54,7 @@ class QuestionsController {
 					);
 			}
 
-			if (total_bounty >= Number(user_balance.btc_balance)) {
+			if (totalBounty >= Number(userBalance.btcBalance)) {
 				return res
 					.status(HttpCodes.UNPROCESSED_CONTENT)
 					.json(
@@ -65,7 +67,7 @@ class QuestionsController {
 					);
 			}
 
-			const question = await QuestionService.create({...req.body, user_email: email});
+			const question = await QuestionService.create({...req.body, userId});
 
 			return res
 				.status(HttpCodes.CREATED)
@@ -91,7 +93,10 @@ class QuestionsController {
 		}
 	}
 
-	async delete(req: DecodedRequest, res: Response): Promise<Response<FormatResponse>> {
+	async delete(
+		req: DecodedRequest,
+		res: Response,
+	): Promise<Response<FormatResponse>> {
 		try {
 			const {questionId} = req.params;
 
@@ -110,22 +115,22 @@ class QuestionsController {
 					);
 			}
 
-			if (!req.email) { 
+			if (!req.id) {
 				return res
 					.status(HttpCodes.UNPROCESSED_CONTENT)
 					.json(
 						new FormatResponse(
 							false,
 							HttpCodes.UNPROCESSED_CONTENT,
-							'Error getting user email',
+							'Error getting user id',
 							null,
 						),
 					);
 			}
 
-			const email = req.email;
+			const userId = req.id;
 
-			if (question.user_email !== email) {
+			if (question.userId !== userId) {
 				return res
 					.status(HttpCodes.UNAUTHORIZED)
 					.json(
@@ -174,8 +179,7 @@ class QuestionsController {
 			const offset = req.query.offset as number | undefined;
 			const order = (req.query.order as string | undefined) || 'DESC';
 
-			console.log(req.email);
-			if (!req.email) { 
+			if (!req.id) {
 				return res
 					.status(HttpCodes.UNPROCESSED_CONTENT)
 					.json(
@@ -188,10 +192,15 @@ class QuestionsController {
 					);
 			}
 
-			const email = req.email;
-			
-			const questions = await QuestionService.getAll(email, limit, offset, order);
-				
+			const userId = req.id;
+
+			const questions = await QuestionService.getAll(
+				userId,
+				limit,
+				offset,
+				order,
+			);
+
 			return res
 				.status(HttpCodes.OK)
 				.json(
@@ -299,7 +308,7 @@ class QuestionsController {
 
 			const question = await QuestionService.getUserOpenQuestion(
 				Number(questionId),
-				req.body.user_email,
+				req.body.userId,
 			);
 
 			if (!question) {

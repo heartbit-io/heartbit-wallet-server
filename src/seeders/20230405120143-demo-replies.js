@@ -7,10 +7,10 @@ const {faker} = require('@faker-js/faker');
 module.exports = {
 	createReply() {
 		return {
-			question_id: faker.helpers.arrayElement([...Array(50).keys()]),
-			user_email: faker.finance.bitcoinAddress(),
+			questionId: faker.helpers.arrayElement([...Array(50).keys()]),
+			userId: faker.datatype.number({min: 1, max: 50}),
 			content: faker.lorem.paragraph(),
-			best_reply: faker.helpers.arrayElement([true, false]),
+			bestReply: faker.helpers.arrayElement([true, false]),
 			createdAt: new Date(),
 			updatedAt: new Date(),
 		};

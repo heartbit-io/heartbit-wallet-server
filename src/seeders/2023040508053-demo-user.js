@@ -9,7 +9,7 @@ module.exports = {
 	createUser() {
 		return {
 			role: faker.helpers.arrayElement(['user', 'doctor', 'admin']),
-			btc_balance: faker.finance.amount(),
+			btcBalance: faker.finance.amount(),
 			pubkey: faker.finance.bitcoinAddress() + new Date().getTime().toString(),
 			createdAt: new Date(),
 			updatedAt: new Date(),

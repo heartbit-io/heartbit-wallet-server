@@ -93,7 +93,7 @@ class RepliesController {
 
 			if (replyForDoctor) {
 				replyType = ReplyTypes.DOCTOR;
-				name = replyForDoctor.user_email;
+				name = String(replyForDoctor.userId); // TODO(david) Get from user
 				reply = replyForDoctor.content; // TODO(david) Add Health records using JSON format
 				classification = 'General physician'; // TODO(david) Get from user
 				updatedAt = replyForDoctor.updatedAt;
@@ -178,7 +178,7 @@ class RepliesController {
 
 			const reply = await ReplyService.getUserReply(
 				Number(replyId),
-				req.body.user_email,
+				req.body.userId,
 			);
 			if (!reply) {
 				return res
@@ -236,7 +236,7 @@ class RepliesController {
 						),
 					);
 			}
-			const question = await QuestionService.getQuestion(reply.question_id);
+			const question = await QuestionService.getQuestion(reply.questionId);
 			if (!question) {
 				return res
 					.status(HttpCodes.NOT_FOUND)
@@ -249,7 +249,7 @@ class RepliesController {
 						),
 					);
 			}
-			if (question.user_email !== req.body.user_email) {
+			if (question.userId !== req.body.userId) {
 				return res
 					.status(HttpCodes.UNPROCESSED_CONTENT)
 					.json(
@@ -264,7 +264,7 @@ class RepliesController {
 
 			//check if question already has a best reply
 			const existingBestReply = await ReplyService.getQuestionBestReply(
-				reply.question_id,
+				reply.questionId,
 			);
 			if (existingBestReply) {
 				return res
@@ -280,8 +280,8 @@ class RepliesController {
 			}
 
 			//create a transaction
-			const user = await UserService.getUserDetails(question.user_email);
-			const responder = await UserService.getUserDetails(reply.user_email);
+			const user = await UserService.getUserDetails(question.userId);
+			const responder = await UserService.getUserDetails(reply.userId);
 
 			if (!user || !responder) {
 				return res
@@ -297,14 +297,11 @@ class RepliesController {
 			}
 
 			//debit user bounty amount
-			const user_balance = user.btc_balance - question.bounty_amount;
+			const userBalance = user.btcBalance - question.bountyAmount;
 
-			const user_debit = UserService.updateUserBtcBalance(
-				user_balance,
-				user.pubkey,
-			);
+			const userDebit = UserService.updateUserBtcBalance(userBalance, user.id);
 
-			if (!user_debit) {
+			if (!userDebit) {
 				return res
 					.status(HttpCodes.UNPROCESSED_CONTENT)
 					.json(
@@ -317,13 +314,13 @@ class RepliesController {
 					);
 			}
 
-			const responder_balance = responder.btc_balance + question.bounty_amount;
-			const responder_credit = await UserService.updateUserBtcBalance(
-				responder_balance,
-				responder.pubkey,
+			const responderBalance = responder.btcBalance + question.bountyAmount;
+			const responderCredit = await UserService.updateUserBtcBalance(
+				responderBalance,
+				responder.id,
 			);
 
-			if (!responder_credit) {
+			if (!responderCredit) {
 				return res
 					.status(HttpCodes.UNPROCESSED_CONTENT)
 					.json(
@@ -338,9 +335,9 @@ class RepliesController {
 
 			//create a transaction
 			await TransactionService.createTransaction({
-				amount: question.bounty_amount,
-				to_user_pubkey: responder.pubkey,
-				from_user_pubkey: user.pubkey,
+				amount: question.bountyAmount,
+				toUserPubkey: responder.pubkey,
+				fromUserPubkey: user.pubkey,
 			});
 
 			const updateReply = await ReplyService.updateReply(reply);

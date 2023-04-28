@@ -8,7 +8,7 @@ import {config} from 'dotenv';
 config();
 
 export interface DecodedRequest extends Request {
-	email?: string;
+	id?: number;
 }
 
 class Auth {
@@ -22,17 +22,31 @@ class Auth {
 			const decodeValue = await admin.auth().verifyIdToken(token);
 
 			if (decodeValue) {
-				req.email = decodeValue.email;
+				req.id = decodeValue.id;
 				return next();
 			}
 
-			return res.status(HttpCodes.UNAUTHORIZED).json(
-				new FormatResponse(false, HttpCodes.UNAUTHORIZED, 'Unauthorized', null),
-			);
+			return res
+				.status(HttpCodes.UNAUTHORIZED)
+				.json(
+					new FormatResponse(
+						false,
+						HttpCodes.UNAUTHORIZED,
+						'Unauthorized',
+						null,
+					),
+				);
 		} catch (error) {
-			return res.status(HttpCodes.INTERNAL_SERVER_ERROR).json(
-				new FormatResponse(false, HttpCodes.INTERNAL_SERVER_ERROR, error, null),
-			);
+			return res
+				.status(HttpCodes.INTERNAL_SERVER_ERROR)
+				.json(
+					new FormatResponse(
+						false,
+						HttpCodes.INTERNAL_SERVER_ERROR,
+						error,
+						null,
+					),
+				);
 		}
 	}
 }

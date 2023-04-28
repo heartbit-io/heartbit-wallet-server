@@ -8,23 +8,21 @@ export interface UserAttributes {
 	pubkey: string;
 	email: string;
 	role: UserRoles;
-	btc_balance: number;
+	btcBalance: number;
 }
 
 export class UserInstance extends Model<UserAttributes> {
+	declare id: number;
 	declare pubkey: string;
 	declare email: string;
-
 	declare role: UserRoles;
-	declare btc_balance: number;
-	static questions: any;
+	declare btcBalance: number;
 
 	static associate(models: any) {
-		// define association here
-		// UserInstance.hasMany(models.questions, {
-		// 	sourceKey: 'pubkey',
-		// 	foreignKey: 'user_email',
-		// });
+		UserInstance.hasMany(models.questions, {
+			sourceKey: 'pubkey',
+			foreignKey: 'userId',
+		});
 	}
 }
 
@@ -44,7 +42,7 @@ UserInstance.init(
 			type: DataTypes.ENUM(...Object.values(UserRoles)),
 			allowNull: false,
 		},
-		btc_balance: {
+		btcBalance: {
 			type: DataTypes.DOUBLE,
 			allowNull: false,
 		},
