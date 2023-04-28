@@ -34,19 +34,6 @@ class RepliesController {
 
 			const questionContent = req.query.questionContent as string;
 
-			if (questionContent.length < 10) {
-				return res
-					.status(HttpCodes.BAD_REQUEST)
-					.json(
-						new FormatResponse(
-							false,
-							HttpCodes.BAD_REQUEST,
-							'Question content is too short',
-							null,
-						),
-					);
-			}
-
 			const model = 'gpt-3.5-turbo';
 			const maxTokens = 2048;
 			const chatgptReply = await ChatgptService.create(
