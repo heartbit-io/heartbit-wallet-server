@@ -60,6 +60,6 @@ ReplyInstance.init(
 		sequelize: dbconnection,
 		tableName: 'replies',
 		timestamps: true,
-		// paranoid: true,
+		paranoid: true,
 	},
 );

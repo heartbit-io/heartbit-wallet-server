@@ -72,6 +72,6 @@ ChatgptReplyInstance.init(
 		sequelize: dbconnection,
 		tableName: 'chatgpt_replies',
 		timestamps: true,
-		// paranoid: true,
+		paranoid: true,
 	},
 );

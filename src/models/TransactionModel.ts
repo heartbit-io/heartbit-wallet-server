@@ -1,4 +1,5 @@
 import {DataTypes, Model} from 'sequelize';
+
 import dbconnection from '../util/dbconnection';
 
 export interface TransactionAttributes {
@@ -45,6 +46,6 @@ TransactionInstance.init(
 		sequelize: dbconnection,
 		tableName: 'transactions',
 		timestamps: true,
-		// paranoid: true,
+		paranoid: true,
 	},
 );

@@ -1,4 +1,5 @@
 import {DataTypes, Model} from 'sequelize';
+
 import dbconnection from '../util/dbconnection';
 
 export enum QuestionStatus {
@@ -50,12 +51,11 @@ QuestionInstance.init(
 			allowNull: false,
 			defaultValue: 'Open',
 		},
-
 	},
 	{
 		sequelize: dbconnection,
 		tableName: 'questions',
 		timestamps: true,
-		// paranoid: true,
+		paranoid: true,
 	},
 );
