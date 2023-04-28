@@ -10,7 +10,7 @@ class QuestionsValidator {
 				.escape()
 				.isLength({min: 50})
 				.withMessage('sufficiently describe your health issue'),
-			body('bounty_amount')
+			body('bountyAmount')
 				.isNumeric()
 				.notEmpty()
 				.withMessage(
