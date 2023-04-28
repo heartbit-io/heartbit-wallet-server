@@ -6,14 +6,14 @@ class UsersValidator {
 		return [
 			body('pubkey')
                 .notEmpty()
-                .isAlphanumeric()
+				.isEmail()
 				.trim()
 				.escape()
-				.withMessage('User public key is required to post a question')
+				.withMessage('User public key is required to sign up')
 				.custom(async value => {
 					const user = await UserService.getUserDetails(value);
 					if (user) {
-						throw new Error('User with given public key exits');
+						throw new Error('User with given public key exists');
 					}
 				}),
 			body('role')
