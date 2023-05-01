@@ -16,11 +16,29 @@ module.exports = {
 			user_email: {
 				type: Sequelize.STRING,
 			},
+			major_complaint: {
+				type: Sequelize.TEXT,
+			},
+			medical_history: {
+				type: Sequelize.TEXT,
+			},
+			current_medications: {
+				type: Sequelize.TEXT,
+			},
+			assessment: {
+				type: Sequelize.TEXT,
+			},
+			plan: {
+				type: Sequelize.TEXT,
+			},
+			triage: {
+				type: Sequelize.TEXT,
+			},
 			content: {
 				type: Sequelize.TEXT,
 			},
-			best_reply: {
-				type: Sequelize.BOOLEAN,
+			status: {
+				type: Sequelize.STRING,
 			},
 			createdAt: {
 				allowNull: false,
@@ -30,6 +48,10 @@ module.exports = {
 				allowNull: false,
 				type: Sequelize.DATE,
 			},
+			deletedAt: {
+				allowNull: true,
+				type: Sequelize.DATE,
+			}
 		});
 	},
 	async down(queryInterface, Sequelize) {

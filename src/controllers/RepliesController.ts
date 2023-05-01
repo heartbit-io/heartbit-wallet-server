@@ -6,11 +6,12 @@ import {HttpCodes} from '../util/HttpCodes';
 import QuestionService from '../services/QuestionService';
 import ReplyService from '../services/ReplyService';
 import {ReplyTypes} from '../util/enums/replyTypes';
-import TransactionService from '../services/TransactionService';
 import UserService from '../services/UserService';
+import { DecodedRequest } from '../middleware/Auth';
+import { UserRoles } from '../util/enums';
 
 class RepliesController {
-	async getChatgptReply(
+	async createChatGPTReply(
 		req: Request,
 		res: Response,
 	): Promise<Response<FormatResponse>> {
@@ -32,13 +33,13 @@ class RepliesController {
 					);
 			}
 
-			const questionContent = req.query.questionContent as string;
+			const { content } = question;
 
 			const model = 'gpt-3.5-turbo';
 			const maxTokens = 2048;
 			const chatgptReply = await ChatgptService.create(
 				Number(questionId),
-				questionContent,
+				content,
 				model,
 				maxTokens,
 			);
@@ -144,9 +145,42 @@ class RepliesController {
 		}
 	}
 
-	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {
+	async createDoctorReply(req: DecodedRequest, res: Response): Promise<Response<FormatResponse>> {
 		try {
-			const question = await ReplyService.createReply({...req.body});
+			// check that the user is logged in
+			if (!req.email) { 
+				return res
+					.status(HttpCodes.UNAUTHORIZED)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.UNAUTHORIZED,
+							'Error getting user email',
+							null,
+						),
+					);
+			}
+
+			const email = req.email;
+			//check that it is a doctor
+			const user = await UserService.getUserDetailsByEmail(email);
+
+			//TODO[Peter]: Extract this into a middleware to check if the user is a doctor
+
+			if (!user || user.role !== UserRoles.DOCTOR) { 
+				return res
+					.status(HttpCodes.UNAUTHORIZED)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.UNAUTHORIZED,
+							'User must be a doctor to reply to a question',
+							null,
+						),
+					);
+			}
+			// check that the question has not already been answered by a doctor
+			const question = await ReplyService.createReply({...req.body, user_email: email});
 
 			return res
 				.status(HttpCodes.CREATED)
@@ -218,6 +252,7 @@ class RepliesController {
 				);
 		}
 	}
+
 }
 
 export default new RepliesController();

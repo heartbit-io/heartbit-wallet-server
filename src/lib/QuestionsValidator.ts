@@ -51,8 +51,7 @@ class QuestionsValidator {
 			query('status')
 				.notEmpty()
 				.isString()
-				.toUpperCase()
-				.isIn(['OPEN', 'CLOSED'])
+				.isIn(['Open', 'Closed'])
 				.withMessage('status must be OPEN or CLOSED')
 				.trim()
 				.escape(),

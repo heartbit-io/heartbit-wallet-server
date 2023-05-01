@@ -1,4 +1,4 @@
-import {Request, Response} from 'express';
+import { Response} from 'express';
 
 import {DecodedRequest} from '../middleware/Auth';
 import FormatResponse from '../lib/FormatResponse';
@@ -314,7 +314,7 @@ class QuestionsController {
 						),
 					);
 			}
-			const { email } = req.params;
+			const { email } = req;
 
 			const user = await UserService.getUserDetailsByEmail(email);
 
@@ -359,7 +359,7 @@ class QuestionsController {
 		}
 	}
 	async getQuestion(
-		req: Request,
+		req: DecodedRequest,
 		res: Response,
 	): Promise<Response<FormatResponse>> {
 		try {
@@ -374,6 +374,49 @@ class QuestionsController {
 							false,
 							HttpCodes.NOT_FOUND,
 							'Question was not found',
+							null,
+						),
+					);
+			}
+
+			if (!req.email) {
+				return res
+					.status(HttpCodes.UNAUTHORIZED)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.UNAUTHORIZED,
+							'Error getting user email',
+							null,
+						),
+					);
+			}
+
+			const user = await UserService.getUserDetailsByEmail(req.email);
+
+			if (!user) { 
+				return res
+					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.UNPROCESSED_CONTENT,
+							'Error getting user details',
+							null,
+						),
+					);
+			}
+
+
+			// TODO: check if user is admin or doctor
+			if (question.userId !== user.id && !user.isDoctor) { 
+				return res
+					.status(HttpCodes.UNAUTHORIZED)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.UNAUTHORIZED,
+							'Only users who posted a question can view the question',
 							null,
 						),
 					);
