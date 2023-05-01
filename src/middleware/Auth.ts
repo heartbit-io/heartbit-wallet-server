@@ -8,7 +8,7 @@ import {config} from 'dotenv';
 config();
 
 export interface DecodedRequest extends Request {
-	id?: number;
+	email?: string;
 }
 
 class Auth {
@@ -22,7 +22,7 @@ class Auth {
 			const decodeValue = await admin.auth().verifyIdToken(token);
 
 			if (decodeValue) {
-				req.id = decodeValue.id;
+				req.email = decodeValue.email;
 				return next();
 			}
 

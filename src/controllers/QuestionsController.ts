@@ -13,7 +13,7 @@ class QuestionsController {
 		res: Response,
 	): Promise<Response<FormatResponse>> {
 		try {
-			if (!req.id) {
+			if (!req.email) {
 				return res
 					.status(HttpCodes.UNPROCESSED_CONTENT)
 					.json(
@@ -26,7 +26,22 @@ class QuestionsController {
 					);
 			}
 
-			const userId: number = req.id;
+			const user = await UserService.getUserDetailsByEmail(req.email);
+
+			if (!user) {
+				return res
+					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.UNPROCESSED_CONTENT,
+							'Error getting user email',
+							null,
+						),
+					);
+			}
+
+			const userId: number = user.id;
 
 			const userOpenBounty = await QuestionService.sumUserOpenBountyAmount(
 				userId,
@@ -115,20 +130,35 @@ class QuestionsController {
 					);
 			}
 
-			if (!req.id) {
+			if (!req.email) {
 				return res
 					.status(HttpCodes.UNPROCESSED_CONTENT)
 					.json(
 						new FormatResponse(
 							false,
 							HttpCodes.UNPROCESSED_CONTENT,
-							'Error getting user id',
+							'Error getting user email',
 							null,
 						),
 					);
 			}
 
-			const userId = req.id;
+			const user = await UserService.getUserDetailsByEmail(req.email);
+
+			if (!user) {
+				return res
+					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.UNPROCESSED_CONTENT,
+							'Error getting user email',
+							null,
+						),
+					);
+			}
+
+			const userId: number = user.id;
 
 			if (question.userId !== userId) {
 				return res
@@ -179,7 +209,7 @@ class QuestionsController {
 			const offset = req.query.offset as number | undefined;
 			const order = (req.query.order as string | undefined) || 'DESC';
 
-			if (!req.id) {
+			if (!req.email) {
 				return res
 					.status(HttpCodes.UNPROCESSED_CONTENT)
 					.json(
@@ -192,7 +222,22 @@ class QuestionsController {
 					);
 			}
 
-			const userId = req.id;
+			const user = await UserService.getUserDetailsByEmail(req.email);
+
+			if (!user) {
+				return res
+					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.UNPROCESSED_CONTENT,
+							'Error getting user email',
+							null,
+						),
+					);
+			}
+
+			const userId: number = user.id;
 
 			const questions = await QuestionService.getAll(
 				userId,
