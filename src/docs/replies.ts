@@ -35,10 +35,6 @@ const createReply = {
 							data: {
 								type: 'object',
 								properties: {
-									bestReply: {
-										type: 'boolean',
-										example: false,
-									},
 									id: {
 										type: 'number',
 										example: 12,
@@ -316,10 +312,6 @@ const updateReply = {
 									questionId: {
 										type: 'string',
 										example: 5,
-									},
-									bestReply: {
-										type: 'boolean',
-										example: true,
 									},
 									createdAt: {
 										type: 'string',

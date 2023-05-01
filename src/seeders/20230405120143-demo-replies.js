@@ -10,7 +10,6 @@ module.exports = {
 			questionId: faker.helpers.arrayElement([...Array(50).keys()]),
 			userId: faker.datatype.number({min: 1, max: 50}),
 			content: faker.lorem.paragraph(),
-			bestReply: faker.helpers.arrayElement([true, false]),
 			createdAt: new Date(),
 			updatedAt: new Date(),
 		};

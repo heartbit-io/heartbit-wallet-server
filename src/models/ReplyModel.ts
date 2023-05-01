@@ -9,7 +9,6 @@ export interface RepliesAttributes {
 	userId: number;
 	content: string;
 	status: ReplyStatus;
-	bestReply?: boolean;
 }
 
 export class ReplyInstance extends Model<RepliesAttributes> {
@@ -17,7 +16,6 @@ export class ReplyInstance extends Model<RepliesAttributes> {
 	declare content: string;
 	declare status: ReplyStatus;
 	declare userId: number;
-	declare bestReply: boolean;
 	declare bountyAmount: number;
 	declare createdAt: Date;
 	declare updatedAt: Date;
@@ -49,11 +47,6 @@ ReplyInstance.init(
 		questionId: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
-		},
-		bestReply: {
-			type: DataTypes.BOOLEAN,
-			allowNull: false,
-			defaultValue: false,
 		},
 	},
 	{

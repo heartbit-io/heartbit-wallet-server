@@ -376,10 +376,6 @@ const getQuestion = {
 													type: 'number',
 													example: 12,
 												},
-												bestReply: {
-													type: 'boolean',
-													example: false,
-												},
 												createdAt: {
 													type: 'string',
 													example: '2023-04-11T11:49:39.200Z',
