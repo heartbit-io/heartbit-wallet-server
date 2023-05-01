@@ -33,18 +33,8 @@ class ReplyService {
 		});
 	}
 
-	async getQuestionBestReply(questionId: number) {
-		return await ReplyInstance.findOne({
-			where: {questionId, bestReply: true},
-		});
-	}
-
 	async deleteReply(reply: ReplyInstance) {
 		return await reply.destroy();
-	}
-
-	async updateReply(reply: ReplyInstance) {
-		return await reply.update({bestReply: true});
 	}
 }
 

@@ -19,6 +19,4 @@ router.delete(
 	RepliesController.delete,
 );
 
-router.patch('/:replyId', RepliesController.markAsBestReply);
-
 export {router as replyRoutes};
