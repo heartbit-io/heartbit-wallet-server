@@ -13,38 +13,28 @@ class ReplyService {
 		});
 	}
 
-	async getUserReplies(user_email: string) {
-		return await ReplyInstance.findAll({where: {user_email}});
+	async getUserReplies(userId: number) {
+		return await ReplyInstance.findAll({where: {userId}});
 	}
 
-	async getQuestionReplies(question_id: number) {
-		return await ReplyInstance.findAll({where: {question_id}});
+	async getQuestionReplies(questionId: number) {
+		return await ReplyInstance.findAll({where: {questionId}});
 	}
 
-	async getReplyByQuestionId(question_id: number) {
+	async getReplyByQuestionId(questionId: number) {
 		return await ReplyInstance.findOne({
-			where: {question_id},
+			where: {questionId},
 		});
 	}
 
-	async getUserReply(id: number, user_email: string) {
+	async getUserReply(id: number, userId: number) {
 		return await ReplyInstance.findOne({
-			where: {id, user_email},
-		});
-	}
-
-	async getQuestionBestReply(question_id: number) {
-		return await ReplyInstance.findOne({
-			where: {question_id, best_reply: true},
+			where: {id, userId},
 		});
 	}
 
 	async deleteReply(reply: ReplyInstance) {
 		return await reply.destroy();
-	}
-
-	async updateReply(reply: ReplyInstance) {
-		return await reply.update({best_reply: true});
 	}
 }
 

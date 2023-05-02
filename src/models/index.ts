@@ -1,8 +1,9 @@
 import {Dialect, Sequelize} from 'sequelize';
+
 import {QuestionInstance} from './QuestionModel';
-import {UserInstance} from './UserModel';
+import {ReplyInstance} from './ReplyModel';
 import {TransactionInstance} from './TransactionModel';
-import { ReplyInstance } from './ReplyModel';
+import {UserInstance} from './UserModel';
 import env from '../config/env';
 
 const dbToUse = env.NODE_ENV === 'test' ? env.TEST_DB_NAME : env.DB_NAME;
@@ -22,20 +23,20 @@ const db = {
 	ReplyInstance,
 };
 
-// Object.values(db).forEach((model: any) => {
-// 	if (model.associate) {
-// 		model.associate(db);
-// 	}
-// });
+Object.values(db).forEach((model: any) => {
+	if (model.associate) {
+		model.associate(db);
+	}
+});
 
 QuestionInstance.belongsTo(UserInstance, {
 	as: 'User',
 	onDelete: 'CASCADE',
-	foreignKey: 'user_email',
+	foreignKey: 'userId',
 });
 
 UserInstance.hasMany(QuestionInstance, {
 	as: 'Questions',
 	onDelete: 'CASCADE',
-	foreignKey: 'user_email',
+	foreignKey: 'userId',
 });

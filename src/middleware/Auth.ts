@@ -26,13 +26,27 @@ class Auth {
 				return next();
 			}
 
-			return res.status(HttpCodes.UNAUTHORIZED).json(
-				new FormatResponse(false, HttpCodes.UNAUTHORIZED, 'Unauthorized', null),
-			);
+			return res
+				.status(HttpCodes.UNAUTHORIZED)
+				.json(
+					new FormatResponse(
+						false,
+						HttpCodes.UNAUTHORIZED,
+						'Unauthorized',
+						null,
+					),
+				);
 		} catch (error) {
-			return res.status(HttpCodes.INTERNAL_SERVER_ERROR).json(
-				new FormatResponse(false, HttpCodes.INTERNAL_SERVER_ERROR, error, null),
-			);
+			return res
+				.status(HttpCodes.INTERNAL_SERVER_ERROR)
+				.json(
+					new FormatResponse(
+						false,
+						HttpCodes.INTERNAL_SERVER_ERROR,
+						error,
+						null,
+					),
+				);
 		}
 	}
 }

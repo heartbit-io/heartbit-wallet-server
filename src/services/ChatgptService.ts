@@ -1,8 +1,9 @@
 import {Configuration, OpenAIApi} from 'openai';
 import {makeAnswerToJson, makePrompt} from '../util/chatgpt';
+
 import {ChatgptReplyInstance} from '../models/ChatgptReplyModel';
-import logger from '../util/logger';
 import env from '../config/env';
+import logger from '../util/logger';
 
 export interface AnswerInterface {
 	role: string;
@@ -54,7 +55,7 @@ class ChatgptService {
 			const jsonAnswer: JsonAnswerInterface = makeAnswerToJson(rawAnswer);
 
 			return await ChatgptReplyInstance.create({
-				question_id: questionId,
+				questionId,
 				model,
 				maxTokens,
 				prompt,
@@ -77,7 +78,7 @@ class ChatgptService {
 	): Promise<ChatgptReplyInstance | undefined> {
 		try {
 			const chatGptReply = await ChatgptReplyInstance.findOne({
-				where: {question_id: questionId},
+				where: {questionId},
 				attributes: ['model', 'jsonAnswer'],
 			});
 

@@ -215,7 +215,7 @@ const createQuestion = {
 										example:
 											'I have tooth sensitivity when I used toothpick today, what should I do?',
 									},
-									bounty_amount: {
+									bountyAmount: {
 										type: 'number',
 										example: 100,
 									},
@@ -261,8 +261,8 @@ const createQuestion = {
 										example: 'User with given public key does not exit',
 									},
 									param: {
-										type: 'string',
-										example: 'user_email',
+										type: 'number',
+										example: 'userId',
 									},
 									location: {
 										type: 'string',
@@ -328,16 +328,16 @@ const getQuestion = {
 										type: 'number',
 										example: 51,
 									},
-									user_email: {
-										type: 'string',
-										example: 'david@heartbit.io',
+									userId: {
+										type: 'number',
+										example: 12,
 									},
 									content: {
 										type: 'string',
 										example:
 											'Itaque ratione aperiam doloribus est. Inventore minus exercitationem. Quasi at nam delectus fugit corporis',
 									},
-									bounty_amount: {
+									bountyAmount: {
 										type: 'number',
 										example: 10000,
 									},
@@ -368,17 +368,13 @@ const getQuestion = {
 													example:
 														'Molestiae officiis ex porro aliquam magnam ex aperiam. Ipsam quis consequuntur perspiciatis quidem repudiandae. Recusandae ullam praesentium dolores odit quis exercitationem exercitationem.',
 												},
-												question_id: {
+												questionId: {
 													type: 'number',
 													example: 51,
 												},
-												user_email: {
-													type: 'string',
-													example: 'david@heartbit.io',
-												},
-												best_reply: {
-													type: 'boolean',
-													example: false,
+												userId: {
+													type: 'number',
+													example: 12,
 												},
 												createdAt: {
 													type: 'string',
@@ -472,16 +468,16 @@ const getAllQuestions = {
 											type: 'number',
 											example: 51,
 										},
-										user_email: {
-											type: 'string',
-											example: 'david@heartbit.io',
+										userId: {
+											type: 'number',
+											example: 12,
 										},
 										content: {
 											type: 'string',
 											example:
 												'Itaque ratione aperiam doloribus est. Inventore minus exercitationem. Quasi at nam delectus fugit corporis',
 										},
-										bounty_amount: {
+										bountyAmount: {
 											type: 'number',
 											example: 10000,
 										},
@@ -552,16 +548,16 @@ const getOpenQuestionsOrderByBounty = {
 											type: 'number',
 											example: 51,
 										},
-										user_email: {
-											type: 'string',
-											example: 'david@heartbit.io',
+										userId: {
+											type: 'number',
+											example: 12,
 										},
 										content: {
 											type: 'string',
 											example:
 												'Itaque ratione aperiam doloribus est. Inventore minus exercitationem. Quasi at nam delectus fugit corporis',
 										},
-										bounty_amount: {
+										bountyAmount: {
 											type: 'number',
 											example: 10000,
 										},
@@ -690,7 +686,7 @@ const createQuestionBody = {
 			example:
 				'I have tooth sensitivity when I used toothpick today, what should I do?',
 		},
-		bounty_amount: {
+		bountyAmount: {
 			type: 'number',
 			example: 10000,
 		},

@@ -1,17 +1,18 @@
 import {Request, Response} from 'express';
-import {HttpCodes} from '../util/HttpCodes';
+import {
+	createUserWithEmailAndPassword,
+	getAuth,
+	sendEmailVerification,
+	signInWithEmailAndPassword,
+} from 'firebase/auth';
+
 import FormatResponse from '../lib/FormatResponse';
-import ReplyService from '../services/ReplyService';
+import {HttpCodes} from '../util/HttpCodes';
 import QuestionService from '../services/QuestionService';
+import ReplyService from '../services/ReplyService';
 import TransactionService from '../services/TransactionService';
 import UserService from '../services/UserService';
 import {firebase} from '../config/firebase-config';
-import {
-	getAuth,
-	signInWithEmailAndPassword,
-	sendEmailVerification,
-	createUserWithEmailAndPassword,
-} from 'firebase/auth';
 
 class UsersController {
 	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {
@@ -19,14 +20,14 @@ class UsersController {
 			const user = await UserService.createUser({...req.body});
 
 			//add user details to firebase
-			const created_user = await createUserWithEmailAndPassword(
+			const createdUser = await createUserWithEmailAndPassword(
 				getAuth(firebase),
 				req.body.email,
 				req.body.password,
 			);
 
 			//send email verification
-			await sendEmailVerification(created_user.user);
+			await sendEmailVerification(createdUser.user);
 
 			return res
 				.status(HttpCodes.CREATED)
@@ -62,7 +63,7 @@ class UsersController {
 				password,
 			);
 
-			if (!login.user.emailVerified) { 
+			if (!login.user.emailVerified) {
 				return res
 					.status(HttpCodes.UNAUTHORIZED)
 					.json(
@@ -75,7 +76,7 @@ class UsersController {
 					);
 			}
 
-			if (!login.user) { 
+			if (!login.user) {
 				return res
 					.status(HttpCodes.UNAUTHORIZED)
 					.json(
@@ -95,7 +96,7 @@ class UsersController {
 				uid: login.user.uid,
 				email: login.user.email,
 				emailVerified: login.user.emailVerified,
-			}
+			};
 
 			return res
 				.status(HttpCodes.OK)
@@ -126,9 +127,9 @@ class UsersController {
 		res: Response,
 	): Promise<Response<FormatResponse>> {
 		try {
-			const {pubkey} = req.params;
+			const {id: userId} = req.params;
 
-			const user = await UserService.getUserDetails(pubkey);
+			const user = await UserService.getUserDetails(Number(userId));
 
 			if (!user) {
 				return res
@@ -143,17 +144,19 @@ class UsersController {
 					);
 			}
 
-			const user_questions = await QuestionService.getUserQuestions(pubkey);
-			const user_replies = await ReplyService.getUserReplies(pubkey);
-			const user_transactions = await TransactionService.getUserTransactions(
-				pubkey,
+			const userQuestions = await QuestionService.getUserQuestions(
+				Number(userId),
+			);
+			const userReplies = await ReplyService.getUserReplies(Number(userId));
+			const userTransactions = await TransactionService.getUserTransactions(
+				user.pubkey,
 			);
 
 			const response = {
 				...user.dataValues,
-				questions: user_questions,
-				replies: user_replies,
-				transactions: user_transactions,
+				questions: userQuestions,
+				replies: userReplies,
+				transactions: userTransactions,
 			};
 
 			return res

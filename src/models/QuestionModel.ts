@@ -1,4 +1,5 @@
 import {DataTypes, Model} from 'sequelize';
+
 import dbconnection from '../util/dbconnection';
 
 export enum QuestionStatus {
@@ -7,23 +8,19 @@ export enum QuestionStatus {
 }
 
 export interface QuestionAttributes {
-	total_bounty?: unknown;
+	totalBounty?: unknown;
 	id?: number;
 	content: string;
-	user_email: string;
-	bounty_amount: number;
+	userId: number;
+	bountyAmount: number;
 	status?: QuestionStatus;
 }
 export class QuestionInstance extends Model<QuestionAttributes> {
 	declare id: number;
 	declare content: string;
-
-	declare user_email: string;
-
-	declare bounty_amount: number;
-
+	declare userId: number;
+	declare bountyAmount: number;
 	declare status: string;
-
 	declare dataValues: QuestionAttributes;
 
 	static associate(models: any) {
@@ -37,11 +34,11 @@ QuestionInstance.init(
 			type: DataTypes.TEXT,
 			allowNull: false,
 		},
-		user_email: {
-			type: DataTypes.STRING,
+		userId: {
+			type: DataTypes.INTEGER,
 			allowNull: false,
 		},
-		bounty_amount: {
+		bountyAmount: {
 			type: DataTypes.DOUBLE,
 			allowNull: false,
 		},
@@ -50,12 +47,11 @@ QuestionInstance.init(
 			allowNull: false,
 			defaultValue: 'Open',
 		},
-
 	},
 	{
 		sequelize: dbconnection,
 		tableName: 'questions',
 		timestamps: true,
-		// paranoid: true,
+		paranoid: true,
 	},
 );

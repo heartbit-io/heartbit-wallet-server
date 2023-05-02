@@ -1,25 +1,26 @@
 import {body, param} from 'express-validator';
-import UserService from '../services/UserService';
+
 import QuestionService from '../services/QuestionService';
 import ReplyService from '../services/ReplyService';
+import UserService from '../services/UserService';
 
 class RepliesValidator {
 	checkCreateReply() {
 		return [
-			body('user_email')
+			body('userId')
 				.notEmpty()
-				.isAlphanumeric()
+				.isNumeric()
 				.trim()
 				.escape()
 				.withMessage('User is required to respond to a question')
 				.custom(async value => {
-					const user = await UserService.getUserDetails(value);
+					const user = await UserService.getUserDetails(Number(value));
 
 					if (!user) {
 						throw new Error('User with given public key does not exit');
 					}
 				}),
-			body('question_id')
+			body('questionId')
 				.isNumeric()
 				.notEmpty()
 				.withMessage('indicate the question you are responding to')
@@ -42,14 +43,14 @@ class RepliesValidator {
 
 	checkDeleteReply() {
 		return [
-			body('user_email')
+			body('userId')
 				.notEmpty()
-				.isAlphanumeric()
+				.isNumeric()
 				.trim()
 				.escape()
 				.withMessage('User public key is required to delete a reply')
 				.custom(async value => {
-					const user = await UserService.getUserDetails(value);
+					const user = await UserService.getUserDetails(Number(value));
 
 					if (!user) {
 						throw new Error('User with given public key does not exit');

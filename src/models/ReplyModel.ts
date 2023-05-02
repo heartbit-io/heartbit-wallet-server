@@ -5,20 +5,18 @@ import dbconnection from '../util/dbconnection';
 
 export interface RepliesAttributes {
 	id?: number;
-	question_id: number;
-	user_email: string;
+	questionId: number;
+	userId: number;
 	content: string;
 	status: ReplyStatus;
-	best_reply?: boolean;
 }
 
 export class ReplyInstance extends Model<RepliesAttributes> {
-	declare question_id: CreationOptional<number>;
+	declare questionId: CreationOptional<number>;
 	declare content: string;
 	declare status: ReplyStatus;
-	declare user_email: string;
-	declare best_reply: boolean;
-	declare bounty_amount: number;
+	declare userId: number;
+	declare bountyAmount: number;
 	declare createdAt: Date;
 	declare updatedAt: Date;
 
@@ -26,7 +24,7 @@ export class ReplyInstance extends Model<RepliesAttributes> {
 		// define association here
 		ReplyInstance.belongsTo(models.questions, {
 			targetKey: 'id',
-			foreignKey: 'question_id',
+			foreignKey: 'questionId',
 		});
 	}
 }
@@ -42,24 +40,19 @@ ReplyInstance.init(
 			allowNull: false,
 			defaultValue: ReplyStatus.DRAFT,
 		},
-		user_email: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-		question_id: {
+		userId: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
 		},
-		best_reply: {
-			type: DataTypes.BOOLEAN,
+		questionId: {
+			type: DataTypes.INTEGER,
 			allowNull: false,
-			defaultValue: false,
 		},
 	},
 	{
 		sequelize: dbconnection,
 		tableName: 'replies',
 		timestamps: true,
-		// paranoid: true,
+		paranoid: true,
 	},
 );

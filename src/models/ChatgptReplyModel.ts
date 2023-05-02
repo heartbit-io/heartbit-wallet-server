@@ -15,15 +15,16 @@ export interface JsonAnswerInterface {
 
 export interface ChatgptRepliesAttributes {
 	id?: number;
-	question_id: number;
+	questionId: CreationOptional<number>;
 	model: string;
 	maxTokens: number;
 	prompt: string;
 	rawAnswer: string;
 	jsonAnswer: JsonAnswerInterface;
 }
+
 export class ChatgptReplyInstance extends Model<ChatgptRepliesAttributes> {
-	declare question_id: CreationOptional<number>;
+	declare questionId: CreationOptional<number>;
 	declare model: string;
 	declare maxTokens: number;
 	declare prompt: string;
@@ -36,14 +37,14 @@ export class ChatgptReplyInstance extends Model<ChatgptRepliesAttributes> {
 		// define association here
 		ChatgptReplyInstance.belongsTo(models.questions, {
 			targetKey: 'id',
-			foreignKey: 'question_id',
+			foreignKey: 'questionId',
 		});
 	}
 }
 
 ChatgptReplyInstance.init(
 	{
-		question_id: {
+		questionId: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
 		},
@@ -70,8 +71,8 @@ ChatgptReplyInstance.init(
 	},
 	{
 		sequelize: dbconnection,
-		tableName: 'chatgpt_replies',
+		tableName: 'chatgptReplies',
 		timestamps: true,
-		// paranoid: true,
+		paranoid: true,
 	},
 );

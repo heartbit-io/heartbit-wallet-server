@@ -1,9 +1,10 @@
-import {Sequelize} from 'sequelize';
 import {
-	QuestionStatus,
-	QuestionInstance,
 	QuestionAttributes,
+	QuestionInstance,
+	QuestionStatus,
 } from '../models/QuestionModel';
+
+import {Sequelize} from 'sequelize';
 
 class QuestionService {
 	async create(question: QuestionAttributes) {
@@ -11,23 +12,27 @@ class QuestionService {
 	}
 
 	//get all user questions
-	async getAll(user_email: string, limit: number | undefined, offset: number | undefined, order: string ) {
+	async getAll(
+		userId: number,
+		limit: number | undefined,
+		offset: number | undefined,
+		order: string,
+	) {
 		return await QuestionInstance.findAll({
-			where: {user_email},
+			where: {userId},
 			limit,
 			offset,
 			order: [['createdAt', order]],
 		});
 	}
 
-
-	async sumUserOpenBountyAmount(user_email: string) {
+	async sumUserOpenBountyAmount(userId: number) {
 		return await QuestionInstance.findAll({
-			where: {user_email, status: QuestionStatus.Open},
+			where: {userId, status: QuestionStatus.Open},
 			attributes: [
-				[Sequelize.fn('sum', Sequelize.col('bounty_amount')), 'total_bounty'],
+				[Sequelize.fn('sum', Sequelize.col('bountyAmount')), 'totalBounty'],
 			],
-			group: ['user_email'],
+			group: ['userId'],
 		});
 	}
 
@@ -37,25 +42,25 @@ class QuestionService {
 		});
 	}
 
-	async getUserOpenQuestion(id: number, user_email: string) {
+	async getUserOpenQuestion(id: number, userId: number) {
 		return await QuestionInstance.findOne({
 			where: {
 				id,
-				user_email,
+				userId,
 				status: QuestionStatus.Open,
 			},
 		});
 	}
 
-	async getUserQuestions(user_email: string): Promise<QuestionInstance[]> {
-		return await QuestionInstance.findAll({where: {user_email}});
+	async getUserQuestions(userId: number): Promise<QuestionInstance[]> {
+		return await QuestionInstance.findAll({where: {userId}});
 	}
 
 	async getOpenQuestionsOrderByBounty() {
 		return await QuestionInstance.findAll({
 			where: {status: QuestionStatus.Open},
 			order: [
-				['bounty_amount', 'DESC'],
+				['bountyAmount', 'DESC'],
 				['createdAt', 'ASC'],
 			],
 		});

@@ -52,7 +52,7 @@ const createUser = {
 										enum: ['user', 'doctor', 'admin'],
 										example: 'user',
 									},
-									btc_balance: {
+									btcBalance: {
 										type: 'number',
 										example: 10000,
 									},
@@ -175,7 +175,7 @@ const getUser = {
 										enum: ['user', 'admin', 'doctor'],
 										example: 'user',
 									},
-									btc_balance: {
+									btcBalance: {
 										type: 'string',
 										example: 10000,
 									},
@@ -201,11 +201,11 @@ const getUser = {
 													example:
 														'Molestiae officiis ex porro aliquam magnam ex aperiam. Ipsam quis consequuntur perspiciatis quidem repudiandae.',
 												},
-												user_email: {
-													type: 'string',
-													example: 'david@heartbit.io',
+												userId: {
+													type: 'number',
+													example: 12,
 												},
-												bounty_amount: {
+												bountyAmount: {
 													type: 'number',
 													example: 281.33,
 												},
@@ -239,17 +239,13 @@ const getUser = {
 													example:
 														'Molestiae officiis ex porro aliquam magnam ex aperiam. Ipsam quis consequuntur perspiciatis quidem repudiandae.',
 												},
-												question_id: {
+												questionId: {
 													type: 'number',
 													example: 51,
 												},
-												user_email: {
-													type: 'string',
-													example: 'david@heartbit.io',
-												},
-												best_reply: {
-													type: 'boolean',
-													example: false,
+												userId: {
+													type: 'number',
+													example: 12,
 												},
 												createdAt: {
 													type: 'string',
@@ -271,11 +267,11 @@ const getUser = {
 													type: 'number',
 													example: 8,
 												},
-												from_user_pubkey: {
+												fromUserPubkey: {
 													type: 'string',
 													example: '3cX325ViRWa2R9Mfqf1BCQxCc1s',
 												},
-												to_user_pubkey: {
+												toUserPubkey: {
 													type: 'string',
 													example: '1Bwp51hh1iAtBKtMgB2JJvoPTEiYDSA',
 												},
@@ -329,7 +325,7 @@ const createUserBody = {
 			type: 'string',
 			example: 'user',
 		},
-		btc_balance: {
+		btcBalance: {
 			type: 'number',
 			example: 10000,
 		},

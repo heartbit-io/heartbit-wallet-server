@@ -1,11 +1,11 @@
-import {body} from 'express-validator';
 import UserService from '../services/UserService';
+import {body} from 'express-validator';
 
 class UsersValidator {
 	userCreate() {
 		return [
 			body('pubkey')
-                .notEmpty()
+				.notEmpty()
 				.isEmail()
 				.trim()
 				.escape()
@@ -21,7 +21,7 @@ class UsersValidator {
 				.notEmpty()
 				.isIn(['user', 'doctor', 'admin'])
 				.withMessage('indicate the user type'),
-			body('btc_balance').isNumeric().withMessage('btc_balance is a number'),
+			body('btcBalance').isNumeric().withMessage('btcBalance is a number'),
 		];
 	}
 	userLogin() {
