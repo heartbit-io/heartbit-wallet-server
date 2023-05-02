@@ -117,15 +117,15 @@ const apiDocumentation = {
 			createQuestionBody,
 			createReplyBody,
 			pubkeyRequestBody,
-			securitySchemes: {
-				bearerAuth: {
-					type: 'http',
-					in: 'header',
-					name: 'Authorization',
-					description: 'Bearer Token',
-					scheme: 'bearer',
-					bearerFormat: 'JWT',
-				},
+		},
+		securitySchemes: {
+			bearerAuth: {
+				type: 'http',
+				in: 'header',
+				name: 'Authorization',
+				description: 'Bearer Token',
+				scheme: 'bearer',
+				bearerFormat: 'JWT',
 			},
 		},
 	},
