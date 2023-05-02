@@ -31,7 +31,7 @@ class RepliesValidator {
 						throw new Error('Question does not exist');
 					}
 				}),
-			body(['content', 'major_complaint', 'medical_history', 'current_medications', 'assessment', 'plan', 'triage'])
+			body(['content', 'majorComplaint', 'medicalHistory', 'currentMedications', 'assessment', 'plan', 'triage'])
 				.isString()
 				.notEmpty()
 				.rtrim()
