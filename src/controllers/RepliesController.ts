@@ -6,11 +6,9 @@ import {HttpCodes} from '../util/HttpCodes';
 import QuestionService from '../services/QuestionService';
 import ReplyService from '../services/ReplyService';
 import {ReplyTypes} from '../util/enums/replyTypes';
-import TransactionService from '../services/TransactionService';
-import UserService from '../services/UserService';
 
 class RepliesController {
-	async getChatgptReply(
+	async createChatGPTReply(
 		req: Request,
 		res: Response,
 	): Promise<Response<FormatResponse>> {
@@ -32,13 +30,13 @@ class RepliesController {
 					);
 			}
 
-			const questionContent = req.query.questionContent as string;
+			const { content } = question;
 
 			const model = 'gpt-3.5-turbo';
 			const maxTokens = 2048;
 			const chatgptReply = await ChatgptService.create(
 				Number(questionId),
-				questionContent,
+				content,
 				model,
 				maxTokens,
 			);
@@ -144,33 +142,6 @@ class RepliesController {
 		}
 	}
 
-	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {
-		try {
-			const question = await ReplyService.createReply({...req.body});
-
-			return res
-				.status(HttpCodes.CREATED)
-				.json(
-					new FormatResponse(
-						true,
-						HttpCodes.CREATED,
-						'Reply created successfully',
-						question,
-					),
-				);
-		} catch (error) {
-			return res
-				.status(HttpCodes.INTERNAL_SERVER_ERROR)
-				.json(
-					new FormatResponse(
-						false,
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						error,
-						null,
-					),
-				);
-		}
-	}
 
 	async delete(req: Request, res: Response): Promise<Response<FormatResponse>> {
 		try {
@@ -218,6 +189,7 @@ class RepliesController {
 				);
 		}
 	}
+
 }
 
 export default new RepliesController();

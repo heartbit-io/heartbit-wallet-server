@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 'use strict';
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -15,9 +16,10 @@ module.exports = {
         primaryKey: true
       },
       role: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        defaultValue: "user"
       },
-      btc_balance: {
+      btcBalance: {
         type: Sequelize.DOUBLE
       },
       email: {
@@ -35,7 +37,11 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
-      }
+      },
+      deletedAt: {
+				allowNull: true,
+				type: Sequelize.DATE,
+			}
     });
   },
   async down(queryInterface, Sequelize) {

@@ -9,6 +9,12 @@ export interface RepliesAttributes {
 	userId: number;
 	content: string;
 	status: ReplyStatus;
+	majorComplaint: string;
+	medicalHistory: string;
+	currentMedications: string;
+	assessment: string;
+	plan: string;
+	triage: string;
 }
 
 export class ReplyInstance extends Model<RepliesAttributes> {
@@ -17,6 +23,12 @@ export class ReplyInstance extends Model<RepliesAttributes> {
 	declare status: ReplyStatus;
 	declare userId: number;
 	declare bountyAmount: number;
+	declare majorComplaint: string;
+	declare medicalHistory: string;
+	declare currentMedications: string;
+	declare assessment: string;
+	declare plan: string;
+	declare triage: string;
 	declare createdAt: Date;
 	declare updatedAt: Date;
 
@@ -31,6 +43,25 @@ export class ReplyInstance extends Model<RepliesAttributes> {
 
 ReplyInstance.init(
 	{
+		majorComplaint: {
+			type: DataTypes.TEXT,
+			allowNull: true,
+		},
+		medicalHistory: {
+			type: DataTypes.TEXT,
+		},
+		currentMedications: {
+			type: DataTypes.TEXT,
+		},
+		assessment: {
+			type: DataTypes.TEXT,
+		},
+		plan: {
+			type: DataTypes.TEXT,
+		},
+		triage: {
+			type: DataTypes.TEXT,
+		},
 		content: {
 			type: DataTypes.TEXT,
 			allowNull: false,

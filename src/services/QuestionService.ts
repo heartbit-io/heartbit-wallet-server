@@ -65,6 +65,15 @@ class QuestionService {
 			],
 		});
 	}
+
+	async getUserQuestionsByStatus(
+		userId: number,
+		status: QuestionStatus,
+	) {
+		return await QuestionInstance.findAll({
+			where: {userId, status},
+		});
+	}
 }
 
 export default new QuestionService();

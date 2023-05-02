@@ -31,13 +31,13 @@ class RepliesValidator {
 						throw new Error('Question does not exist');
 					}
 				}),
-			body('content')
+			body(['content', 'majorComplaint', 'medicalHistory', 'currentMedications', 'assessment', 'plan', 'triage'])
 				.isString()
 				.notEmpty()
 				.rtrim()
 				.escape()
 				.isLength({min: 50})
-				.withMessage('sufficiently describe your answer to help the user'),
+				.withMessage('sufficiently describe your answer to help the patient'),
 		];
 	}
 

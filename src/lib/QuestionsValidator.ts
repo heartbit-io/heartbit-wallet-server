@@ -46,6 +46,17 @@ class QuestionsValidator {
 				.escape(),
 		];
 	}
+	getUserQuestionsBystatus() {
+		return [
+			query('status')
+				.notEmpty()
+				.isString()
+				.isIn(['Open', 'Closed'])
+				.withMessage('status must be OPEN or CLOSED')
+				.trim()
+				.escape(),
+		];
+	}
 }
 
 export default new QuestionsValidator();

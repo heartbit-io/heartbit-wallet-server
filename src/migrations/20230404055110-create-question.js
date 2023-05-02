@@ -13,14 +13,15 @@ module.exports = {
 			content: {
 				type: Sequelize.TEXT,
 			},
-			user_email: {
-				type: Sequelize.STRING,
+			userId: {
+				type: Sequelize.INTEGER,
 			},
-			bounty_amount: {
+			bountyAmount: {
 				type: Sequelize.DOUBLE,
 			},
 			status: {
 				type: Sequelize.STRING,
+				defaultValue: "Open",
 			},
 			createdAt: {
 				allowNull: false,
@@ -30,6 +31,10 @@ module.exports = {
 				allowNull: false,
 				type: Sequelize.DATE,
 			},
+			deletedAt: {
+				allowNull: true,
+				type: Sequelize.DATE,
+			}
 		});
 	},
 	async down(queryInterface, Sequelize) {

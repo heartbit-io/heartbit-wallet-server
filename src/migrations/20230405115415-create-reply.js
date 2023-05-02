@@ -10,17 +10,35 @@ module.exports = {
 				primaryKey: true,
 				type: Sequelize.INTEGER,
 			},
-			question_id: {
+			questionId: {
 				type: Sequelize.INTEGER,
 			},
-			user_email: {
-				type: Sequelize.STRING,
+			userId: {
+				type: Sequelize.INTEGER,
+			},
+			majorComplaint: {
+				type: Sequelize.TEXT,
+			},
+			medicalHistory: {
+				type: Sequelize.TEXT,
+			},
+			currentMedications: {
+				type: Sequelize.TEXT,
+			},
+			assessment: {
+				type: Sequelize.TEXT,
+			},
+			plan: {
+				type: Sequelize.TEXT,
+			},
+			triage: {
+				type: Sequelize.TEXT,
 			},
 			content: {
 				type: Sequelize.TEXT,
 			},
-			best_reply: {
-				type: Sequelize.BOOLEAN,
+			status: {
+				type: Sequelize.STRING,
 			},
 			createdAt: {
 				allowNull: false,
@@ -30,6 +48,10 @@ module.exports = {
 				allowNull: false,
 				type: Sequelize.DATE,
 			},
+			deletedAt: {
+				allowNull: true,
+				type: Sequelize.DATE,
+			}
 		});
 	},
 	async down(queryInterface, Sequelize) {

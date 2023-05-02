@@ -24,6 +24,10 @@ export class UserInstance extends Model<UserAttributes> {
 			foreignKey: 'userId',
 		});
 	}
+
+	isDoctor() {
+		return this.role === UserRoles.DOCTOR;
+	}
 }
 
 UserInstance.init(

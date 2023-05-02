@@ -10,10 +10,10 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      from_user_pubkey: {
+      fromUserPubkey: {
         type: Sequelize.STRING
       },
-      to_user_pubkey: {
+      toUserPubkey: {
         type: Sequelize.STRING
       },
       amount: {
@@ -26,7 +26,11 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
-      }
+      },
+      deletedAt: {
+				allowNull: true,
+				type: Sequelize.DATE,
+			}
     });
   },
   async down(queryInterface, Sequelize) {
