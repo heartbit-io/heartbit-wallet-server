@@ -28,6 +28,12 @@ export class UserInstance extends Model<UserAttributes> {
 
 UserInstance.init(
 	{
+		id: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			autoIncrement: true,
+			primaryKey: true,
+		},
 		pubkey: {
 			type: DataTypes.STRING,
 			allowNull: false,

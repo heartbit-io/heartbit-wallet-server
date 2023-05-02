@@ -131,9 +131,9 @@ const getUser = {
 	operationId: 'getUser',
 	parameters: [
 		{
-			name: 'pubkey',
+			name: 'email',
 			in: 'path',
-			description: 'User public key',
+			description: 'User email key',
 			required: true,
 			type: 'string',
 		},
