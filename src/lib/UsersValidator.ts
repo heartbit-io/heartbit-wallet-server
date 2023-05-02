@@ -11,7 +11,7 @@ class UsersValidator {
 				.escape()
 				.withMessage('User public key is required to sign up')
 				.custom(async value => {
-					const user = await UserService.getUserDetails(value);
+					const user = await UserService.getUserDetailsByPubkey(value);
 					if (user) {
 						throw new Error('User with given public key exists');
 					}

@@ -9,6 +9,10 @@ class UserService {
 		return await UserInstance.findOne({where: {email}});
 	}
 
+	async getUserDetailsByPubkey(pubkey: string): Promise<UserInstance | null> {
+		return await UserInstance.findOne({where: {pubkey}});
+	}
+
 	async createUser(user: UserAttributes) {
 		return await UserInstance.create({...user});
 	}
