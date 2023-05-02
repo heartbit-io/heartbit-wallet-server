@@ -15,9 +15,6 @@ class Auth {
 	async verifyToken(req: DecodedRequest, res: Response, next: NextFunction) {
 		const token = req?.headers?.authorization?.split(' ')[1] || '';
 
-		// XXX, FIXFE(david): Under line Only for development, remove this line when mid-may
-		if (process.env.NODE_ENV !== 'production') return next();
-
 		try {
 			const decodeValue = await admin.auth().verifyIdToken(token);
 
