@@ -10,6 +10,7 @@ module.exports = {
 		return {
 			role: faker.helpers.arrayElement(['user', 'doctor', 'admin']),
 			btcBalance: faker.finance.amount(),
+			email: faker.internet.email(),
 			pubkey: faker.finance.bitcoinAddress() + new Date().getTime().toString(),
 			createdAt: new Date(),
 			updatedAt: new Date(),

@@ -35,20 +35,20 @@ class DoctorsController {
 
 			//TODO[Peter]: Extract this into a middleware to check if the user is a doctor
 
-			if (!doctor || doctor.role !== UserRoles.DOCTOR) {
+			if (!doctor || !doctor.isDoctor) {
 				return res
 					.status(HttpCodes.UNAUTHORIZED)
 					.json(
 						new FormatResponse(
 							false,
 							HttpCodes.UNAUTHORIZED,
-							'User must be a doctor to reply to a question',
+							'Only doctors can reply to a question',
 							null,
 						),
 					);
 			}
 
-			const question = await QuestionService.getQuestion(req.body.question_id);
+			const question = await QuestionService.getQuestion(req.body.questionId);
 
 			if (!question) {
 				return res

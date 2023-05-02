@@ -15,4 +15,4 @@ router.post(
 router.get('/questions', DoctorsController.getQuestions);
 
 
-export {router as userRoutes};
+export {router as doctorRoutes};
