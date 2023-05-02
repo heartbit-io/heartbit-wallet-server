@@ -112,9 +112,9 @@ class UsersController {
 		res: Response,
 	): Promise<Response<FormatResponse>> {
 		try {
-			const {email} = req.params;
+			const { userId }  = req.params;
 
-			const user = await UserService.getUserDetailsByEmail(email);
+			const user = await UserService.getUserDetails(Number(userId));
 
 			if (!user) {
 				return res
@@ -129,9 +129,9 @@ class UsersController {
 					);
 			}
 
-			const userId = user.id;
-			const userQuestions = await QuestionService.getUserQuestions(userId);
-			const userReplies = await ReplyService.getUserReplies(userId);
+			
+			const userQuestions = await QuestionService.getUserQuestions(Number(userId));
+			const userReplies = await ReplyService.getUserReplies(Number(userId));
 			const userTransactions = await TransactionService.getUserTransactions(
 				user.pubkey,
 			);

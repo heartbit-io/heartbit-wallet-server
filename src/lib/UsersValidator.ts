@@ -6,14 +6,25 @@ class UsersValidator {
 		return [
 			body('pubkey')
 				.notEmpty()
-				.isEmail()
 				.trim()
 				.escape()
-				.withMessage('User public key is required to sign up')
+				.withMessage('Supply a valid public key')
 				.custom(async value => {
 					const user = await UserService.getUserDetailsByPubkey(value);
 					if (user) {
-						throw new Error('User with given public key exists');
+						throw new Error('User with given public key already exist');
+					}
+				}),
+				body('email')
+				.notEmpty()
+				.isEmail()
+				.trim()
+				.escape()
+				.withMessage('Supply a valid email address')
+				.custom(async value => {
+					const user = await UserService.getUserDetailsByEmail(value);
+					if (user) {
+						throw new Error('User with given email already exist');
 					}
 				}),
 			body('role')
