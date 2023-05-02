@@ -11,7 +11,7 @@
     "dev": "npx nodemon",
     "build": "concurrently \"rimraf ./build\" \"npx tsc -w\"",
     "lint": "eslint . --ext .ts",
-    "start": "concurrently \"npm run build\" \"node build/index.js\"",
+    "start": "node build/index.js",
     "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
     "db:migrate": "npx sequelize-cli db:migrate",
     "undo:migration": "npx sequelize-cli db:migrate:undo:all",
