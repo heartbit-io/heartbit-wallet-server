@@ -31,7 +31,7 @@ class DoctorsController {
 
 			const email = req.email;
 			//check that it is a doctor
-			const doctor = await UserService.getUserDetails(email);
+			const doctor = await UserService.getUserDetailsByEmail(email);
 
 			//TODO[Peter]: Extract this into a middleware to check if the user is a doctor
 
@@ -64,7 +64,7 @@ class DoctorsController {
 			}
 
 			//create a transaction
-			const user = await UserService.getUserDetails(question.user_email);
+			const user = await UserService.getUserDetails(question.userId);
 
 			if (!user) {
 				return res
@@ -80,14 +80,14 @@ class DoctorsController {
 			}
 
 			//debit user bounty amount
-			const user_balance = user.btc_balance - question.bounty_amount;
+			const userBalance = user.btcBalance - question.bountyAmount;
 
-			const user_debit = UserService.updateUserBtcBalance(
-				user_balance,
-				user.pubkey,
+			const userDebit = UserService.updateUserBtcBalance(
+				userBalance,
+				user.id,
 			);
 
-			if (!user_debit) {
+			if (!userDebit) {
 				return res
 					.status(HttpCodes.UNPROCESSED_CONTENT)
 					.json(
@@ -100,10 +100,10 @@ class DoctorsController {
 					);
 			}
 
-			const doctorBalance = doctor.btc_balance + question.bounty_amount;
+			const doctorBalance = doctor.btcBalance + question.bountyAmount;
 			const creditDoctor = await UserService.updateUserBtcBalance(
 				doctorBalance,
-				doctor.pubkey,
+				doctor.id,
 			);
 
 			if (!creditDoctor) {
@@ -121,9 +121,9 @@ class DoctorsController {
 
 			//create a transaction
 			await TransactionService.createTransaction({
-				amount: question.bounty_amount,
-				to_user_pubkey: doctor.pubkey,
-				from_user_pubkey: user.pubkey,
+				amount: question.bountyAmount,
+				toUserPubkey: doctor.pubkey,
+				fromUserPubkey: user.pubkey,
 			});
 
 			const reply = await ReplyService.createReply({
@@ -173,7 +173,7 @@ class DoctorsController {
 		}
 
 		//check that it is a doctor
-        const doctor = await UserService.getUserDetails(req.email);
+        const doctor = await UserService.getUserDetailsByEmail(req.email);
         
         if (!doctor || doctor.role !== UserRoles.DOCTOR) { 
             return res

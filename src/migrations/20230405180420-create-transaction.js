@@ -10,10 +10,10 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      from_user_pubkey: {
+      fromUserPubkey: {
         type: Sequelize.STRING
       },
-      to_user_pubkey: {
+      toUserPubkey: {
         type: Sequelize.STRING
       },
       amount: {

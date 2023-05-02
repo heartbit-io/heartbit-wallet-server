@@ -10,19 +10,19 @@ module.exports = {
 				primaryKey: true,
 				type: Sequelize.INTEGER,
 			},
-			question_id: {
+			questionId: {
 				type: Sequelize.INTEGER,
 			},
-			user_email: {
-				type: Sequelize.STRING,
+			userId: {
+				type: Sequelize.INTEGER,
 			},
-			major_complaint: {
+			majorComplaint: {
 				type: Sequelize.TEXT,
 			},
-			medical_history: {
+			medicalHistory: {
 				type: Sequelize.TEXT,
 			},
-			current_medications: {
+			currentMedications: {
 				type: Sequelize.TEXT,
 			},
 			assessment: {
