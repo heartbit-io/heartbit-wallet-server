@@ -29,12 +29,14 @@ class DoctorsController {
 					);
 			}
 
-			const email = req.email;
+            const email = req.email;
+            
 			//check that it is a doctor
 			const doctor = await UserService.getUserDetailsByEmail(email);
 
+        
 			//TODO[Peter]: Extract this into a middleware to check if the user is a doctor
-
+            
 			if (!doctor || !doctor.isDoctor) {
 				return res
 					.status(HttpCodes.UNAUTHORIZED)
@@ -127,7 +129,8 @@ class DoctorsController {
 			});
 
 			const reply = await ReplyService.createReply({
-				...req.body,
+                ...req.body,
+                userId: user.id,
 				user_email: email,
 			});
 

@@ -14,6 +14,6 @@ router.post(
 	UsersController.create,
 );
 
-router.get('/:userId', Auth.verifyToken, UsersController.getUser);
+router.get('/me', UsersController.getUser);
 
 export {router as userRoutes};

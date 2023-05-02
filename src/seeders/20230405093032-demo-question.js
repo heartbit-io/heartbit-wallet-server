@@ -10,7 +10,7 @@ module.exports = {
 			content: faker.lorem.sentences(),
 			userId: faker.helpers.arrayElement(userIds),
 			bountyAmount: faker.finance.amount(),
-			status: faker.helpers.arrayElement(['open', 'closed']),
+			status: faker.helpers.arrayElement(['Open', 'Closed']),
 			createdAt: new Date(),
 			updatedAt: new Date(),
 		};
