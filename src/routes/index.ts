@@ -12,6 +12,7 @@ const router = Router();
 router.use('/questions', Auth.verifyToken, questionRoutes);
 router.use('/replies', Auth.verifyToken, replyRoutes);
 router.use('/users', userRoutes);
+router.use('/doctors', userRoutes);
 router.use('/transactions', Auth.verifyToken, transactionRoutes);
 router.use('/documentation', swaggerUi.serve, swaggerUi.setup(apiDocumentation));
 

@@ -6,9 +6,6 @@ import {HttpCodes} from '../util/HttpCodes';
 import QuestionService from '../services/QuestionService';
 import ReplyService from '../services/ReplyService';
 import {ReplyTypes} from '../util/enums/replyTypes';
-import UserService from '../services/UserService';
-import { DecodedRequest } from '../middleware/Auth';
-import { UserRoles } from '../util/enums';
 
 class RepliesController {
 	async createChatGPTReply(
@@ -145,66 +142,6 @@ class RepliesController {
 		}
 	}
 
-	async createDoctorReply(req: DecodedRequest, res: Response): Promise<Response<FormatResponse>> {
-		try {
-			// check that the user is logged in
-			if (!req.email) { 
-				return res
-					.status(HttpCodes.UNAUTHORIZED)
-					.json(
-						new FormatResponse(
-							false,
-							HttpCodes.UNAUTHORIZED,
-							'Error getting user email',
-							null,
-						),
-					);
-			}
-
-			const email = req.email;
-			//check that it is a doctor
-			const user = await UserService.getUserDetailsByEmail(email);
-
-			//TODO[Peter]: Extract this into a middleware to check if the user is a doctor
-
-			if (!user || user.role !== UserRoles.DOCTOR) { 
-				return res
-					.status(HttpCodes.UNAUTHORIZED)
-					.json(
-						new FormatResponse(
-							false,
-							HttpCodes.UNAUTHORIZED,
-							'User must be a doctor to reply to a question',
-							null,
-						),
-					);
-			}
-			// check that the question has not already been answered by a doctor
-			const question = await ReplyService.createReply({...req.body, user_email: email});
-
-			return res
-				.status(HttpCodes.CREATED)
-				.json(
-					new FormatResponse(
-						true,
-						HttpCodes.CREATED,
-						'Reply created successfully',
-						question,
-					),
-				);
-		} catch (error) {
-			return res
-				.status(HttpCodes.INTERNAL_SERVER_ERROR)
-				.json(
-					new FormatResponse(
-						false,
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						error,
-						null,
-					),
-				);
-		}
-	}
 
 	async delete(req: Request, res: Response): Promise<Response<FormatResponse>> {
 		try {

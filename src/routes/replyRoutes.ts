@@ -9,13 +9,6 @@ router.get('/:questionId/reply', RepliesController.get);
 
 router.get('/:questionId/chatGptReply', RepliesController.createChatGPTReply);
 
-router.post(
-	'/',
-	RepliesValidator.checkCreateReply(),
-	Validation.validate,
-	RepliesController.createDoctorReply,
-);
-
 router.delete(
 	'/:replyId',
 	RepliesValidator.checkDeleteReply(),
