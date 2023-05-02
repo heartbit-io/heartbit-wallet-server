@@ -1,10 +1,5 @@
 import {Request, Response} from 'express';
-import {
-	createUserWithEmailAndPassword,
-	getAuth,
-	sendEmailVerification,
-	signInWithEmailAndPassword,
-} from 'firebase/auth';
+import {getAuth, signInWithEmailAndPassword} from 'firebase/auth';
 
 import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
@@ -18,16 +13,6 @@ class UsersController {
 	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {
 		try {
 			const user = await UserService.createUser({...req.body});
-
-			//add user details to firebase
-			const createdUser = await createUserWithEmailAndPassword(
-				getAuth(firebase),
-				req.body.email,
-				req.body.password,
-			);
-
-			//send email verification
-			await sendEmailVerification(createdUser.user);
 
 			return res
 				.status(HttpCodes.CREATED)
@@ -127,9 +112,9 @@ class UsersController {
 		res: Response,
 	): Promise<Response<FormatResponse>> {
 		try {
-			const {id: userId} = req.params;
+			const {email} = req.params;
 
-			const user = await UserService.getUserDetails(Number(userId));
+			const user = await UserService.getUserDetailsByEmail(email);
 
 			if (!user) {
 				return res
@@ -144,10 +129,9 @@ class UsersController {
 					);
 			}
 
-			const userQuestions = await QuestionService.getUserQuestions(
-				Number(userId),
-			);
-			const userReplies = await ReplyService.getUserReplies(Number(userId));
+			const userId = user.id;
+			const userQuestions = await QuestionService.getUserQuestions(userId);
+			const userReplies = await ReplyService.getUserReplies(userId);
 			const userTransactions = await TransactionService.getUserTransactions(
 				user.pubkey,
 			);
