@@ -2,6 +2,9 @@
   "name": "heartbit-wallet-server",
   "version": "1.0.0",
   "description": "",
+  "engines": {
+    "node": "v18.15.0"
+  },
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
