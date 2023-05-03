@@ -439,16 +439,23 @@ const getAllQuestions = {
 		{
 			name: 'limit',
 			in: 'query',
-			description: 'questions limit parameter',
+			description: 'questions limit query parameter',
 			required: false,
 			type: 'number',
 		},
 		{
 			name: 'offset',
 			in: 'query',
-			description: 'questions ofsset parameter',
+			description: 'questions offset query parameter',
 			required: false,
 			type: 'number',
+		},
+		{
+			name: 'order',
+			in: 'query',
+			description: 'questions order query parameter, desc or asc',
+			required: false,
+			type: 'string',
 		},
 	],
 	responses: {
