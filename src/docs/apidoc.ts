@@ -1,11 +1,11 @@
 import {
+	createChatgptReply,
 	createQuestion,
 	createQuestionBody,
 	deleteQuestion,
 	getAllQuestions,
 	getOpenQuestionsOrderByBounty,
 	getQuestion,
-	createChatgptReply,
 	getReply,
 } from './questions';
 import {
@@ -15,7 +15,8 @@ import {
 	pubkeyRequestBody,
 	updateReply,
 } from './replies';
-import {createUser, createUserBody, getUser, internalError} from './users';
+import {createUser, createUserBody, getUser} from './users';
+import {internalError, unprocessedContentError} from './responses';
 
 import env from '../config/env';
 import {getUserTransactions} from './transactions';
@@ -112,7 +113,6 @@ const apiDocumentation = {
 	components: {
 		schemas: {
 			createUserBody,
-			internalError,
 			createQuestion,
 			createQuestionBody,
 			createReplyBody,
@@ -127,6 +127,10 @@ const apiDocumentation = {
 				scheme: 'bearer',
 				bearerFormat: 'JWT',
 			},
+		},
+		responses: {
+			internalError,
+			unprocessedContentError,
 		},
 	},
 };

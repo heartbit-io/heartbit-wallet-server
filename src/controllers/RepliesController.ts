@@ -98,7 +98,7 @@ class RepliesController {
 				},
 			};
 
-			return res.status(HttpCodes.OK).json(replyResponseInterface);
+			return res.status(HttpCodes.CREATED).json(replyResponseInterface);
 		} catch (error) {
 			return res
 				.status(HttpCodes.INTERNAL_SERVER_ERROR)

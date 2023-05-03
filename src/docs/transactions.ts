@@ -146,7 +146,7 @@ const getUserTransactions = {
 			content: {
 				'application/json': {
 					schema: {
-						$ref: '#/components/schemas/internalError',
+						$ref: '#/components/responses/internalError',
 					},
 				},
 			},
