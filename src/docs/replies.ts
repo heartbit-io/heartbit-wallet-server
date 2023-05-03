@@ -459,34 +459,6 @@ const createReplyBody = {
 			type: 'number',
 			example: 51,
 		},
-		plan: {
-			type: 'string',
-			example: 'daily',
-		},
-		majorComplaint: {
-			type: 'string',
-			example: 'I have a headache and I feel dizzy',
-		},
-		medicalHistory: {
-			type: 'string',
-			example: 'I have a history of heart disease',
-		},
-		currentMedications: {
-			type: 'string',
-			example: 'I am currently taking paracetamol',
-		},
-		assessment: {
-			type: 'string',
-			example: 'You have a headache',
-		},
-		triage: {
-			type: 'string',
-			example: 'You need to take paracetamol',
-		},
-		status: {
-			type: 'string',
-			example: 'done',
-		}
 	},
 };
 

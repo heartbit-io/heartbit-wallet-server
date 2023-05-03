@@ -8,7 +8,6 @@ import ReplyService from '../services/ReplyService';
 import TransactionService from '../services/TransactionService';
 import UserService from '../services/UserService';
 import {firebase} from '../config/firebase-config';
-import { DecodedRequest } from '../middleware/Auth';
 
 class UsersController {
 	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {
@@ -109,24 +108,11 @@ class UsersController {
 	}
 
 	async getUser(
-		req: DecodedRequest,
+		req: Request,
 		res: Response,
 	): Promise<Response<FormatResponse>> {
 		try {
-			if (!req.email) {
-				return res
-					.status(HttpCodes.UNAUTHORIZED)
-					.json(
-						new FormatResponse(
-							false,
-							HttpCodes.UNAUTHORIZED,
-							'Error getting user email',
-							null,
-						),
-					);
-			}
-
-            const email = req.email;
+			const { email }  = req.params;
 
 			const user = await UserService.getUserDetailsByEmail(email);
 

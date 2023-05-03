@@ -29,28 +29,26 @@ class DoctorsController {
 					);
 			}
 
-            const email = req.email;
-            
+			const email = req.email;
 			//check that it is a doctor
 			const doctor = await UserService.getUserDetailsByEmail(email);
 
-        
 			//TODO[Peter]: Extract this into a middleware to check if the user is a doctor
-            
-			if (!doctor || !doctor.isDoctor) {
+
+			if (!doctor || doctor.role !== UserRoles.DOCTOR) {
 				return res
 					.status(HttpCodes.UNAUTHORIZED)
 					.json(
 						new FormatResponse(
 							false,
 							HttpCodes.UNAUTHORIZED,
-							'Only doctors can reply to a question',
+							'User must be a doctor to reply to a question',
 							null,
 						),
 					);
 			}
 
-			const question = await QuestionService.getQuestion(req.body.questionId);
+			const question = await QuestionService.getQuestion(req.body.question_id);
 
 			if (!question) {
 				return res
@@ -129,8 +127,7 @@ class DoctorsController {
 			});
 
 			const reply = await ReplyService.createReply({
-                ...req.body,
-                userId: user.id,
+				...req.body,
 				user_email: email,
 			});
 

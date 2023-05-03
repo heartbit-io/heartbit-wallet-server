@@ -6,7 +6,7 @@ import DoctorsController from '../controllers/DoctorsController';
 const router = Router();
 
 router.post(
-	'/replies/',
+	'/',
 	RepliesValidator.checkCreateReply(),
 	Validation.validate,
 	DoctorsController.createDoctorReply,
@@ -15,4 +15,4 @@ router.post(
 router.get('/questions', DoctorsController.getQuestions);
 
 
-export {router as doctorRoutes};
+export {router as userRoutes};

@@ -5,42 +5,21 @@ const {faker} = require('@faker-js/faker');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-
-		
-
-	createReply(index, doctorIds) {
+	createReply() {
 		return {
-			questionId: index,
-			userId: faker.helpers.arrayElement(doctorIds),
+			questionId: faker.helpers.arrayElement([...Array(50).keys()]),
+			userId: faker.datatype.number({min: 1, max: 50}),
 			content: faker.lorem.paragraph(),
-			majorComplaint: faker.lorem.paragraph(),
-			medicalHistory: faker.lorem.paragraph(),
-			currentMedications: faker.lorem.paragraph(),
-			assessment: faker.lorem.paragraph(),
-			plan: faker.lorem.paragraph(),
-			triage: faker.lorem.paragraph(),
-			status: faker.helpers.arrayElement(['open', 'closed']),
 			createdAt: new Date(),
 			updatedAt: new Date(),
 		};
 	},
 	async up(queryInterface, Sequelize) {
-
-		const doctors = await queryInterface.sequelize.query(
-			`SELECT id from users where role = 'doctor'`);
-		
-		const doctorIds = doctors[0].map((doctor) => doctor.id);
-
-		const questionsCount = await queryInterface.sequelize.query(
-			`SELECT count(*) from questions`);
-
-		const questionsNumber = questionsCount[0][0].count;
-		
 		const replies = [];
 
-		for (let index = 1; index < questionsNumber; index++) {
-			replies.push(this.createReply(index, doctorIds));
-		}
+		Array.from({length: 50}).forEach(() => {
+			replies.push(this.createReply());
+		});
 		return queryInterface.bulkInsert('replies', replies);
 	},
 

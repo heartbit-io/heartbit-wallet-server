@@ -78,7 +78,7 @@ const apiDocumentation = {
 		'/users': {
 			post: createUser,
 		},
-		'/users/{userId}': {
+		'/users/{pubkey}': {
 			get: getUser,
 		},
 		'/questions': {

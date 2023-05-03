@@ -5,12 +5,12 @@ const {faker} = require('@faker-js/faker');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-	createQuestion(userIds) {
+	createQuestion() {
 		return {
 			content: faker.lorem.sentences(),
-			userId: faker.helpers.arrayElement(userIds),
+			userId: faker.datatype.number({min: 1, max: 50}),
 			bountyAmount: faker.finance.amount(),
-			status: faker.helpers.arrayElement(['Open', 'Closed']),
+			status: faker.helpers.arrayElement(['open', 'closed']),
 			createdAt: new Date(),
 			updatedAt: new Date(),
 		};
@@ -19,13 +19,8 @@ module.exports = {
 	async up(queryInterface, Sequelize) {
 		const questions = [];
 
-		const users = await queryInterface.sequelize.query(
-			`SELECT id from users where role = 'user'`);
-		
-		const userIds = users[0].map((user) => user.id);
-
 		Array.from({length: 50}).forEach(() => {
-			questions.push(this.createQuestion(userIds));
+			questions.push(this.createQuestion());
 		});
 		return queryInterface.bulkInsert('questions', questions);
 	},
