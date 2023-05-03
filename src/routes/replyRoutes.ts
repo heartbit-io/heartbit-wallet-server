@@ -7,7 +7,7 @@ const router = Router();
 
 router.get('/:questionId/reply', RepliesController.get);
 
-router.get('/:questionId/chatGptReply', RepliesController.createChatGPTReply);
+router.post('/:questionId/chatGptReply', RepliesController.createChatGPTReply);
 
 router.delete(
 	'/:replyId',
