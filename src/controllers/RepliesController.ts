@@ -219,6 +219,8 @@ class RepliesController {
 
 			await ReplyService.deleteReply(reply);
 
+			// TODO(david): maybe question status also need to be updated(closed to open)
+
 			return res
 				.status(HttpCodes.OK)
 				.json(
