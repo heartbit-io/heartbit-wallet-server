@@ -30,7 +30,24 @@ class RepliesController {
 					);
 			}
 
-			const { content } = question;
+			const {content} = question;
+
+			const replyForChatGpt = await ChatgptService.getChatGptReplyByQuestionId(
+				Number(questionId),
+			);
+
+			if (replyForChatGpt) {
+				return res
+					.status(HttpCodes.AREADY_EXIST)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.AREADY_EXIST,
+							'Chatgpt reply already exist',
+							null,
+						),
+					);
+			}
 
 			const model = 'gpt-3.5-turbo';
 			const maxTokens = 2048;
@@ -54,8 +71,8 @@ class RepliesController {
 					);
 			}
 
-			const reply = chatgptReply.jsonAnswer.triageGuide;
-			const createdAt = chatgptReply.createdAt;
+			const reply = chatgptReply.jsonAnswer.triageGuide || 'No response';
+			const createdAt = chatgptReply.createdAt || new Date();
 
 			return res.status(HttpCodes.OK).json(
 				new FormatResponse(true, HttpCodes.OK, 'Chatgpt reply successfully', {
@@ -142,7 +159,6 @@ class RepliesController {
 		}
 	}
 
-
 	async delete(req: Request, res: Response): Promise<Response<FormatResponse>> {
 		try {
 			const {replyId} = req.params;
@@ -189,7 +205,6 @@ class RepliesController {
 				);
 		}
 	}
-
 }
 
 export default new RepliesController();
