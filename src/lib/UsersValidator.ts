@@ -10,6 +10,7 @@ class UsersValidator {
 				.escape()
 				.withMessage('Supply a valid public key')
 				.custom(async value => {
+					// TODO(david): pubkey validation(length? format? etc)
 					const user = await UserService.getUserDetailsByPubkey(value);
 					if (user) {
 						throw new Error('User with given public key already exist');
