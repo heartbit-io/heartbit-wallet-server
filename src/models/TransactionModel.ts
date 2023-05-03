@@ -3,11 +3,13 @@ import {DataTypes, Model} from 'sequelize';
 import dbconnection from '../util/dbconnection';
 
 export interface TransactionAttributes {
+	id?: number;
 	fromUserPubkey: string;
 	toUserPubkey: string;
 	amount: number;
 }
 export class TransactionInstance extends Model<TransactionAttributes> {
+	declare id: number;
 	declare fromUserPubkey: string;
 	declare toUserPubkey: string;
 	declare amount: number;
@@ -19,6 +21,12 @@ export class TransactionInstance extends Model<TransactionAttributes> {
 
 TransactionInstance.init(
 	{
+		id: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			autoIncrement: true,
+			primaryKey: true,
+		},
 		fromUserPubkey: {
 			type: DataTypes.STRING,
 			allowNull: false,

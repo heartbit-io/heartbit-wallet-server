@@ -24,6 +24,7 @@ export interface ChatgptRepliesAttributes {
 }
 
 export class ChatgptReplyInstance extends Model<ChatgptRepliesAttributes> {
+	declare id: number;
 	declare questionId: CreationOptional<number>;
 	declare model: string;
 	declare maxTokens: number;
@@ -44,6 +45,12 @@ export class ChatgptReplyInstance extends Model<ChatgptRepliesAttributes> {
 
 ChatgptReplyInstance.init(
 	{
+		id: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			autoIncrement: true,
+			primaryKey: true,
+		},
 		questionId: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
