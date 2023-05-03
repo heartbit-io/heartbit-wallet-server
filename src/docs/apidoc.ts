@@ -95,7 +95,7 @@ const apiDocumentation = {
 		'/questions/{questionId}/replies': {
 			get: getReply,
 		},
-		'/questions/{questionId}/chat-gpt-replies': {
+		'/questions/chat-gpt-replies': {
 			post: createChatgptReply,
 		},
 		'/replies': {

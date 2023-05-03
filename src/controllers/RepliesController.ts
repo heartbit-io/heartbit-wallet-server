@@ -13,7 +13,7 @@ class RepliesController {
 		res: Response,
 	): Promise<Response<FormatResponse>> {
 		try {
-			const {questionId} = req.params;
+			const {questionId} = req.body;
 
 			const question = await QuestionService.getQuestion(Number(questionId));
 
