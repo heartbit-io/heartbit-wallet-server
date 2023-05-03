@@ -5,9 +5,9 @@ import Validation from '../middleware/Validation';
 
 const router = Router();
 
-router.get('/:questionId/reply', RepliesController.get);
+router.get('/:questionId', RepliesController.get);
 
-router.post('/:questionId/chatGptReply', RepliesController.createChatGPTReply);
+router.post('chatGptReply/:questionId', RepliesController.createChatGPTReply);
 
 router.delete(
 	'/:replyId',

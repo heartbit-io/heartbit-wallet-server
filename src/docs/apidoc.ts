@@ -3,12 +3,12 @@ import {
 	createQuestionBody,
 	deleteQuestion,
 	getAllQuestions,
-	getChatgptReply,
 	getOpenQuestionsOrderByBounty,
 	getQuestion,
-	getReply,
 } from './questions';
 import {
+	createChatgptReply,
+	getReply,
 	createReply,
 	createReplyBody,
 	deleteReply,
@@ -78,7 +78,7 @@ const apiDocumentation = {
 		'/users': {
 			post: createUser,
 		},
-		'/users/{userId}': {
+		'/users/{email}': {
 			get: getUser,
 		},
 		'/questions': {
@@ -92,11 +92,11 @@ const apiDocumentation = {
 			get: getQuestion,
 			delete: deleteQuestion,
 		},
-		'/questions/{questionId}/reply': {
+		'/replies/{questionId}': {
 			get: getReply,
 		},
-		'/questions/{questionId}/chatGptReply': {
-			get: getChatgptReply,
+		'/replies/chatGptReply/{questionId}': {
+			post: createChatgptReply,
 		},
 		'/replies': {
 			post: createReply,
