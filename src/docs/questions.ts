@@ -86,26 +86,22 @@ const createChatgptReply = {
 	tags: ['Questions'],
 	description: 'create a reply from chatgpt',
 	operationId: 'createChatgptReply',
-	parameters: [
-		{
-			name: 'questionId',
-			in: 'path',
-			description: 'The id of the question',
-			required: true,
-			schema: {
-				type: 'number',
+	requestBody: {
+		content: {
+			'application/json': {
+				schema: {
+					type: 'object',
+						properties: {
+							questionId: {
+								type: 'number',
+								example: 1,
+							},
+						}
+				},
 			},
 		},
-		{
-			name: 'questionContent',
-			in: 'query',
-			description: 'The content of the question',
-			required: true,
-			schema: {
-				type: 'string',
-			},
-		},
-	],
+		required: true,
+	},	
 	responses: {
 		'200': {
 			description: 'Reply from ChatGPT generated successfully',
