@@ -79,9 +79,20 @@ class DoctorsController {
 					);
 			}
 
-			// If userId and doctorId are the same, return an error
+			if (user.id === doctor.id) {
+				return res
+					.status(HttpCodes.BAD_REQUEST)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.BAD_REQUEST,
+							'User and doctor cannot be the same',
+							null,
+						),
+					);
+			}
 
-			// TODO(david) start a transaction
+			// XXX, TODO(david) start a database transaction
 			// debit user bounty amount
 			const userBalance = user.btcBalance - question.bountyAmount;
 			const userDebit = UserService.updateUserBtcBalance(userBalance, user.id);
@@ -130,6 +141,8 @@ class DoctorsController {
 				userId: user.id,
 				userEmail: email,
 			});
+
+			// XXX, TODO(david): end a database transaction
 
 			return res
 				.status(HttpCodes.CREATED)
