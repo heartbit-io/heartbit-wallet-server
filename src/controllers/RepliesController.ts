@@ -19,12 +19,12 @@ class RepliesController {
 
 			if (!question) {
 				return res
-					.status(HttpCodes.NOT_FOUND)
+					.status(HttpCodes.UNPROCESSED_CONTENT)
 					.json(
 						new FormatResponse(
 							false,
-							HttpCodes.NOT_FOUND,
-							'Question was not found',
+							HttpCodes.UNPROCESSED_CONTENT,
+							'Question was not exist',
 							null,
 						),
 					);
@@ -49,7 +49,9 @@ class RepliesController {
 					);
 			}
 
-			const model = 'gpt-3.5-turbo';
+			// TODO(david): If bountyAmount is not 0, use gpt-4 model(currently gpt-4 is waitlist)
+			const model =
+				question.bountyAmount === 0 ? 'gpt-3.5-turbo' : 'gpt-3.5-turbo';
 			const maxTokens = 2048;
 			const chatgptReply = await ChatgptService.create(
 				Number(questionId),
@@ -60,12 +62,12 @@ class RepliesController {
 
 			if (!chatgptReply) {
 				return res
-					.status(HttpCodes.NOT_FOUND)
+					.status(HttpCodes.UNPROCESSED_CONTENT)
 					.json(
 						new FormatResponse(
 							false,
-							HttpCodes.NOT_FOUND,
-							'Chatgpt reply was not found',
+							HttpCodes.UNPROCESSED_CONTENT,
+							'ChatGPT not replied',
 							null,
 						),
 					);
