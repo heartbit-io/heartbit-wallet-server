@@ -8,8 +8,8 @@ export enum QuestionStatus {
 }
 
 export interface QuestionAttributes {
-	totalBounty?: unknown;
 	id?: number;
+	totalBounty?: unknown;
 	content: string;
 	userId: number;
 	bountyAmount: number;
@@ -30,6 +30,12 @@ export class QuestionInstance extends Model<QuestionAttributes> {
 
 QuestionInstance.init(
 	{
+		id: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			autoIncrement: true,
+			primaryKey: true,
+		},
 		content: {
 			type: DataTypes.TEXT,
 			allowNull: false,

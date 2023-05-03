@@ -18,6 +18,7 @@ export interface RepliesAttributes {
 }
 
 export class ReplyInstance extends Model<RepliesAttributes> {
+	declare id: number;
 	declare questionId: CreationOptional<number>;
 	declare content: string;
 	declare status: ReplyStatus;
@@ -43,6 +44,12 @@ export class ReplyInstance extends Model<RepliesAttributes> {
 
 ReplyInstance.init(
 	{
+		id: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			autoIncrement: true,
+			primaryKey: true,
+		},
 		majorComplaint: {
 			type: DataTypes.TEXT,
 			allowNull: true,
