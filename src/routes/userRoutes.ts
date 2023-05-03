@@ -15,5 +15,6 @@ router.post(
 );
 
 router.get('/me', UsersController.getUser);
+router.get('/:email', UsersController.getUser);
 
 export {router as userRoutes};

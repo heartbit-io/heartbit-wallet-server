@@ -113,7 +113,7 @@ class UsersController {
 		res: Response,
 	): Promise<Response<FormatResponse>> {
 		try {
-			if (!req.email) {
+			if (!req.params.email) {
 				return res
 					.status(HttpCodes.UNAUTHORIZED)
 					.json(
@@ -126,8 +126,7 @@ class UsersController {
 					);
 			}
 
-            const email = req.email;
-
+			const email = req.params.email;
 			const user = await UserService.getUserDetailsByEmail(email);
 
 			if (!user) {

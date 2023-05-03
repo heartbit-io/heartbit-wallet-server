@@ -133,7 +133,7 @@ const getUser = {
 		{
 			name: 'email',
 			in: 'path',
-			description: 'User email key',
+			description: 'User email',
 			required: true,
 			type: 'string',
 		},
