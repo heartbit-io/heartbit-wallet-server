@@ -15,7 +15,7 @@ class UsersValidator {
 						throw new Error('User with given public key already exist');
 					}
 				}),
-				body('email')
+			body('email')
 				.notEmpty()
 				.isEmail()
 				.trim()
@@ -50,7 +50,7 @@ class UsersValidator {
 				.escape()
 				.withMessage('User email is required to login')
 				.custom(async value => {
-					const user = await UserService.getUserDetails(value);
+					const user = await UserService.getUserDetailsById(value);
 					if (!user) {
 						throw new Error('User with given email does not exit');
 					}

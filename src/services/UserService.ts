@@ -1,7 +1,7 @@
 import {UserAttributes, UserInstance} from '../models/UserModel';
 
 class UserService {
-	async getUserDetails(id: number): Promise<UserInstance | null> {
+	async getUserDetailsById(id: number): Promise<UserInstance | null> {
 		return await UserInstance.findOne({where: {id}});
 	}
 

@@ -66,7 +66,7 @@ class DoctorsController {
 			}
 
 			//create a transaction
-			const user = await UserService.getUserDetails(question.userId);
+			const user = await UserService.getUserDetailsById(question.userId);
 
 			if (!user) {
 				return res
