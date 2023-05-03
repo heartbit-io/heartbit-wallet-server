@@ -74,14 +74,14 @@ class ChatgptService {
 				rawAnswer: 'No response',
 				jsonAnswer: JSON.parse(
 					JSON.stringify({
-						title: 'No response',
-						triageGuide: 'No response',
-						chiefComplaint: 'No response',
-						medicalHistory: 'No response',
-						currentMedication: 'No response',
-						accessment: 'No response',
-						plan: 'No response',
-						doctorNote: 'No response',
+						title: 'title',
+						triageGuide: 'treguide',
+						chiefComplaint: 'chiefComplaint',
+						medicalHistory: 'medicalHistory',
+						currentMedication: 'currentMedication',
+						accessment: 'accessment',
+						plan: 'plan',
+						doctorNote: 'doctorNote',
 					}),
 				),
 			});
@@ -98,7 +98,7 @@ class ChatgptService {
 		try {
 			const chatGptReply = await ChatgptReplyInstance.findOne({
 				where: {questionId},
-				attributes: ['model', 'jsonAnswer'],
+				attributes: ['model', 'jsonAnswer', 'createdAt'],
 			});
 
 			if (!chatGptReply) return;
