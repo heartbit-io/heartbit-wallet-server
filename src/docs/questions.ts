@@ -538,7 +538,7 @@ const deleteQuestion = {
 	operationId: 'deleteQuestion',
 	parameters: [
 		{
-			name: 'id',
+			name: 'questionId',
 			in: 'path',
 			description: 'Question id',
 			required: true,

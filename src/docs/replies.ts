@@ -153,7 +153,7 @@ const deleteReply = {
 	operationId: 'deleteReply',
 	parameters: [
 		{
-			name: 'id',
+			name: 'replyId',
 			in: 'path',
 			description: 'Reply id',
 			required: true,
@@ -291,7 +291,7 @@ const updateReply = {
 	operationId: 'updateReply',
 	parameters: [
 		{
-			name: 'id',
+			name: 'replyId',
 			in: 'path',
 			description: 'Reply id',
 			required: true,
