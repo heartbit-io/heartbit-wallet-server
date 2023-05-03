@@ -91,17 +91,17 @@ const createChatgptReply = {
 			'application/json': {
 				schema: {
 					type: 'object',
-						properties: {
-							questionId: {
-								type: 'number',
-								example: 1,
-							},
-						}
+					properties: {
+						questionId: {
+							type: 'number',
+							example: 1,
+						},
+					},
 				},
 			},
 		},
 		required: true,
-	},	
+	},
 	responses: {
 		'200': {
 			description: 'Reply from ChatGPT generated successfully',
@@ -435,6 +435,22 @@ const getAllQuestions = {
 	tags: ['Questions'],
 	description: 'Get all questions',
 	operationId: 'getAllQuestions',
+	parameters: [
+		{
+			name: 'limit',
+			in: 'query',
+			description: 'questions limit parameter',
+			required: false,
+			type: 'number',
+		},
+		{
+			name: 'offset',
+			in: 'query',
+			description: 'questions ofsset parameter',
+			required: false,
+			type: 'number',
+		},
+	],
 	responses: {
 		'200': {
 			description: 'Successfully retrieved questions',
@@ -697,5 +713,5 @@ export {
 	getOpenQuestionsOrderByBounty,
 	deleteQuestion,
 	getReply,
-	createChatgptReply
+	createChatgptReply,
 };
