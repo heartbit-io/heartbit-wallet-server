@@ -3,9 +3,9 @@ import {
 	createQuestionBody,
 	deleteQuestion,
 	getAllQuestions,
-	getChatgptReply,
 	getOpenQuestionsOrderByBounty,
 	getQuestion,
+	createChatgptReply,
 	getReply,
 } from './questions';
 import {
@@ -92,11 +92,11 @@ const apiDocumentation = {
 			get: getQuestion,
 			delete: deleteQuestion,
 		},
-		'/questions/{questionId}/reply': {
+		'/questions/{questionId}/replies': {
 			get: getReply,
 		},
-		'/questions/{questionId}/chatGptReply': {
-			get: getChatgptReply,
+		'/questions/{questionId}/chat-gpt-replies': {
+			post: createChatgptReply,
 		},
 		'/replies': {
 			post: createReply,

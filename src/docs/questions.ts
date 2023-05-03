@@ -82,10 +82,10 @@ const getReply = {
 	},
 };
 
-const getChatgptReply = {
+const createChatgptReply = {
 	tags: ['Questions'],
-	description: 'Get a reply from chatgpt',
-	operationId: 'getChatgptReply',
+	description: 'create a reply from chatgpt',
+	operationId: 'createChatgptReply',
 	parameters: [
 		{
 			name: 'questionId',
@@ -108,7 +108,7 @@ const getChatgptReply = {
 	],
 	responses: {
 		'200': {
-			description: 'Reply from ChatGPT retrieved successfully',
+			description: 'Reply from ChatGPT generated successfully',
 			content: {
 				'application/json': {
 					schema: {
@@ -124,7 +124,7 @@ const getChatgptReply = {
 							},
 							message: {
 								type: 'string',
-								example: 'ChatGPT Reply retrieved successfully',
+								example: 'ChatGPT Reply generated successfully',
 							},
 							data: {
 								type: 'object',
@@ -141,7 +141,7 @@ const getChatgptReply = {
 			},
 		},
 		'404': {
-			description: 'ChatGPT Reply not found',
+			description: 'ChatGPT Reply failed to be created',
 			content: {
 				'application/json': {
 					schema: {},
@@ -701,5 +701,5 @@ export {
 	getOpenQuestionsOrderByBounty,
 	deleteQuestion,
 	getReply,
-	getChatgptReply,
+	createChatgptReply
 };

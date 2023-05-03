@@ -6,7 +6,7 @@ import Auth from '../middleware/Auth';
 
 const router = Router();
 
-router.post('/login', UsersController.login);
+router.get('/login', UsersController.login);
 router.post(
 	'/',
 	UsersValidator.userCreate(),

@@ -5,13 +5,6 @@ import DoctorsController from '../controllers/DoctorsController';
 
 const router = Router();
 
-router.post(
-	'/replies/',
-	RepliesValidator.checkCreateReply(),
-	Validation.validate,
-	DoctorsController.createDoctorReply,
-);
-
 router.get('/questions', DoctorsController.getQuestions);
 
 

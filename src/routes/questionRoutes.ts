@@ -1,5 +1,6 @@
 import QuestionsController from '../controllers/QuestionsController';
 import QuestionsValidator from '../lib/QuestionsValidator';
+import RepliesController from '../controllers/RepliesController';
 import {Router} from 'express';
 import Validation from '../middleware/Validation';
 const router = Router();
@@ -38,5 +39,10 @@ router.delete(
 	Validation.validate,
 	QuestionsController.delete,
 );
+
+router.get('/:questionId/replies', RepliesController.get);
+
+router.post('/:questionId/chat-gpt-replies', RepliesController.createChatGPTReply);
+
 
 export {router as questionRoutes};
