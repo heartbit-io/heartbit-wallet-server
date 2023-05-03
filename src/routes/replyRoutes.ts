@@ -5,10 +5,6 @@ import Validation from '../middleware/Validation';
 
 const router = Router();
 
-router.get('/:questionId', RepliesController.get);
-
-router.post('chatGptReply/:questionId', RepliesController.createChatGPTReply);
-
 router.delete(
 	'/:replyId',
 	RepliesValidator.checkDeleteReply(),

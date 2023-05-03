@@ -5,10 +5,10 @@ import {
 	getAllQuestions,
 	getOpenQuestionsOrderByBounty,
 	getQuestion,
-} from './questions';
-import {
 	createChatgptReply,
 	getReply,
+} from './questions';
+import {
 	createReply,
 	createReplyBody,
 	deleteReply,
@@ -92,10 +92,10 @@ const apiDocumentation = {
 			get: getQuestion,
 			delete: deleteQuestion,
 		},
-		'/replies/{questionId}': {
+		'/questions/{questionId}/replies': {
 			get: getReply,
 		},
-		'/replies/chatGptReply/{questionId}': {
+		'/questions{questionId}/chat-gpt-replies': {
 			post: createChatgptReply,
 		},
 		'/replies': {

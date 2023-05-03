@@ -1,3 +1,164 @@
+const getReply = {
+	tags: ['Questions'],
+	description: 'Get a reply by question id',
+	operationId: 'getReply',
+	parameters: [
+		{
+			name: 'questionId',
+			in: 'path',
+			description: 'The id of the question',
+			required: true,
+			schema: {
+				type: 'number',
+			},
+		},
+	],
+	responses: {
+		'200': {
+			description: 'Reply retrieved successfully',
+			content: {
+				'application/json': {
+					schema: {
+						type: 'object',
+						properties: {
+							success: {
+								type: 'boolean',
+								example: true,
+							},
+							statusCode: {
+								type: 'number',
+								example: 200,
+							},
+							message: {
+								type: 'string',
+								example: 'Reply retrieved successfully',
+							},
+							data: {
+								type: 'object',
+								properties: {
+									replyType: {
+										type: 'string',
+										example: 'DOCTOR',
+									},
+									name: {
+										type: 'string',
+										example: 'Dr. John Doe',
+									},
+									classification: {
+										type: 'string',
+										example: 'General physician',
+									},
+									reply: {
+										type: 'string',
+										example: 'This is a reply',
+									},
+									updatedAt: {
+										type: 'string',
+										example: '2021-08-01T00:00:00.000Z',
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		'404': {
+			description: 'Reply not found',
+			content: {
+				'application/json': {
+					schema: {},
+				},
+			},
+		},
+		'500': {
+			description: 'Internal server error',
+			content: {
+				'application/json': {
+					schema: {},
+				},
+			},
+		},
+	},
+};
+
+const createChatgptReply = {
+	tags: ['Questions'],
+	description: 'create a reply from chatgpt',
+	operationId: 'createChatgptReply',
+	parameters: [
+		{
+			name: 'questionId',
+			in: 'path',
+			description: 'The id of the question',
+			required: true,
+			schema: {
+				type: 'number',
+			},
+		},
+		{
+			name: 'questionContent',
+			in: 'query',
+			description: 'The content of the question',
+			required: true,
+			schema: {
+				type: 'string',
+			},
+		},
+	],
+	responses: {
+		'200': {
+			description: 'Reply from ChatGPT generated successfully',
+			content: {
+				'application/json': {
+					schema: {
+						type: 'object',
+						properties: {
+							success: {
+								type: 'boolean',
+								example: true,
+							},
+							statusCode: {
+								type: 'number',
+								example: 200,
+							},
+							message: {
+								type: 'string',
+								example: 'ChatGPT Reply generated successfully',
+							},
+							data: {
+								type: 'object',
+								properties: {
+									reply: {
+										type: 'string',
+										example: 'This is a reply',
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		'404': {
+			description: 'ChatGPT Reply failed to be created',
+			content: {
+				'application/json': {
+					schema: {},
+				},
+			},
+		},
+		'500': {
+			description: 'Internal server error',
+			content: {
+				'application/json': {
+					schema: {},
+				},
+			},
+		},
+	},
+};
+
 const createQuestion = {
 	tags: ['Questions'],
 	description: 'Create a new question',
@@ -539,4 +700,6 @@ export {
 	getAllQuestions,
 	getOpenQuestionsOrderByBounty,
 	deleteQuestion,
+	getReply,
+	createChatgptReply
 };
