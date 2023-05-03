@@ -290,7 +290,7 @@ const getQuestion = {
 	operationId: 'getQuestion',
 	parameters: [
 		{
-			name: 'id',
+			name: 'questionId',
 			in: 'path',
 			description: 'Question id',
 			required: true,
