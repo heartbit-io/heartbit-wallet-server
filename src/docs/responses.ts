@@ -20,6 +20,28 @@ const internalError = {
 	},
 };
 
+const notFoundError = {
+	type: 'object',
+	properties: {
+		success: {
+			type: 'boolean',
+			example: false,
+		},
+		statusCode: {
+			type: 'number',
+			example: 404,
+		},
+		message: {
+			type: 'string',
+			example: 'Not Found Error',
+		},
+		data: {
+			type: 'string',
+			example: null,
+		},
+	},
+};
+
 const unprocessedContentError = {
 	type: 'object',
 	properties: {
@@ -42,4 +64,4 @@ const unprocessedContentError = {
 	},
 };
 
-export {internalError, unprocessedContentError};
+export {internalError, notFoundError, unprocessedContentError};

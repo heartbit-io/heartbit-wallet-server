@@ -16,7 +16,11 @@ import {
 	updateReply,
 } from './replies';
 import {createUser, createUserBody, getUser} from './users';
-import {internalError, unprocessedContentError} from './responses';
+import {
+	internalError,
+	notFoundError,
+	unprocessedContentError,
+} from './responses';
 
 import env from '../config/env';
 import {getUserTransactions} from './transactions';
@@ -130,6 +134,7 @@ const apiDocumentation = {
 		},
 		responses: {
 			internalError,
+			notFoundError,
 			unprocessedContentError,
 		},
 	},

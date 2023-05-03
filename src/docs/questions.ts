@@ -99,11 +99,11 @@ const getReply = {
 			},
 		},
 		'422': {
-			description: 'Unprocessed Content Error',
+			description: 'Not Found Error',
 			content: {
 				'application/json': {
 					schema: {
-						$ref: '#/components/responses/unprocessedContentError',
+						$ref: '#/components/responses/notFoundError',
 					},
 				},
 			},
@@ -168,11 +168,11 @@ const createChatgptReply = {
 			},
 		},
 		'422': {
-			description: 'Unprocessed Content Error',
+			description: 'Not Found Error',
 			content: {
 				'application/json': {
 					schema: {
-						$ref: '#/components/responses/unprocessedContentError',
+						$ref: '#/components/responses/notfoundError',
 					},
 				},
 			},

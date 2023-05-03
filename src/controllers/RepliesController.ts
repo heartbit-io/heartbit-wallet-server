@@ -30,11 +30,11 @@ class RepliesController {
 
 			if (!question) {
 				return res
-					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.status(HttpCodes.NOT_FOUND)
 					.json(
 						new FormatResponse(
 							false,
-							HttpCodes.UNPROCESSED_CONTENT,
+							HttpCodes.NOT_FOUND,
 							'Question was not exist',
 							null,
 						),
@@ -73,11 +73,11 @@ class RepliesController {
 
 			if (!chatgptReply) {
 				return res
-					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.status(HttpCodes.NOT_FOUND)
 					.json(
 						new FormatResponse(
 							false,
-							HttpCodes.UNPROCESSED_CONTENT,
+							HttpCodes.NOT_FOUND,
 							'ChatGPT not replied',
 							null,
 						),
@@ -134,11 +134,11 @@ class RepliesController {
 				);
 				if (!user) {
 					return res
-						.status(HttpCodes.UNPROCESSED_CONTENT)
+						.status(HttpCodes.NOT_FOUND)
 						.json(
 							new FormatResponse(
 								false,
-								HttpCodes.UNPROCESSED_CONTENT,
+								HttpCodes.NOT_FOUND,
 								'Doctor was not found',
 								null,
 							),
@@ -156,11 +156,11 @@ class RepliesController {
 
 				if (!replyForChatGpt) {
 					return res
-						.status(HttpCodes.UNPROCESSED_CONTENT)
+						.status(HttpCodes.NOT_FOUND)
 						.json(
 							new FormatResponse(
 								false,
-								HttpCodes.UNPROCESSED_CONTENT,
+								HttpCodes.NOT_FOUND,
 								'Chatgpt reply was not found',
 								null,
 							),

@@ -1,13 +1,12 @@
-import {Response} from 'express';
-
 import {DecodedRequest} from '../middleware/Auth';
 import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
 import QuestionService from '../services/QuestionService';
 import ReplyService from '../services/ReplyService';
-import UserService from '../services/UserService';
+import {Response} from 'express';
 import TransactionService from '../services/TransactionService';
 import {UserRoles} from '../util/enums/userRoles';
+import UserService from '../services/UserService';
 
 class DoctorsController {
 	async createDoctorReply(
@@ -29,14 +28,13 @@ class DoctorsController {
 					);
 			}
 
-            const email = req.email;
-            
-			//check that it is a doctor
+			const email = req.email;
+
+			// check that it is a doctor
 			const doctor = await UserService.getUserDetailsByEmail(email);
 
-        
-			//TODO[Peter]: Extract this into a middleware to check if the user is a doctor
-            
+			// TODO[Peter]: Extract this into a middleware to check if the user is a doctor
+
 			if (!doctor || !doctor.isDoctor) {
 				return res
 					.status(HttpCodes.UNAUTHORIZED)
@@ -65,7 +63,7 @@ class DoctorsController {
 					);
 			}
 
-			//create a transaction
+			// create a transaction
 			const user = await UserService.getUserDetailsById(question.userId);
 
 			if (!user) {
@@ -81,13 +79,12 @@ class DoctorsController {
 					);
 			}
 
-			//debit user bounty amount
-			const userBalance = user.btcBalance - question.bountyAmount;
+			// If userId and doctorId are the same, return an error
 
-			const userDebit = UserService.updateUserBtcBalance(
-				userBalance,
-				user.id,
-			);
+			// TODO(david) start a transaction
+			// debit user bounty amount
+			const userBalance = user.btcBalance - question.bountyAmount;
+			const userDebit = UserService.updateUserBtcBalance(userBalance, user.id);
 
 			if (!userDebit) {
 				return res
@@ -129,9 +126,9 @@ class DoctorsController {
 			});
 
 			const reply = await ReplyService.createReply({
-                ...req.body,
-                userId: user.id,
-				user_email: email,
+				...req.body,
+				userId: user.id,
+				userEmail: email,
 			});
 
 			return res
@@ -176,20 +173,20 @@ class DoctorsController {
 		}
 
 		//check that it is a doctor
-        const doctor = await UserService.getUserDetailsByEmail(req.email);
-        
-        if (!doctor || doctor.role !== UserRoles.DOCTOR) { 
-            return res
-                .status(HttpCodes.UNAUTHORIZED)
-                .json(
-                    new FormatResponse(
-                        false,
-                        HttpCodes.UNAUTHORIZED,
-                        'User must be a doctor to get user questions',
-                        null,
-                    ),
-                );
-        }
+		const doctor = await UserService.getUserDetailsByEmail(req.email);
+
+		if (!doctor || doctor.role !== UserRoles.DOCTOR) {
+			return res
+				.status(HttpCodes.UNAUTHORIZED)
+				.json(
+					new FormatResponse(
+						false,
+						HttpCodes.UNAUTHORIZED,
+						'User must be a doctor to get user questions',
+						null,
+					),
+				);
+		}
 
 		const openQuestions = await QuestionService.getOpenQuestionsOrderByBounty();
 

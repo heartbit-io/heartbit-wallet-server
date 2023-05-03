@@ -30,11 +30,11 @@ class QuestionsController {
 
 			if (!user) {
 				return res
-					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.status(HttpCodes.NOT_FOUND)
 					.json(
 						new FormatResponse(
 							false,
-							HttpCodes.UNPROCESSED_CONTENT,
+							HttpCodes.NOT_FOUND,
 							'No user exists for the email.',
 							null,
 						),
@@ -58,11 +58,11 @@ class QuestionsController {
 
 			if (!userBalance) {
 				return res
-					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.status(HttpCodes.NOT_FOUND)
 					.json(
 						new FormatResponse(
 							false,
-							HttpCodes.UNPROCESSED_CONTENT,
+							HttpCodes.NOT_FOUND,
 							'Error getting user balance',
 							null,
 						),
@@ -71,11 +71,11 @@ class QuestionsController {
 
 			if (totalBounty >= Number(userBalance.btcBalance)) {
 				return res
-					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.status(HttpCodes.NOT_FOUND)
 					.json(
 						new FormatResponse(
 							false,
-							HttpCodes.UNPROCESSED_CONTENT,
+							HttpCodes.NOT_FOUND,
 							'You do not have enough sats to post a new question',
 							null,
 						),
@@ -132,11 +132,11 @@ class QuestionsController {
 
 			if (!req.email) {
 				return res
-					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.status(HttpCodes.NOT_FOUND)
 					.json(
 						new FormatResponse(
 							false,
-							HttpCodes.UNPROCESSED_CONTENT,
+							HttpCodes.NOT_FOUND,
 							'Error getting user email',
 							null,
 						),
@@ -147,11 +147,11 @@ class QuestionsController {
 
 			if (!user) {
 				return res
-					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.status(HttpCodes.NOT_FOUND)
 					.json(
 						new FormatResponse(
 							false,
-							HttpCodes.UNPROCESSED_CONTENT,
+							HttpCodes.NOT_FOUND,
 							'Error getting user email',
 							null,
 						),
@@ -226,11 +226,11 @@ class QuestionsController {
 
 			if (!user) {
 				return res
-					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.status(HttpCodes.NOT_FOUND)
 					.json(
 						new FormatResponse(
 							false,
-							HttpCodes.UNPROCESSED_CONTENT,
+							HttpCodes.NOT_FOUND,
 							'Error getting user email',
 							null,
 						),
@@ -319,11 +319,11 @@ class QuestionsController {
 
 			if (!user) {
 				return res
-					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.status(HttpCodes.NOT_FOUND)
 					.json(
 						new FormatResponse(
 							false,
-							HttpCodes.UNPROCESSED_CONTENT,
+							HttpCodes.NOT_FOUND,
 							'Error getting user details',
 							null,
 						),
@@ -398,11 +398,11 @@ class QuestionsController {
 
 			if (!user) {
 				return res
-					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.status(HttpCodes.NOT_FOUND)
 					.json(
 						new FormatResponse(
 							false,
-							HttpCodes.UNPROCESSED_CONTENT,
+							HttpCodes.NOT_FOUND,
 							'Error getting user details',
 							null,
 						),
