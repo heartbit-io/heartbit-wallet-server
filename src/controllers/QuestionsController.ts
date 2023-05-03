@@ -1,12 +1,11 @@
-import { Response} from 'express';
-
 import {DecodedRequest} from '../middleware/Auth';
 import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
 import QuestionService from '../services/QuestionService';
+import {QuestionStatus} from '../models/QuestionModel';
 import ReplyService from '../services/ReplyService';
+import {Response} from 'express';
 import UserService from '../services/UserService';
-import { QuestionStatus } from '../models/QuestionModel';
 
 class QuestionsController {
 	async create(
@@ -36,7 +35,7 @@ class QuestionsController {
 						new FormatResponse(
 							false,
 							HttpCodes.UNPROCESSED_CONTENT,
-							'Error getting user email',
+							'No user exists for the email.',
 							null,
 						),
 					);
@@ -300,9 +299,9 @@ class QuestionsController {
 		}
 	}
 
-	async getUserQuestionsByStatus(req: DecodedRequest, res: Response) { 
+	async getUserQuestionsByStatus(req: DecodedRequest, res: Response) {
 		try {
-			if (!req.email) { 
+			if (!req.email) {
 				return res
 					.status(HttpCodes.UNAUTHORIZED)
 					.json(
@@ -314,11 +313,11 @@ class QuestionsController {
 						),
 					);
 			}
-			const { email } = req;
+			const {email} = req;
 
 			const user = await UserService.getUserDetailsByEmail(email);
 
-			if (!user) { 
+			if (!user) {
 				return res
 					.status(HttpCodes.UNPROCESSED_CONTENT)
 					.json(
@@ -333,7 +332,10 @@ class QuestionsController {
 
 			const status = req.query.status as QuestionStatus;
 
-			const questions = await QuestionService.getUserQuestionsByStatus(user.id, status);
+			const questions = await QuestionService.getUserQuestionsByStatus(
+				user.id,
+				status,
+			);
 
 			return res
 				.status(HttpCodes.OK)
@@ -394,7 +396,7 @@ class QuestionsController {
 
 			const user = await UserService.getUserDetailsByEmail(req.email);
 
-			if (!user) { 
+			if (!user) {
 				return res
 					.status(HttpCodes.UNPROCESSED_CONTENT)
 					.json(
@@ -407,9 +409,8 @@ class QuestionsController {
 					);
 			}
 
-
 			// TODO: check if user is admin or doctor
-			if (question.userId !== user.id && !user.isDoctor) { 
+			if (question.userId !== user.id && !user.isDoctor) {
 				return res
 					.status(HttpCodes.UNAUTHORIZED)
 					.json(
