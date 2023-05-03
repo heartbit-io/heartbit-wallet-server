@@ -6,12 +6,23 @@ import {HttpCodes} from '../util/HttpCodes';
 import QuestionService from '../services/QuestionService';
 import ReplyService from '../services/ReplyService';
 import {ReplyTypes} from '../util/enums/replyTypes';
+import UserService from '../services/UserService';
+
+export interface ReplyResponseInterface extends FormatResponse {
+	data: {
+		replyType: ReplyTypes;
+		name: string;
+		classification: string;
+		reply: string;
+		createdAt: Date;
+	};
+}
 
 class RepliesController {
 	async createChatGPTReply(
 		req: Request,
 		res: Response,
-	): Promise<Response<FormatResponse>> {
+	): Promise<Response<ReplyResponseInterface>> {
 		try {
 			const {questionId} = req.body;
 
@@ -73,15 +84,21 @@ class RepliesController {
 					);
 			}
 
-			const reply = chatgptReply.jsonAnswer.triageGuide || 'No response';
-			const createdAt = chatgptReply.createdAt || new Date();
+			// set response
+			const replyResponseInterface: ReplyResponseInterface = {
+				success: true,
+				statusCode: HttpCodes.OK,
+				message: 'Chatgpt reply successfully',
+				data: {
+					replyType: ReplyTypes.AI,
+					name: model,
+					classification: 'Open AI',
+					reply: chatgptReply.jsonAnswer.triageGuide || '',
+					createdAt: chatgptReply.createdAt, // TODO(david): date formatting, 1 Apr 2023
+				},
+			};
 
-			return res.status(HttpCodes.OK).json(
-				new FormatResponse(true, HttpCodes.OK, 'Chatgpt reply successfully', {
-					reply,
-					createdAt,
-				}),
-			);
+			return res.status(HttpCodes.OK).json(replyResponseInterface);
 		} catch (error) {
 			return res
 				.status(HttpCodes.INTERNAL_SERVER_ERROR)
@@ -96,57 +113,75 @@ class RepliesController {
 		}
 	}
 
-	async get(req: Request, res: Response): Promise<Response<FormatResponse>> {
+	async get(
+		req: Request,
+		res: Response,
+	): Promise<Response<ReplyResponseInterface>> {
 		try {
 			const {questionId} = req.params;
 			let replyType: ReplyTypes;
 			let reply: string;
 			let name: string;
 			let classification: string;
-			let updatedAt: Date;
+			let createdAt: Date;
 			const replyForDoctor = await ReplyService.getReplyByQuestionId(
 				Number(questionId),
 			);
 
 			if (replyForDoctor) {
+				const user = await UserService.getUserDetailsById(
+					replyForDoctor.userId,
+				);
+				if (!user) {
+					return res
+						.status(HttpCodes.UNPROCESSED_CONTENT)
+						.json(
+							new FormatResponse(
+								false,
+								HttpCodes.UNPROCESSED_CONTENT,
+								'Doctor was not found',
+								null,
+							),
+						);
+				}
+
 				replyType = ReplyTypes.DOCTOR;
-				name = String(replyForDoctor.userId); // TODO(david) Get from user
-				reply = replyForDoctor.content; // TODO(david) Add Health records using JSON format
-				classification = 'General physician'; // TODO(david) Get from user
-				updatedAt = replyForDoctor.updatedAt;
+				name = user.email; // TODO(david): name?, user model has not name
+				reply = replyForDoctor.content; // TODO(david): Add Health records using JSON format
+				classification = 'General physician'; // TODO(david): Get from user like user.classification
+				createdAt = replyForDoctor.createdAt;
 			} else {
 				const replyForChatGpt =
 					await ChatgptService.getChatGptReplyByQuestionId(Number(questionId));
 
 				if (!replyForChatGpt) {
 					return res
-						.status(HttpCodes.NOT_FOUND)
+						.status(HttpCodes.UNPROCESSED_CONTENT)
 						.json(
 							new FormatResponse(
 								false,
-								HttpCodes.NOT_FOUND,
+								HttpCodes.UNPROCESSED_CONTENT,
 								'Chatgpt reply was not found',
 								null,
 							),
 						);
 				}
 				replyType = ReplyTypes.AI;
-				name = 'Trage by ' + replyForChatGpt.model;
+				name = replyForChatGpt.model;
 				reply = replyForChatGpt.jsonAnswer.triageGuide;
 				classification = 'Open AI';
-				updatedAt = replyForChatGpt.updatedAt;
+				createdAt = replyForChatGpt.createdAt;
 			}
 
-			return res
-				.status(HttpCodes.OK)
-				.json(
-					new FormatResponse(
-						true,
-						HttpCodes.OK,
-						'Reply retrieved successfully',
-						{replyType, name, classification, reply, updatedAt},
-					),
-				);
+			// set response
+			const replyResponseInterface: ReplyResponseInterface = {
+				success: true,
+				statusCode: HttpCodes.OK,
+				message: 'Reply retrieved successfully',
+				data: {replyType, name, classification, reply, createdAt},
+			};
+
+			return res.status(HttpCodes.OK).json(replyResponseInterface);
 		} catch (error) {
 			return res
 				.status(HttpCodes.INTERNAL_SERVER_ERROR)
