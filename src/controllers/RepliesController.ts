@@ -91,7 +91,7 @@ class RepliesController {
 				message: 'Chatgpt reply successfully',
 				data: {
 					replyType: ReplyTypes.AI,
-					name: model,
+					name: 'Advice by GPT-3.5', // TODO(david): formatting
 					classification: 'Open AI',
 					reply: chatgptReply.jsonAnswer.triageGuide || '',
 					createdAt: chatgptReply.createdAt, // TODO(david): date formatting, 1 Apr 2023
@@ -167,7 +167,7 @@ class RepliesController {
 						);
 				}
 				replyType = ReplyTypes.AI;
-				name = replyForChatGpt.model;
+				name = 'Advice by GPT-3.5'; // TODO(david): formatting
 				reply = replyForChatGpt.jsonAnswer.triageGuide;
 				classification = 'Open AI';
 				createdAt = replyForChatGpt.createdAt;
