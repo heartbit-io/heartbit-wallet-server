@@ -14,7 +14,6 @@ router.post(
 	UsersController.create,
 );
 
-router.get('/me', Auth.verifyToken, UsersController.getUser);
 router.get('/:email', Auth.verifyToken, UsersController.getUser);
 
 export {router as userRoutes};
