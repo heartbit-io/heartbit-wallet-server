@@ -1,6 +1,7 @@
 import {Request, Response} from 'express';
 import {getAuth, signInWithEmailAndPassword} from 'firebase/auth';
 
+import {DecodedRequest} from '../middleware/Auth';
 import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
 import QuestionService from '../services/QuestionService';
@@ -8,7 +9,6 @@ import ReplyService from '../services/ReplyService';
 import TransactionService from '../services/TransactionService';
 import UserService from '../services/UserService';
 import {firebase} from '../config/firebase-config';
-import { DecodedRequest } from '../middleware/Auth';
 
 class UsersController {
 	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {
@@ -126,7 +126,22 @@ class UsersController {
 					);
 			}
 
+			const emailByToken = req.email;
 			const email = req.params.email;
+
+			if (emailByToken !== email) {
+				return res
+					.status(HttpCodes.UNAUTHORIZED)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.UNAUTHORIZED,
+							'Unauthorized to get user details',
+							null,
+						),
+					);
+			}
+
 			const user = await UserService.getUserDetailsByEmail(email);
 
 			if (!user) {
@@ -142,19 +157,7 @@ class UsersController {
 					);
 			}
 
-			
-			const userQuestions = await QuestionService.getUserQuestions(Number(user.id));
-			const userReplies = await ReplyService.getUserReplies(Number(user.id));
-			const userTransactions = await TransactionService.getUserTransactions(
-				user.pubkey,
-			);
-
-			const response = {
-				...user.dataValues,
-				questions: userQuestions,
-				replies: userReplies,
-				transactions: userTransactions,
-			};
+			const response = user.dataValues;
 
 			return res
 				.status(HttpCodes.OK)
