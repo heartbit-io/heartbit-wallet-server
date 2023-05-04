@@ -423,9 +423,7 @@ class QuestionsController {
 					);
 			}
 
-			const replies = await ReplyService.getQuestionReplies(Number(questionId));
-
-			const response = {...question.dataValues, replies};
+			const response = question.dataValues;
 
 			return res
 				.status(HttpCodes.OK)
