@@ -6,7 +6,7 @@ class TransactionsValidator {
 		return [
 			param('pubkey')
 				.notEmpty()
-				.isAlphanumeric()
+				// .isAlphanumeric() // XXX(david): comment to develop
 				.trim()
 				.escape()
 				.withMessage('User public key is required to get their transactions')
