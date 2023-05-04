@@ -52,6 +52,14 @@ const getUserTransactions = {
 											type: 'number',
 											example: 205.24,
 										},
+										type: {
+											type: 'string',
+											expample: 'deposit',
+										},
+										fee: {
+											type: 'number',
+											example: 100,
+										},
 										createdAt: {
 											type: 'string',
 											example: '2023-04-12T21:36:10.115Z',

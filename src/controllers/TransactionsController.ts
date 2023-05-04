@@ -1,10 +1,10 @@
 import {Request, Response} from 'express';
-import {HttpCodes} from '../util/HttpCodes';
+
 import FormatResponse from '../lib/FormatResponse';
+import {HttpCodes} from '../util/HttpCodes';
 import TransactionService from '../services/TransactionService';
 
 class RepliesController {
-
 	async getUserTransactions(req: Request, res: Response) {
 		try {
 			const {pubkey} = req.params;
@@ -22,7 +22,6 @@ class RepliesController {
 						),
 					);
 			}
-
 
 			return res
 				.status(HttpCodes.OK)

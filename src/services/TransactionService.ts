@@ -13,6 +13,8 @@ class TransactionService {
 			amount: transaction.amount,
 			fromUserPubkey: transaction.fromUserPubkey,
 			toUserPubkey: transaction.toUserPubkey,
+			fee: transaction.fee,
+			type: transaction.type,
 		});
 	}
 

@@ -1,5 +1,6 @@
 import {DataTypes, Model} from 'sequelize';
 
+import {TxTypes} from '../util/enums';
 import dbconnection from '../util/dbconnection';
 
 export interface TransactionAttributes {
@@ -7,12 +8,16 @@ export interface TransactionAttributes {
 	fromUserPubkey: string;
 	toUserPubkey: string;
 	amount: number;
+	type: TxTypes;
+	fee: number;
 }
 export class TransactionInstance extends Model<TransactionAttributes> {
 	declare id: number;
 	declare fromUserPubkey: string;
 	declare toUserPubkey: string;
 	declare amount: number;
+	declare type: TxTypes;
+	declare fee: number;
 
 	static associate(models: any) {
 		// define association here
@@ -45,6 +50,15 @@ TransactionInstance.init(
 		},
 		amount: {
 			type: DataTypes.DOUBLE,
+			allowNull: false,
+		},
+		type: {
+			type: DataTypes.ENUM(...Object.values(TxTypes)),
+			allowNull: false,
+			defaultValue: TxTypes.DEPOSIT,
+		},
+		fee: {
+			type: DataTypes.INTEGER,
 			allowNull: false,
 		},
 	},

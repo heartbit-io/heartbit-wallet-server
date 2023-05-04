@@ -5,6 +5,7 @@ import QuestionService from '../services/QuestionService';
 import ReplyService from '../services/ReplyService';
 import {Response} from 'express';
 import TransactionService from '../services/TransactionService';
+import {TxTypes} from '../util/enums/txTypes';
 import {UserRoles} from '../util/enums/userRoles';
 import UserService from '../services/UserService';
 
@@ -110,7 +111,12 @@ class DoctorsController {
 					);
 			}
 
-			const doctorBalance = doctor.btcBalance + question.bountyAmount;
+			// 100 is default sats
+			const calulatedFee =
+				100 + Math.floor((question.bountyAmount - 100) * 0.02);
+
+			const doctorBalance =
+				doctor.btcBalance + question.bountyAmount - calulatedFee;
 			const creditDoctor = await UserService.updateUserBtcBalance(
 				doctorBalance,
 				doctor.id,
@@ -131,9 +137,11 @@ class DoctorsController {
 
 			//create a transaction
 			await TransactionService.createTransaction({
-				amount: question.bountyAmount,
+				amount: question.bountyAmount - calulatedFee,
 				toUserPubkey: doctor.pubkey,
 				fromUserPubkey: user.pubkey,
+				fee: calulatedFee,
+				type: TxTypes.BOUNTY_EARNED,
 			});
 
 			const reply = await ReplyService.createReply({
