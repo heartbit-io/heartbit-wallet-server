@@ -4,16 +4,17 @@ import {getAuth, signInWithEmailAndPassword} from 'firebase/auth';
 import {DecodedRequest} from '../middleware/Auth';
 import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
-import QuestionService from '../services/QuestionService';
-import ReplyService from '../services/ReplyService';
-import TransactionService from '../services/TransactionService';
 import UserService from '../services/UserService';
 import {firebase} from '../config/firebase-config';
 
 class UsersController {
 	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {
 		try {
-			const user = await UserService.createUser({...req.body});
+			const user = await UserService.createUser({
+				...req.body,
+				pubkey: req.body.pubkey.toLowerCase(),
+				email: req.body.email.toLowerCase(),
+			});
 
 			return res
 				.status(HttpCodes.CREATED)
@@ -127,7 +128,7 @@ class UsersController {
 			}
 
 			const emailByToken = req.email;
-			const email = req.params.email;
+			const email = req.params.email.toLocaleLowerCase();
 
 			if (emailByToken !== email) {
 				return res

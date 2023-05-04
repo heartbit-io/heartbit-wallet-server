@@ -11,7 +11,9 @@ class UsersValidator {
 				.withMessage('Supply a valid public key')
 				.custom(async value => {
 					// TODO(david): pubkey validation(length? format? etc)
-					const user = await UserService.getUserDetailsByPubkey(value);
+					const user = await UserService.getUserDetailsByPubkey(
+						value.toLowerCase(),
+					);
 					if (user) {
 						throw new Error('User with given public key already exist');
 					}
@@ -23,7 +25,9 @@ class UsersValidator {
 				.escape()
 				.withMessage('Supply a valid email address')
 				.custom(async value => {
-					const user = await UserService.getUserDetailsByEmail(value);
+					const user = await UserService.getUserDetailsByEmail(
+						value.toLowerCase(),
+					);
 					if (user) {
 						throw new Error('User with given email already exist');
 					}
