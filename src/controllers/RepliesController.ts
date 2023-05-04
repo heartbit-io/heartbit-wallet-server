@@ -146,7 +146,7 @@ class RepliesController {
 				}
 
 				replyType = ReplyTypes.DOCTOR;
-				name = user.email; // TODO(david): name?, user model has not name
+				name = user.email; // TODO(david): Doctor real name(Dr. + first name + last name)
 				reply = replyForDoctor.content; // TODO(david): Add Health records using JSON format
 				classification = 'General physician'; // TODO(david): Get from user like user.classification
 				createdAt = replyForDoctor.createdAt;
