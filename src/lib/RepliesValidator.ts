@@ -14,7 +14,7 @@ class RepliesValidator {
 				.escape()
 				.withMessage('User is required to respond to a question')
 				.custom(async value => {
-					const user = await UserService.getUserDetails(Number(value));
+					const user = await UserService.getUserDetailsById(Number(value));
 
 					if (!user) {
 						throw new Error('User with given public key does not exit');
@@ -31,7 +31,15 @@ class RepliesValidator {
 						throw new Error('Question does not exist');
 					}
 				}),
-			body(['content', 'majorComplaint', 'medicalHistory', 'currentMedications', 'assessment', 'plan', 'triage'])
+			body([
+				'content',
+				'majorComplaint',
+				'medicalHistory',
+				'currentMedications',
+				'assessment',
+				'plan',
+				'triage',
+			])
 				.isString()
 				.notEmpty()
 				.rtrim()
@@ -50,7 +58,7 @@ class RepliesValidator {
 				.escape()
 				.withMessage('User public key is required to delete a reply')
 				.custom(async value => {
-					const user = await UserService.getUserDetails(Number(value));
+					const user = await UserService.getUserDetailsById(Number(value));
 
 					if (!user) {
 						throw new Error('User with given public key does not exit');

@@ -1,7 +1,7 @@
 import {UserAttributes, UserInstance} from '../models/UserModel';
 
 class UserService {
-	async getUserDetails(id: number): Promise<UserInstance | null> {
+	async getUserDetailsById(id: number): Promise<UserInstance | null> {
 		return await UserInstance.findOne({where: {id}});
 	}
 
@@ -13,8 +13,8 @@ class UserService {
 		return await UserInstance.findOne({where: {pubkey}});
 	}
 
-	async createUser(user: UserAttributes) {
-		return await UserInstance.create({...user});
+	async createUser(user: UserAttributes, dbTransaction?: any) {
+		return await UserInstance.create({...user}, {transaction: dbTransaction});
 	}
 
 	async getUserBalance(id: number): Promise<UserInstance | null> {

@@ -1,8 +1,8 @@
+import Auth from '../middleware/Auth';
 import {Router} from 'express';
+import UsersController from '../controllers/UsersController';
 import UsersValidator from '../lib/UsersValidator';
 import Validation from '../middleware/Validation';
-import UsersController from '../controllers/UsersController';
-import Auth from '../middleware/Auth';
 
 const router = Router();
 
@@ -14,7 +14,6 @@ router.post(
 	UsersController.create,
 );
 
-router.get('/me', UsersController.getUser);
-router.get('/:email', UsersController.getUser);
+router.get('/:email', Auth.verifyToken, UsersController.getUser);
 
 export {router as userRoutes};

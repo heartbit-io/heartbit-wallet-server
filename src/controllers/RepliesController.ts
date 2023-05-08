@@ -6,12 +6,23 @@ import {HttpCodes} from '../util/HttpCodes';
 import QuestionService from '../services/QuestionService';
 import ReplyService from '../services/ReplyService';
 import {ReplyTypes} from '../util/enums/replyTypes';
+import UserService from '../services/UserService';
+
+export interface ReplyResponseInterface extends FormatResponse {
+	data: {
+		replyType: ReplyTypes;
+		name: string;
+		classification: string;
+		reply: string;
+		createdAt: Date;
+	};
+}
 
 class RepliesController {
 	async createChatGPTReply(
 		req: Request,
 		res: Response,
-	): Promise<Response<FormatResponse>> {
+	): Promise<Response<ReplyResponseInterface>> {
 		try {
 			const {questionId} = req.body;
 
@@ -24,15 +35,34 @@ class RepliesController {
 						new FormatResponse(
 							false,
 							HttpCodes.NOT_FOUND,
-							'Question was not found',
+							'Question was not exist',
 							null,
 						),
 					);
 			}
 
-			const { content } = question;
+			const {content} = question;
 
-			const model = 'gpt-3.5-turbo';
+			const replyForChatGpt = await ChatgptService.getChatGptReplyByQuestionId(
+				Number(questionId),
+			);
+
+			if (replyForChatGpt) {
+				return res
+					.status(HttpCodes.AREADY_EXIST)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.AREADY_EXIST,
+							'Chatgpt reply already exist',
+							null,
+						),
+					);
+			}
+
+			// TODO(david): If bountyAmount is not 0, use gpt-4 model(currently gpt-4 is waitlist)
+			const model =
+				question.bountyAmount === 0 ? 'gpt-3.5-turbo' : 'gpt-3.5-turbo';
 			const maxTokens = 2048;
 			const chatgptReply = await ChatgptService.create(
 				Number(questionId),
@@ -48,21 +78,27 @@ class RepliesController {
 						new FormatResponse(
 							false,
 							HttpCodes.NOT_FOUND,
-							'Chatgpt reply was not found',
+							'ChatGPT not replied',
 							null,
 						),
 					);
 			}
 
-			const reply = chatgptReply.jsonAnswer.triageGuide;
-			const createdAt = chatgptReply.createdAt;
+			// set response
+			const replyResponseInterface: ReplyResponseInterface = {
+				success: true,
+				statusCode: HttpCodes.OK,
+				message: 'Chatgpt reply successfully',
+				data: {
+					replyType: ReplyTypes.AI,
+					name: 'Advice by GPT-3.5', // TODO(david): formatting
+					classification: 'Open AI',
+					reply: chatgptReply.jsonAnswer.triageGuide || '',
+					createdAt: chatgptReply.createdAt, // TODO(david): date formatting, 1 Apr 2023
+				},
+			};
 
-			return res.status(HttpCodes.OK).json(
-				new FormatResponse(true, HttpCodes.OK, 'Chatgpt reply successfully', {
-					reply,
-					createdAt,
-				}),
-			);
+			return res.status(HttpCodes.CREATED).json(replyResponseInterface);
 		} catch (error) {
 			return res
 				.status(HttpCodes.INTERNAL_SERVER_ERROR)
@@ -77,24 +113,43 @@ class RepliesController {
 		}
 	}
 
-	async get(req: Request, res: Response): Promise<Response<FormatResponse>> {
+	async get(
+		req: Request,
+		res: Response,
+	): Promise<Response<ReplyResponseInterface>> {
 		try {
 			const {questionId} = req.params;
 			let replyType: ReplyTypes;
 			let reply: string;
 			let name: string;
 			let classification: string;
-			let updatedAt: Date;
+			let createdAt: Date;
 			const replyForDoctor = await ReplyService.getReplyByQuestionId(
 				Number(questionId),
 			);
 
 			if (replyForDoctor) {
+				const user = await UserService.getUserDetailsById(
+					replyForDoctor.userId,
+				);
+				if (!user) {
+					return res
+						.status(HttpCodes.NOT_FOUND)
+						.json(
+							new FormatResponse(
+								false,
+								HttpCodes.NOT_FOUND,
+								'Doctor was not found',
+								null,
+							),
+						);
+				}
+
 				replyType = ReplyTypes.DOCTOR;
-				name = String(replyForDoctor.userId); // TODO(david) Get from user
-				reply = replyForDoctor.content; // TODO(david) Add Health records using JSON format
-				classification = 'General physician'; // TODO(david) Get from user
-				updatedAt = replyForDoctor.updatedAt;
+				name = user.email; // TODO(david): Doctor real name(Dr. + first name + last name)
+				reply = replyForDoctor.content; // TODO(david): Add Health records using JSON format
+				classification = 'General physician'; // TODO(david): Get from user like user.classification
+				createdAt = replyForDoctor.createdAt;
 			} else {
 				const replyForChatGpt =
 					await ChatgptService.getChatGptReplyByQuestionId(Number(questionId));
@@ -112,22 +167,21 @@ class RepliesController {
 						);
 				}
 				replyType = ReplyTypes.AI;
-				name = 'Trage by ' + replyForChatGpt.model;
+				name = 'Advice by GPT-3.5'; // TODO(david): formatting
 				reply = replyForChatGpt.jsonAnswer.triageGuide;
 				classification = 'Open AI';
-				updatedAt = replyForChatGpt.updatedAt;
+				createdAt = replyForChatGpt.createdAt;
 			}
 
-			return res
-				.status(HttpCodes.OK)
-				.json(
-					new FormatResponse(
-						true,
-						HttpCodes.OK,
-						'Reply retrieved successfully',
-						{replyType, name, classification, reply, updatedAt},
-					),
-				);
+			// set response
+			const replyResponseInterface: ReplyResponseInterface = {
+				success: true,
+				statusCode: HttpCodes.OK,
+				message: 'Reply retrieved successfully',
+				data: {replyType, name, classification, reply, createdAt},
+			};
+
+			return res.status(HttpCodes.OK).json(replyResponseInterface);
 		} catch (error) {
 			return res
 				.status(HttpCodes.INTERNAL_SERVER_ERROR)
@@ -141,7 +195,6 @@ class RepliesController {
 				);
 		}
 	}
-
 
 	async delete(req: Request, res: Response): Promise<Response<FormatResponse>> {
 		try {
@@ -166,6 +219,8 @@ class RepliesController {
 
 			await ReplyService.deleteReply(reply);
 
+			// TODO(david): maybe question status also need to be updated(closed to open)
+
 			return res
 				.status(HttpCodes.OK)
 				.json(
@@ -189,7 +244,6 @@ class RepliesController {
 				);
 		}
 	}
-
 }
 
 export default new RepliesController();

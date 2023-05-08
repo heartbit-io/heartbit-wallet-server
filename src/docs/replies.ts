@@ -1,3 +1,63 @@
+const replyBodyData = {
+	userId: {
+		type: 'number',
+		example: 12,
+	},
+	content: {
+		type: 'string',
+		example:
+			'This is a reply to your question and it has the following content',
+	},
+	questionId: {
+		type: 'number',
+		example: 51,
+	},
+	plan: {
+		type: 'string',
+		example: 'daily',
+	},
+	majorComplaint: {
+		type: 'string',
+		example: 'I have a headache and I feel dizzy',
+	},
+	medicalHistory: {
+		type: 'string',
+		example: 'I have a history of heart disease',
+	},
+	currentMedications: {
+		type: 'string',
+		example: 'I am currently taking paracetamol',
+	},
+	assessment: {
+		type: 'string',
+		example: 'You have a headache',
+	},
+	triage: {
+		type: 'string',
+		example: 'You need to take paracetamol',
+	},
+	status: {
+		type: 'string',
+		example: 'done',
+	},
+};
+
+const replyResponseData = {
+	id: {
+		type: 'number',
+		example: 6,
+	},
+	createdAt: {
+		type: 'string',
+		example: '2023-04-11T11:49:39.209Z',
+	},
+	updatedAt: {
+		type: 'string',
+		example: '2023-04-14T03:34:44.239Z',
+	},
+	...replyBodyData,
+};
+
 const createReply = {
 	tags: ['Replies'],
 	description: 'Create a reply to a question',
@@ -34,32 +94,7 @@ const createReply = {
 							},
 							data: {
 								type: 'object',
-								properties: {
-									id: {
-										type: 'number',
-										example: 12,
-									},
-									questionId: {
-										type: 'number',
-										example: 51,
-									},
-									userId: {
-										type: 'number',
-										example: 12,
-									},
-									content: {
-										type: 'string',
-										example: 'this is the reply to a post',
-									},
-									updatedAt: {
-										type: 'string',
-										example: '2023-04-12T21:36:10.115Z',
-									},
-									createdAt: {
-										type: 'string',
-										example: '2023-04-12T21:36:10.115Z',
-									},
-								},
+								properties: replyResponseData,
 							},
 						},
 					},
@@ -104,7 +139,7 @@ const createReply = {
 			content: {
 				'application/json': {
 					schema: {
-						$ref: '#/components/schemas/internalError',
+						$ref: '#/components/responses/internalError',
 					},
 				},
 			},
@@ -118,7 +153,7 @@ const deleteReply = {
 	operationId: 'deleteReply',
 	parameters: [
 		{
-			name: 'id',
+			name: 'replyId',
 			in: 'path',
 			description: 'Reply id',
 			required: true,
@@ -242,7 +277,7 @@ const deleteReply = {
 			content: {
 				'application/json': {
 					schema: {
-						$ref: '#/components/schemas/internalError',
+						$ref: '#/components/responses/internalError',
 					},
 				},
 			},
@@ -256,7 +291,7 @@ const updateReply = {
 	operationId: 'updateReply',
 	parameters: [
 		{
-			name: 'id',
+			name: 'replyId',
 			in: 'path',
 			description: 'Reply id',
 			required: true,
@@ -295,33 +330,7 @@ const updateReply = {
 							},
 							data: {
 								type: 'object',
-								properties: {
-									id: {
-										type: 'number',
-										example: 6,
-									},
-									content: {
-										type: 'string',
-										example:
-											'Tempora eligendi tenetur porro deserunt optio tempore eveniet laboriosam. Voluptatum iure autem commodi voluptates.',
-									},
-									userId: {
-										type: 'number',
-										example: 12,
-									},
-									questionId: {
-										type: 'string',
-										example: 5,
-									},
-									createdAt: {
-										type: 'string',
-										example: '2023-04-11T11:49:39.209Z',
-									},
-									updatedAt: {
-										type: 'string',
-										example: '2023-04-14T03:34:44.239Z',
-									},
-								},
+								properties: replyResponseData,
 							},
 						},
 					},
@@ -435,7 +444,7 @@ const updateReply = {
 			content: {
 				'application/json': {
 					schema: {
-						$ref: '#/components/schemas/internalError',
+						$ref: '#/components/responses/internalError',
 					},
 				},
 			},
@@ -445,49 +454,7 @@ const updateReply = {
 
 const createReplyBody = {
 	type: 'object',
-	properties: {
-		userId: {
-			type: 'number',
-			example: 12,
-		},
-		content: {
-			type: 'string',
-			example:
-				'This is a reply to your question and it has the following content',
-		},
-		questionId: {
-			type: 'number',
-			example: 51,
-		},
-		plan: {
-			type: 'string',
-			example: 'daily',
-		},
-		majorComplaint: {
-			type: 'string',
-			example: 'I have a headache and I feel dizzy',
-		},
-		medicalHistory: {
-			type: 'string',
-			example: 'I have a history of heart disease',
-		},
-		currentMedications: {
-			type: 'string',
-			example: 'I am currently taking paracetamol',
-		},
-		assessment: {
-			type: 'string',
-			example: 'You have a headache',
-		},
-		triage: {
-			type: 'string',
-			example: 'You need to take paracetamol',
-		},
-		status: {
-			type: 'string',
-			example: 'done',
-		}
-	},
+	properties: replyBodyData,
 };
 
 const pubkeyRequestBody = {

@@ -1,19 +1,41 @@
 import {Request, Response} from 'express';
 import {getAuth, signInWithEmailAndPassword} from 'firebase/auth';
 
+import {DecodedRequest} from '../middleware/Auth';
 import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
-import QuestionService from '../services/QuestionService';
-import ReplyService from '../services/ReplyService';
 import TransactionService from '../services/TransactionService';
+import {TxTypes} from '../util/enums';
 import UserService from '../services/UserService';
+import dbconnection from '../util/dbconnection';
 import {firebase} from '../config/firebase-config';
-import { DecodedRequest } from '../middleware/Auth';
 
 class UsersController {
 	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {
+		const dbTransaction = await dbconnection.transaction();
+
 		try {
-			const user = await UserService.createUser({...req.body});
+			const user = await UserService.createUser(
+				{
+					...req.body,
+					pubkey: req.body.pubkey.toLowerCase(),
+					email: req.body.email.toLowerCase(),
+				},
+				dbTransaction,
+			);
+
+			await TransactionService.createTransaction(
+				{
+					amount: 1000, // SIGN_UP_BONUS
+					toUserPubkey: user.pubkey,
+					fromUserPubkey: user.pubkey, // Initial transcation
+					type: TxTypes.SIGN_UP_BONUS,
+					fee: 0,
+				},
+				dbTransaction,
+			);
+
+			await dbTransaction.commit();
 
 			return res
 				.status(HttpCodes.CREATED)
@@ -26,6 +48,8 @@ class UsersController {
 					),
 				);
 		} catch (error) {
+			await dbTransaction.rollback();
+
 			return res
 				.status(HttpCodes.INTERNAL_SERVER_ERROR)
 				.json(
@@ -126,7 +150,22 @@ class UsersController {
 					);
 			}
 
-			const email = req.params.email;
+			const emailByToken = req.email;
+			const email = req.params.email.toLocaleLowerCase();
+
+			if (emailByToken !== email) {
+				return res
+					.status(HttpCodes.UNAUTHORIZED)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.UNAUTHORIZED,
+							'Unauthorized to get user details',
+							null,
+						),
+					);
+			}
+
 			const user = await UserService.getUserDetailsByEmail(email);
 
 			if (!user) {
@@ -142,19 +181,7 @@ class UsersController {
 					);
 			}
 
-			
-			const userQuestions = await QuestionService.getUserQuestions(Number(user.id));
-			const userReplies = await ReplyService.getUserReplies(Number(user.id));
-			const userTransactions = await TransactionService.getUserTransactions(
-				user.pubkey,
-			);
-
-			const response = {
-				...user.dataValues,
-				questions: userQuestions,
-				replies: userReplies,
-				transactions: userTransactions,
-			};
+			const response = user.dataValues;
 
 			return res
 				.status(HttpCodes.OK)

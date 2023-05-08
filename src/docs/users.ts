@@ -118,7 +118,7 @@ const createUser = {
 			content: {
 				'application/json': {
 					schema: {
-						$ref: '#/components/schemas/internalError',
+						$ref: '#/components/responses/internalError',
 					},
 				},
 			},
@@ -187,109 +187,6 @@ const getUser = {
 										type: 'string',
 										example: '2023-04-12T21:36:10.115Z',
 									},
-									questions: {
-										type: 'array',
-										items: {
-											type: 'object',
-											properties: {
-												id: {
-													type: 'number',
-													example: 1,
-												},
-												content: {
-													type: 'string',
-													example:
-														'Molestiae officiis ex porro aliquam magnam ex aperiam. Ipsam quis consequuntur perspiciatis quidem repudiandae.',
-												},
-												userId: {
-													type: 'number',
-													example: 12,
-												},
-												bountyAmount: {
-													type: 'number',
-													example: 281.33,
-												},
-												status: {
-													type: 'string',
-													enum: ['closed', 'open'],
-													example: 'closed',
-												},
-												createdAt: {
-													type: 'string',
-													example: '2023-04-11T11:49:39.200Z',
-												},
-												updatedAt: {
-													type: 'string',
-													example: '2023-04-11T11:49:39.200Z',
-												},
-											},
-										},
-									},
-									replies: {
-										type: 'array',
-										items: {
-											type: 'object',
-											properties: {
-												id: {
-													type: 'number',
-													example: 29,
-												},
-												content: {
-													type: 'string',
-													example:
-														'Molestiae officiis ex porro aliquam magnam ex aperiam. Ipsam quis consequuntur perspiciatis quidem repudiandae.',
-												},
-												questionId: {
-													type: 'number',
-													example: 51,
-												},
-												userId: {
-													type: 'number',
-													example: 12,
-												},
-												createdAt: {
-													type: 'string',
-													example: '2023-04-11T11:49:39.200Z',
-												},
-												updatedAt: {
-													type: 'string',
-													example: '2023-04-11T11:49:39.200Z',
-												},
-											},
-										},
-									},
-									transactions: {
-										type: 'array',
-										items: {
-											type: 'object',
-											properties: {
-												id: {
-													type: 'number',
-													example: 8,
-												},
-												fromUserPubkey: {
-													type: 'string',
-													example: '3cX325ViRWa2R9Mfqf1BCQxCc1s',
-												},
-												toUserPubkey: {
-													type: 'string',
-													example: '1Bwp51hh1iAtBKtMgB2JJvoPTEiYDSA',
-												},
-												amount: {
-													type: 'number',
-													example: 205.24,
-												},
-												createdAt: {
-													type: 'string',
-													example: '2023-04-11T11:49:39.215Z',
-												},
-												updatedAt: {
-													type: 'string',
-													example: '2023-04-11T11:49:39.215Z',
-												},
-											},
-										},
-									},
 								},
 							},
 						},
@@ -302,7 +199,7 @@ const getUser = {
 			content: {
 				'application/json': {
 					schema: {
-						$ref: '#/components/schemas/internalError',
+						$ref: '#/components/responses/internalError',
 					},
 				},
 			},
@@ -332,26 +229,4 @@ const createUserBody = {
 	},
 };
 
-const internalError = {
-	type: 'object',
-	properties: {
-		success: {
-			type: 'boolean',
-			example: false,
-		},
-		statusCode: {
-			type: 'number',
-			example: 500,
-		},
-		message: {
-			type: 'string',
-			example: 'Internal Server Error',
-		},
-		data: {
-			type: 'string',
-			example: null,
-		},
-	},
-};
-
-export {createUser, createUserBody, getUser, internalError};
+export {createUser, createUserBody, getUser};

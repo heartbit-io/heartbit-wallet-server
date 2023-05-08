@@ -1,3 +1,62 @@
+const replyResponseData = {
+	type: 'object',
+	properties: {
+		replyType: {
+			type: 'string',
+			example: 'DOCTOR',
+		},
+		name: {
+			type: 'string',
+			example: 'Dr. John Doe',
+		},
+		classification: {
+			type: 'string',
+			example: 'General physician',
+		},
+		reply: {
+			type: 'string',
+			example: 'This is a reply',
+		},
+		createdAt: {
+			type: 'string',
+			example: '1 Apr 2023',
+		},
+	},
+};
+
+const questionResponseData = {
+	id: {
+		type: 'number',
+		example: 51,
+	},
+	userId: {
+		type: 'number',
+		example: 12,
+	},
+	content: {
+		type: 'string',
+		example:
+			'Itaque ratione aperiam doloribus est. Inventore minus exercitationem. Quasi at nam delectus fugit corporis',
+	},
+	bountyAmount: {
+		type: 'number',
+		example: 10000,
+	},
+	status: {
+		type: 'string',
+		enum: ['open', 'closed'],
+		example: 'open',
+	},
+	createdAt: {
+		type: 'string',
+		example: '2023-04-12T21:36:10.115Z',
+	},
+	updatedAt: {
+		type: 'string',
+		example: '2023-04-12T21:36:10.115Z',
+	},
+};
+
 const getReply = {
 	tags: ['Questions'],
 	description: 'Get a reply by question id',
@@ -33,49 +92,29 @@ const getReply = {
 								type: 'string',
 								example: 'Reply retrieved successfully',
 							},
-							data: {
-								type: 'object',
-								properties: {
-									replyType: {
-										type: 'string',
-										example: 'DOCTOR',
-									},
-									name: {
-										type: 'string',
-										example: 'Dr. John Doe',
-									},
-									classification: {
-										type: 'string',
-										example: 'General physician',
-									},
-									reply: {
-										type: 'string',
-										example: 'This is a reply',
-									},
-									updatedAt: {
-										type: 'string',
-										example: '2021-08-01T00:00:00.000Z',
-									},
-								},
-							},
+							data: replyResponseData,
 						},
 					},
 				},
 			},
 		},
-		'404': {
-			description: 'Reply not found',
+		'422': {
+			description: 'Not Found Error',
 			content: {
 				'application/json': {
-					schema: {},
+					schema: {
+						$ref: '#/components/responses/notFoundError',
+					},
 				},
 			},
 		},
 		'500': {
-			description: 'Internal server error',
+			description: 'Internal Server Error',
 			content: {
 				'application/json': {
-					schema: {},
+					schema: {
+						$ref: '#/components/responses/internalError',
+					},
 				},
 			},
 		},
@@ -103,7 +142,7 @@ const createChatgptReply = {
 		required: true,
 	},
 	responses: {
-		'200': {
+		'201': {
 			description: 'Reply from ChatGPT generated successfully',
 			content: {
 				'application/json': {
@@ -122,33 +161,29 @@ const createChatgptReply = {
 								type: 'string',
 								example: 'ChatGPT Reply generated successfully',
 							},
-							data: {
-								type: 'object',
-								properties: {
-									reply: {
-										type: 'string',
-										example: 'This is a reply',
-									},
-								},
-							},
+							data: replyResponseData,
 						},
 					},
 				},
 			},
 		},
-		'404': {
-			description: 'ChatGPT Reply failed to be created',
+		'422': {
+			description: 'Not Found Error',
 			content: {
 				'application/json': {
-					schema: {},
+					schema: {
+						$ref: '#/components/responses/notfoundError',
+					},
 				},
 			},
 		},
 		'500': {
-			description: 'Internal server error',
+			description: 'Internal Server Error',
 			content: {
 				'application/json': {
-					schema: {},
+					schema: {
+						$ref: '#/components/responses/internalError',
+					},
 				},
 			},
 		},
@@ -196,34 +231,7 @@ const createQuestion = {
 							},
 							data: {
 								type: 'object',
-								properties: {
-									id: {
-										type: 'number',
-										example: 51,
-									},
-									status: {
-										type: 'string',
-										enum: ['open', 'closed'],
-										example: 'open',
-									},
-									content: {
-										type: 'string',
-										example:
-											'I have tooth sensitivity when I used toothpick today, what should I do?',
-									},
-									bountyAmount: {
-										type: 'number',
-										example: 100,
-									},
-									updatedAt: {
-										type: 'string',
-										example: '2023-04-12T21:36:10.115Z',
-									},
-									createdAt: {
-										type: 'string',
-										example: '2023-04-12T21:36:10.115Z',
-									},
-								},
+								properties: questionResponseData,
 							},
 						},
 					},
@@ -277,20 +285,21 @@ const createQuestion = {
 			content: {
 				'application/json': {
 					schema: {
-						$ref: '#/components/schemas/internalError',
+						$ref: '#/components/responses/internalError',
 					},
 				},
 			},
 		},
 	},
 };
+
 const getQuestion = {
 	tags: ['Questions'],
 	description: 'Get question details',
 	operationId: 'getQuestion',
 	parameters: [
 		{
-			name: 'id',
+			name: 'questionId',
 			in: 'path',
 			description: 'Question id',
 			required: true,
@@ -299,7 +308,7 @@ const getQuestion = {
 	],
 	responses: {
 		'200': {
-			description: 'Successfully retrieved user details',
+			description: 'Successfully retrieved question details',
 			content: {
 				'application/json': {
 					schema: {
@@ -320,36 +329,7 @@ const getQuestion = {
 							data: {
 								type: 'object',
 								properties: {
-									id: {
-										type: 'number',
-										example: 51,
-									},
-									userId: {
-										type: 'number',
-										example: 12,
-									},
-									content: {
-										type: 'string',
-										example:
-											'Itaque ratione aperiam doloribus est. Inventore minus exercitationem. Quasi at nam delectus fugit corporis',
-									},
-									bountyAmount: {
-										type: 'number',
-										example: 10000,
-									},
-									status: {
-										type: 'string',
-										enum: ['open', 'closed'],
-										example: 'open',
-									},
-									createdAt: {
-										type: 'string',
-										example: '2023-04-12T21:36:10.115Z',
-									},
-									updatedAt: {
-										type: 'string',
-										example: '2023-04-12T21:36:10.115Z',
-									},
+									...questionResponseData,
 									replies: {
 										type: 'array',
 										items: {
@@ -423,7 +403,7 @@ const getQuestion = {
 			content: {
 				'application/json': {
 					schema: {
-						$ref: '#/components/schemas/internalError',
+						$ref: '#/components/responses/internalError',
 					},
 				},
 			},
@@ -482,38 +462,7 @@ const getAllQuestions = {
 								type: 'array',
 								items: {
 									type: 'object',
-									properties: {
-										id: {
-											type: 'number',
-											example: 51,
-										},
-										userId: {
-											type: 'number',
-											example: 12,
-										},
-										content: {
-											type: 'string',
-											example:
-												'Itaque ratione aperiam doloribus est. Inventore minus exercitationem. Quasi at nam delectus fugit corporis',
-										},
-										bountyAmount: {
-											type: 'number',
-											example: 10000,
-										},
-										status: {
-											type: 'string',
-											enum: ['open', 'closed'],
-											example: 'closed',
-										},
-										createdAt: {
-											type: 'string',
-											example: '2023-04-12T21:36:10.115Z',
-										},
-										updatedAt: {
-											type: 'string',
-											example: '2023-04-12T21:36:10.115Z',
-										},
-									},
+									properties: questionResponseData,
 								},
 							},
 						},
@@ -526,7 +475,7 @@ const getAllQuestions = {
 			content: {
 				'application/json': {
 					schema: {
-						$ref: '#/components/schemas/internalError',
+						$ref: '#/components/responses/internalError',
 					},
 				},
 			},
@@ -562,38 +511,7 @@ const getOpenQuestionsOrderByBounty = {
 								type: 'array',
 								items: {
 									type: 'object',
-									properties: {
-										id: {
-											type: 'number',
-											example: 51,
-										},
-										userId: {
-											type: 'number',
-											example: 12,
-										},
-										content: {
-											type: 'string',
-											example:
-												'Itaque ratione aperiam doloribus est. Inventore minus exercitationem. Quasi at nam delectus fugit corporis',
-										},
-										bountyAmount: {
-											type: 'number',
-											example: 10000,
-										},
-										status: {
-											type: 'string',
-											enum: ['open', 'closed'],
-											example: 'open',
-										},
-										createdAt: {
-											type: 'string',
-											example: '2023-04-12T21:36:10.115Z',
-										},
-										updatedAt: {
-											type: 'string',
-											example: '2023-04-12T21:36:10.115Z',
-										},
-									},
+									properties: questionResponseData,
 								},
 							},
 						},
@@ -606,7 +524,7 @@ const getOpenQuestionsOrderByBounty = {
 			content: {
 				'application/json': {
 					schema: {
-						$ref: '#/components/schemas/internalError',
+						$ref: '#/components/responses/internalError',
 					},
 				},
 			},
@@ -620,7 +538,7 @@ const deleteQuestion = {
 	operationId: 'deleteQuestion',
 	parameters: [
 		{
-			name: 'id',
+			name: 'questionId',
 			in: 'path',
 			description: 'Question id',
 			required: true,
@@ -689,7 +607,7 @@ const deleteQuestion = {
 			content: {
 				'application/json': {
 					schema: {
-						$ref: '#/components/schemas/internalError',
+						$ref: '#/components/responses/internalError',
 					},
 				},
 			},

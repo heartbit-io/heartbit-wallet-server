@@ -1,13 +1,13 @@
-import {Response} from 'express';
-
 import {DecodedRequest} from '../middleware/Auth';
 import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
 import QuestionService from '../services/QuestionService';
 import ReplyService from '../services/ReplyService';
-import UserService from '../services/UserService';
+import {Response} from 'express';
 import TransactionService from '../services/TransactionService';
+import {TxTypes} from '../util/enums/txTypes';
 import {UserRoles} from '../util/enums/userRoles';
+import UserService from '../services/UserService';
 
 class DoctorsController {
 	async createDoctorReply(
@@ -29,14 +29,13 @@ class DoctorsController {
 					);
 			}
 
-            const email = req.email;
-            
-			//check that it is a doctor
+			const email = req.email;
+
+			// check that it is a doctor
 			const doctor = await UserService.getUserDetailsByEmail(email);
 
-        
-			//TODO[Peter]: Extract this into a middleware to check if the user is a doctor
-            
+			// TODO[Peter]: Extract this into a middleware to check if the user is a doctor
+
 			if (!doctor || !doctor.isDoctor) {
 				return res
 					.status(HttpCodes.UNAUTHORIZED)
@@ -65,8 +64,8 @@ class DoctorsController {
 					);
 			}
 
-			//create a transaction
-			const user = await UserService.getUserDetails(question.userId);
+			// create a transaction
+			const user = await UserService.getUserDetailsById(question.userId);
 
 			if (!user) {
 				return res
@@ -81,13 +80,23 @@ class DoctorsController {
 					);
 			}
 
-			//debit user bounty amount
-			const userBalance = user.btcBalance - question.bountyAmount;
+			if (user.id === doctor.id) {
+				return res
+					.status(HttpCodes.BAD_REQUEST)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.BAD_REQUEST,
+							'User and doctor cannot be the same',
+							null,
+						),
+					);
+			}
 
-			const userDebit = UserService.updateUserBtcBalance(
-				userBalance,
-				user.id,
-			);
+			// XXX, TODO(david) start a database transaction
+			// debit user bounty amount
+			const userBalance = user.btcBalance - question.bountyAmount;
+			const userDebit = UserService.updateUserBtcBalance(userBalance, user.id);
 
 			if (!userDebit) {
 				return res
@@ -102,7 +111,12 @@ class DoctorsController {
 					);
 			}
 
-			const doctorBalance = doctor.btcBalance + question.bountyAmount;
+			// 100 is default sats
+			const calulatedFee =
+				100 + Math.floor((question.bountyAmount - 100) * 0.02);
+
+			const doctorBalance =
+				doctor.btcBalance + question.bountyAmount - calulatedFee;
 			const creditDoctor = await UserService.updateUserBtcBalance(
 				doctorBalance,
 				doctor.id,
@@ -123,16 +137,20 @@ class DoctorsController {
 
 			//create a transaction
 			await TransactionService.createTransaction({
-				amount: question.bountyAmount,
+				amount: question.bountyAmount - calulatedFee,
 				toUserPubkey: doctor.pubkey,
 				fromUserPubkey: user.pubkey,
+				fee: calulatedFee,
+				type: TxTypes.BOUNTY_EARNED,
 			});
 
 			const reply = await ReplyService.createReply({
-                ...req.body,
-                userId: user.id,
-				user_email: email,
+				...req.body,
+				userId: user.id,
+				userEmail: email,
 			});
+
+			// XXX, TODO(david): end a database transaction
 
 			return res
 				.status(HttpCodes.CREATED)
@@ -176,20 +194,20 @@ class DoctorsController {
 		}
 
 		//check that it is a doctor
-        const doctor = await UserService.getUserDetailsByEmail(req.email);
-        
-        if (!doctor || doctor.role !== UserRoles.DOCTOR) { 
-            return res
-                .status(HttpCodes.UNAUTHORIZED)
-                .json(
-                    new FormatResponse(
-                        false,
-                        HttpCodes.UNAUTHORIZED,
-                        'User must be a doctor to get user questions',
-                        null,
-                    ),
-                );
-        }
+		const doctor = await UserService.getUserDetailsByEmail(req.email);
+
+		if (!doctor || doctor.role !== UserRoles.DOCTOR) {
+			return res
+				.status(HttpCodes.UNAUTHORIZED)
+				.json(
+					new FormatResponse(
+						false,
+						HttpCodes.UNAUTHORIZED,
+						'User must be a doctor to get user questions',
+						null,
+					),
+				);
+		}
 
 		const openQuestions = await QuestionService.getOpenQuestionsOrderByBounty();
 

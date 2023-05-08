@@ -1,11 +1,11 @@
 import express, {Application} from 'express';
+
 import cors from 'cors';
+import dbconnection from './util/dbconnection';
+import env from './config/env';
 import helmet from 'helmet';
 import {log} from 'console';
-import dbconnection from './util/dbconnection';
-import { routes } from './routes';
-import env from './config/env';
-
+import {routes} from './routes';
 
 const PORT = Number(env.PORT);
 

@@ -1,15 +1,17 @@
 import {Request, Response} from 'express';
-import {HttpCodes} from '../util/HttpCodes';
+
 import FormatResponse from '../lib/FormatResponse';
+import {HttpCodes} from '../util/HttpCodes';
 import TransactionService from '../services/TransactionService';
 
 class RepliesController {
-
 	async getUserTransactions(req: Request, res: Response) {
 		try {
 			const {pubkey} = req.params;
 
-			const transactions = await TransactionService.getUserTransactions(pubkey);
+			const transactions = await TransactionService.getUserTransactions(
+				pubkey.toLocaleLowerCase(),
+			);
 			if (!transactions || transactions.length === 0) {
 				return res
 					.status(HttpCodes.NOT_FOUND)
@@ -22,7 +24,6 @@ class RepliesController {
 						),
 					);
 			}
-
 
 			return res
 				.status(HttpCodes.OK)

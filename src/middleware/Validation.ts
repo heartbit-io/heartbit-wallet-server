@@ -1,7 +1,8 @@
-import {Request, Response, NextFunction} from 'express';
-import {validationResult} from 'express-validator';
+import {NextFunction, Request, Response} from 'express';
+
 import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
+import {validationResult} from 'express-validator';
 
 class Validation {
 	validate(req: Request, res: Response, next: NextFunction) {
@@ -10,12 +11,7 @@ class Validation {
 			return res
 				.status(HttpCodes.BAD_REQUEST)
 				.json(
-					new FormatResponse(
-						false,
-						HttpCodes.BAD_REQUEST,
-						error.array(),
-						null,
-					),
+					new FormatResponse(false, HttpCodes.BAD_REQUEST, error.array(), null),
 				);
 		}
 		next();

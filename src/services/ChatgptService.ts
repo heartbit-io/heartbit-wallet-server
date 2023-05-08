@@ -41,9 +41,9 @@ class ChatgptService {
 		model: string,
 		maxTokens: number,
 	): Promise<ChatgptReplyInstance | undefined> {
+		const prompt = makePrompt(questionContent, '');
 		try {
 			// TODO(david): Add patient profile parameter
-			const prompt = makePrompt(questionContent, '');
 
 			const completion = await this.openai.createChatCompletion({
 				model,
@@ -65,7 +65,26 @@ class ChatgptService {
 		} catch (error) {
 			// TODO(david): Sentry alert in slack
 			logger.warn(error);
-			return;
+			// XXX(david): temp logic for client developement
+			return await ChatgptReplyInstance.create({
+				questionId,
+				model,
+				maxTokens,
+				prompt,
+				rawAnswer: 'No response',
+				jsonAnswer: JSON.parse(
+					JSON.stringify({
+						title: 'title',
+						triageGuide: 'treguide',
+						chiefComplaint: 'chiefComplaint',
+						medicalHistory: 'medicalHistory',
+						currentMedication: 'currentMedication',
+						accessment: 'accessment',
+						plan: 'plan',
+						doctorNote: 'doctorNote',
+					}),
+				),
+			});
 		}
 	}
 
@@ -79,7 +98,7 @@ class ChatgptService {
 		try {
 			const chatGptReply = await ChatgptReplyInstance.findOne({
 				where: {questionId},
-				attributes: ['model', 'jsonAnswer'],
+				attributes: ['model', 'jsonAnswer', 'createdAt'],
 			});
 
 			if (!chatGptReply) return;

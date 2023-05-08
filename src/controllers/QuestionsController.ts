@@ -1,12 +1,10 @@
-import { Response} from 'express';
-
 import {DecodedRequest} from '../middleware/Auth';
 import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
 import QuestionService from '../services/QuestionService';
-import ReplyService from '../services/ReplyService';
+import {QuestionStatus} from '../models/QuestionModel';
+import {Response} from 'express';
 import UserService from '../services/UserService';
-import { QuestionStatus } from '../models/QuestionModel';
 
 class QuestionsController {
 	async create(
@@ -31,12 +29,12 @@ class QuestionsController {
 
 			if (!user) {
 				return res
-					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.status(HttpCodes.NOT_FOUND)
 					.json(
 						new FormatResponse(
 							false,
-							HttpCodes.UNPROCESSED_CONTENT,
-							'Error getting user email',
+							HttpCodes.NOT_FOUND,
+							'No user exists for the email.',
 							null,
 						),
 					);
@@ -59,11 +57,11 @@ class QuestionsController {
 
 			if (!userBalance) {
 				return res
-					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.status(HttpCodes.NOT_FOUND)
 					.json(
 						new FormatResponse(
 							false,
-							HttpCodes.UNPROCESSED_CONTENT,
+							HttpCodes.NOT_FOUND,
 							'Error getting user balance',
 							null,
 						),
@@ -72,11 +70,11 @@ class QuestionsController {
 
 			if (totalBounty >= Number(userBalance.btcBalance)) {
 				return res
-					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.status(HttpCodes.NOT_FOUND)
 					.json(
 						new FormatResponse(
 							false,
-							HttpCodes.UNPROCESSED_CONTENT,
+							HttpCodes.NOT_FOUND,
 							'You do not have enough sats to post a new question',
 							null,
 						),
@@ -133,11 +131,11 @@ class QuestionsController {
 
 			if (!req.email) {
 				return res
-					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.status(HttpCodes.NOT_FOUND)
 					.json(
 						new FormatResponse(
 							false,
-							HttpCodes.UNPROCESSED_CONTENT,
+							HttpCodes.NOT_FOUND,
 							'Error getting user email',
 							null,
 						),
@@ -148,11 +146,11 @@ class QuestionsController {
 
 			if (!user) {
 				return res
-					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.status(HttpCodes.NOT_FOUND)
 					.json(
 						new FormatResponse(
 							false,
-							HttpCodes.UNPROCESSED_CONTENT,
+							HttpCodes.NOT_FOUND,
 							'Error getting user email',
 							null,
 						),
@@ -227,11 +225,11 @@ class QuestionsController {
 
 			if (!user) {
 				return res
-					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.status(HttpCodes.NOT_FOUND)
 					.json(
 						new FormatResponse(
 							false,
-							HttpCodes.UNPROCESSED_CONTENT,
+							HttpCodes.NOT_FOUND,
 							'Error getting user email',
 							null,
 						),
@@ -300,9 +298,9 @@ class QuestionsController {
 		}
 	}
 
-	async getUserQuestionsByStatus(req: DecodedRequest, res: Response) { 
+	async getUserQuestionsByStatus(req: DecodedRequest, res: Response) {
 		try {
-			if (!req.email) { 
+			if (!req.email) {
 				return res
 					.status(HttpCodes.UNAUTHORIZED)
 					.json(
@@ -314,17 +312,17 @@ class QuestionsController {
 						),
 					);
 			}
-			const { email } = req;
+			const {email} = req;
 
 			const user = await UserService.getUserDetailsByEmail(email);
 
-			if (!user) { 
+			if (!user) {
 				return res
-					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.status(HttpCodes.NOT_FOUND)
 					.json(
 						new FormatResponse(
 							false,
-							HttpCodes.UNPROCESSED_CONTENT,
+							HttpCodes.NOT_FOUND,
 							'Error getting user details',
 							null,
 						),
@@ -333,7 +331,10 @@ class QuestionsController {
 
 			const status = req.query.status as QuestionStatus;
 
-			const questions = await QuestionService.getUserQuestionsByStatus(user.id, status);
+			const questions = await QuestionService.getUserQuestionsByStatus(
+				user.id,
+				status,
+			);
 
 			return res
 				.status(HttpCodes.OK)
@@ -394,22 +395,21 @@ class QuestionsController {
 
 			const user = await UserService.getUserDetailsByEmail(req.email);
 
-			if (!user) { 
+			if (!user) {
 				return res
-					.status(HttpCodes.UNPROCESSED_CONTENT)
+					.status(HttpCodes.NOT_FOUND)
 					.json(
 						new FormatResponse(
 							false,
-							HttpCodes.UNPROCESSED_CONTENT,
+							HttpCodes.NOT_FOUND,
 							'Error getting user details',
 							null,
 						),
 					);
 			}
 
-
 			// TODO: check if user is admin or doctor
-			if (question.userId !== user.id && !user.isDoctor) { 
+			if (question.userId !== user.id && !user.isDoctor) {
 				return res
 					.status(HttpCodes.UNAUTHORIZED)
 					.json(
@@ -422,9 +422,7 @@ class QuestionsController {
 					);
 			}
 
-			const replies = await ReplyService.getQuestionReplies(Number(questionId));
-
-			const response = {...question.dataValues, replies};
+			const response = question.dataValues;
 
 			return res
 				.status(HttpCodes.OK)
