@@ -2,17 +2,6 @@ import env from '../config/env';
 import https from 'https';
 import logger from '../util/logger';
 
-export interface JsonAnswerInterface {
-	[title: string]: string;
-	triageGuide: string;
-	chiefComplaint: string;
-	medicalHistory: string;
-	currentMedication: string;
-	accessment: string;
-	plan: string;
-	doctorNote: string;
-}
-
 class AirtableService {
 	apiKey: string;
 	constructor(apiKey: string) {
