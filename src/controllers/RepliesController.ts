@@ -1,5 +1,6 @@
 import {Request, Response} from 'express';
 
+import AirtableService from '../services/AirtableService';
 import ChatgptService from '../services/ChatgptService';
 import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
@@ -132,7 +133,7 @@ class RepliesController {
 				const user = await UserService.getUserDetailsById(
 					replyForDoctor.userId,
 				);
-				if (!user) {
+				if (!user || !user.airTableRecordId) {
 					return res
 						.status(HttpCodes.NOT_FOUND)
 						.json(
@@ -145,8 +146,28 @@ class RepliesController {
 						);
 				}
 
+				const doctorDetails = await AirtableService.getAirtableDoctorInfo(
+					user.airTableRecordId,
+				);
+
+				if (!doctorDetails) {
+					return res
+						.status(HttpCodes.NOT_FOUND)
+						.json(
+							new FormatResponse(
+								false,
+								HttpCodes.NOT_FOUND,
+								'Doctor detail was not found',
+								null,
+							),
+						);
+				}
+
 				replyType = ReplyTypes.DOCTOR;
-				name = user.email; // TODO(david): Doctor real name(Dr. + first name + last name)
+				name =
+					doctorDetails.fields['First Name'] +
+					' ' +
+					doctorDetails.fields['Last Name'];
 				reply = replyForDoctor.content; // TODO(david): Add Health records using JSON format
 				classification = 'General physician'; // TODO(david): Get from user like user.classification
 				createdAt = replyForDoctor.createdAt;
