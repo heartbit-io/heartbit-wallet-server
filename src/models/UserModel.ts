@@ -9,6 +9,7 @@ export interface UserAttributes {
 	email: string;
 	role: UserRoles;
 	btcBalance: number;
+	airTableRecordId: string;
 }
 
 export class UserInstance extends Model<UserAttributes> {
@@ -17,6 +18,7 @@ export class UserInstance extends Model<UserAttributes> {
 	declare email: string;
 	declare role: UserRoles;
 	declare btcBalance: number;
+	declare airTableRecordId: string;
 
 	static associate(models: any) {
 		UserInstance.hasMany(models.questions, {
@@ -55,6 +57,10 @@ UserInstance.init(
 		btcBalance: {
 			type: DataTypes.DOUBLE,
 			allowNull: false,
+		},
+		airTableRecordId: {
+			type: DataTypes.STRING,
+			unique: true,
 		},
 	},
 	{
