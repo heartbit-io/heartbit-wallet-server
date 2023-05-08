@@ -3,7 +3,6 @@ import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
 import QuestionService from '../services/QuestionService';
 import {QuestionStatus} from '../models/QuestionModel';
-import ReplyService from '../services/ReplyService';
 import {Response} from 'express';
 import UserService from '../services/UserService';
 
