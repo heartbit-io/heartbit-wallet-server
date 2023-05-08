@@ -4,17 +4,38 @@ import {getAuth, signInWithEmailAndPassword} from 'firebase/auth';
 import {DecodedRequest} from '../middleware/Auth';
 import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
+import TransactionService from '../services/TransactionService';
+import {TxTypes} from '../util/enums';
 import UserService from '../services/UserService';
+import dbconnection from '../util/dbconnection';
 import {firebase} from '../config/firebase-config';
 
 class UsersController {
 	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {
+		const dbTransaction = await dbconnection.transaction();
+
 		try {
-			const user = await UserService.createUser({
-				...req.body,
-				pubkey: req.body.pubkey.toLowerCase(),
-				email: req.body.email.toLowerCase(),
-			});
+			const user = await UserService.createUser(
+				{
+					...req.body,
+					pubkey: req.body.pubkey.toLowerCase(),
+					email: req.body.email.toLowerCase(),
+				},
+				dbTransaction,
+			);
+
+			await TransactionService.createTransaction(
+				{
+					amount: 1000, // SIGN_UP_BONUS
+					toUserPubkey: user.pubkey,
+					fromUserPubkey: user.pubkey, // Initial transcation
+					type: TxTypes.SIGN_UP_BONUS,
+					fee: 0,
+				},
+				dbTransaction,
+			);
+
+			await dbTransaction.commit();
 
 			return res
 				.status(HttpCodes.CREATED)
@@ -27,6 +48,8 @@ class UsersController {
 					),
 				);
 		} catch (error) {
+			await dbTransaction.rollback();
+
 			return res
 				.status(HttpCodes.INTERNAL_SERVER_ERROR)
 				.json(

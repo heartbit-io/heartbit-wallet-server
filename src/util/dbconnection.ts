@@ -1,6 +1,6 @@
 import {Dialect, Sequelize} from 'sequelize';
-import env from '../config/env';
 
+import env from '../config/env';
 
 const db = env.NODE_ENV === 'test' ? env.TEST_DB_NAME : env.DB_NAME;
 
