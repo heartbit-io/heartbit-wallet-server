@@ -4,6 +4,7 @@ import logger from '../util/logger';
 
 class CoinPaprikaService {
 	private fetchData = async (): Promise<any> => {
+		// TODO(david): If has cache, return cache
 		// get 10,000(0.0001 btc) satoshi to usd
 		return new Promise((resolve, reject) => {
 			const url =
