@@ -4,8 +4,8 @@ import CoinPaprikaService from '../services/CoinPaprikaService';
 import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
 
-class CoinExchageRateController {
-	async getBtcExchageRate(req: Request, res: Response) {
+class CoinExchangeRateController {
+	async getBtcExchangeRate(req: Request, res: Response) {
 		try {
 			const {satoshi} = req.query;
 
@@ -38,4 +38,4 @@ class CoinExchageRateController {
 	}
 }
 
-export default new CoinExchageRateController();
+export default new CoinExchangeRateController();

@@ -1,5 +1,5 @@
 const getCoinExchangeRates = {
-	tags: ['Coin Exchage Rate'],
+	tags: ['Coin Exchange Rate'],
 	description: 'Get coin exchange rate',
 	operationId: 'getCoinExchangeRates',
 	parameters: [
@@ -13,7 +13,7 @@ const getCoinExchangeRates = {
 	],
 	responses: {
 		'200': {
-			description: 'Successfully retrieved btc exchage rate',
+			description: 'Successfully retrieved btc exchange rate',
 			content: {
 				'application/json': {
 					schema: {
@@ -29,7 +29,7 @@ const getCoinExchangeRates = {
 							},
 							message: {
 								type: 'string',
-								example: 'Successfully retrieved btc exchage rate',
+								example: 'Successfully retrieved btc exchange rate',
 							},
 							data: {
 								type: 'array',

@@ -80,7 +80,7 @@ const apiDocumentation = {
 			name: 'Transactions',
 		},
 		{
-			name: 'Coin Exchage Rate',
+			name: 'Coin Exchange Rate',
 		},
 	],
 	paths: {
@@ -117,7 +117,7 @@ const apiDocumentation = {
 		'/transactions/{pubkey}': {
 			get: getUserTransactions,
 		},
-		'/coinExchageRate/btc': {
+		'/coin-exchange-rates/btc': {
 			get: getCoinExchangeRates,
 		},
 	},

@@ -1,7 +1,7 @@
 import Auth from '../middleware/Auth';
 import {Router} from 'express';
 import {apiDocumentation} from '../docs/apidoc';
-import {coinExchageRateRoutes} from './coinExchageRateRoutes';
+import {coinExchangeRateRoutes} from './coinExchangeRateRoutes';
 import {doctorRoutes} from './doctorRoutes';
 import {questionRoutes} from './questionRoutes';
 import {replyRoutes} from './replyRoutes';
@@ -21,6 +21,6 @@ router.use(
 	swaggerUi.serve,
 	swaggerUi.setup(apiDocumentation),
 );
-router.use('/coinExchageRate', Auth.verifyToken, coinExchageRateRoutes);
+router.use('/coin-exchange-rates', Auth.verifyToken, coinExchangeRateRoutes);
 
 export {router as routes};
