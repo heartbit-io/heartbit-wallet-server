@@ -23,6 +23,7 @@ import {
 } from './responses';
 
 import env from '../config/env';
+import {getCoinExchangeRates} from './coinExchangeRate';
 import {getUserTransactions} from './transactions';
 import {log} from 'console';
 
@@ -78,6 +79,9 @@ const apiDocumentation = {
 		{
 			name: 'Transactions',
 		},
+		{
+			name: 'Coin Exchage Rate',
+		},
 	],
 	paths: {
 		'/users': {
@@ -112,6 +116,9 @@ const apiDocumentation = {
 		},
 		'/transactions/{pubkey}': {
 			get: getUserTransactions,
+		},
+		'/coinExchageRate/btc': {
+			get: getCoinExchangeRates,
 		},
 	},
 	components: {
