@@ -30,6 +30,7 @@ export const env = {
 	FB_MEASUREMENT_ID: process.env.FB_MEASUREMENT_ID as string,
 	AIRTABLE_API_KEY: process.env.AIRTABLE_API_KEY as string,
 	AIRTABLE_URL: process.env.AIRTABLE_API_KEY as string,
+	COINPAPRIKA_URL: process.env.COINPAPRIKA_URL as string,
 };
 
 Object.entries(env).forEach(([key, value]) => {

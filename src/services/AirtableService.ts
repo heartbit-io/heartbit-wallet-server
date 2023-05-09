@@ -33,7 +33,7 @@ class AirtableService {
 
 	/**
 	 * @description - Get Airtable registered doctor info
-	 * @param questionId - Question ID
+	 * @param airTableRecordId - airtable record ID
 	 */
 	async getAirtableDoctorInfo(airTableRecordId: string): Promise<any> {
 		try {
