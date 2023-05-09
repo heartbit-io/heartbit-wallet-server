@@ -1,4 +1,4 @@
-import CoinExchangeRateController from '../controllers/coinExchangeRateController';
+import CoinExchangeRateController from '../controllers/CoinExchangeRateController';
 import {Router} from 'express';
 
 const router = Router();
