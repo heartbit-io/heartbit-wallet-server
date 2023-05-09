@@ -1,12 +1,18 @@
-import env from '../config/env';
+import NodeCache from 'node-cache';
 import https from 'https';
 import logger from '../util/logger';
 
+const cache = new NodeCache();
+
 class CoinPaprikaService {
 	private fetchData = async (): Promise<any> => {
-		// TODO(david): If has cache, return cache
+		const cacheKey = `btcExchangeRate`;
+
+		const cachedValue = cache.get(cacheKey);
+		if (cachedValue) return cachedValue;
+
 		// get 10,000(0.0001 btc) satoshi to usd
-		return new Promise((resolve, reject) => {
+		const value = new Promise((resolve, reject) => {
 			const url =
 				process.env.COINPAPRIKA_URL +
 				'price-converter?base_currency_id=btc-bitcoin&quote_currency_id=usd-us-dollars&amount=0.0001';
@@ -25,6 +31,9 @@ class CoinPaprikaService {
 					reject(error);
 				});
 		});
+		// auto delete after 1 hour
+		cache.set(cacheKey, value, 3600);
+		return value;
 	};
 
 	/**
