@@ -1,26 +1,44 @@
 const replyResponseData = {
-	type: 'object',
-	properties: {
-		replyType: {
-			type: 'string',
-			example: 'DOCTOR',
-		},
-		name: {
-			type: 'string',
-			example: 'Dr. John Doe',
-		},
-		classification: {
-			type: 'string',
-			example: 'General physician',
-		},
-		reply: {
-			type: 'string',
-			example: 'This is a reply',
-		},
-		createdAt: {
-			type: 'string',
-			example: '1 Apr 2023',
-		},
+	id: {
+		type: 'number',
+		example: 6,
+	},
+	createdAt: {
+		type: 'string',
+		example: '2023-04-11T11:49:39.209Z',
+	},
+	updatedAt: {
+		type: 'string',
+		example: '2023-04-14T03:34:44.239Z',
+	},
+	content: {
+		type: 'string',
+		example:
+			'This is a reply to your question and it has the following content',
+	},
+	plan: {
+		type: 'string',
+		example: 'daily',
+	},
+	majorComplaint: {
+		type: 'string',
+		example: 'I have a headache and I feel dizzy',
+	},
+	medicalHistory: {
+		type: 'string',
+		example: 'I have a history of heart disease',
+	},
+	currentMedications: {
+		type: 'string',
+		example: 'I am currently taking paracetamol',
+	},
+	assessment: {
+		type: 'string',
+		example: 'You have a headache',
+	},
+	triage: {
+		type: 'string',
+		example: 'You need to take paracetamol',
 	},
 };
 
