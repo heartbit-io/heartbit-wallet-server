@@ -48,7 +48,7 @@ class CoinPaprikaService {
 			return {
 				10000: usd10000,
 				1000: usd10000 / 10,
-				custumSatoshi: satoshi ? (satoshi * usd10000) / 10000 : 0,
+				customSatoshi: satoshi ? (satoshi * usd10000) / 10000 : 0,
 			};
 		} catch (error) {
 			// TODO(david): Sentry alert in slack

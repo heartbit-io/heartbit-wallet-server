@@ -44,7 +44,7 @@ const getCoinExchangeRates = {
 											type: 'number',
 											example: 0.27,
 										},
-										custumSatoshi: {
+										customSatoshi: {
 											type: 'number',
 											example: 1.5,
 										},
