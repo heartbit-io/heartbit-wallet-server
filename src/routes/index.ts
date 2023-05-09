@@ -21,6 +21,6 @@ router.use(
 	swaggerUi.serve,
 	swaggerUi.setup(apiDocumentation),
 );
-router.use('/coinExchageRate', coinExchageRateRoutes);
+router.use('/coinExchageRate', Auth.verifyToken, coinExchageRateRoutes);
 
 export {router as routes};
