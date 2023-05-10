@@ -56,10 +56,6 @@ const getUserTransactions = {
 											type: 'string',
 											example: 'deposit',
 										},
-										typeText: {
-											type: 'string',
-											example: 'Deposit',
-										},
 										fee: {
 											type: 'number',
 											example: 100,

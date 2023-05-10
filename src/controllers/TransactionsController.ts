@@ -11,10 +11,10 @@ class RepliesController {
 		const txTypeMap = {
 			deposit: 'Deposit',
 			withdraw: 'Withdraw',
-			sign_up_bonus: 'Sign Up Bonus',
-			bounty_earned: 'Bounty Earned',
-			bounty_pledged: 'Bounty Pledged',
-			bounty_refunded: 'Bounty Refunded',
+			sign_up_bonus: 'Sign-up bonus',
+			bounty_earned: 'Bounty earned',
+			bounty_pledged: 'Bounty pledged',
+			bounty_refunded: 'Bounty refunded',
 		};
 
 		try {
@@ -36,10 +36,9 @@ class RepliesController {
 					);
 			}
 			const fomatedTransactions = transactions.map(transaction => {
-				const txType: TxTypes = transaction.type;
 				return {
 					...transaction.dataValues,
-					typeText: txTypeMap[txType],
+					type: txTypeMap[transaction.type],
 				};
 			});
 
