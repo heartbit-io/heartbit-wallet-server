@@ -3,9 +3,20 @@ import {Request, Response} from 'express';
 import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
 import TransactionService from '../services/TransactionService';
+import {TxTypes} from '../util/enums';
 
 class RepliesController {
 	async getUserTransactions(req: Request, res: Response) {
+		// fomatting for client
+		const txTypeMap = {
+			deposit: 'Deposit',
+			withdraw: 'Withdraw',
+			sign_up_bonus: 'Sign Up Bonus',
+			bounty_earned: 'Bounty Earned',
+			bounty_pledged: 'Bounty Pledged',
+			bounty_refunded: 'Bounty Refunded',
+		};
+
 		try {
 			const {pubkey} = req.params;
 
@@ -24,6 +35,13 @@ class RepliesController {
 						),
 					);
 			}
+			const fomatedTransactions = transactions.map(transaction => {
+				const txType: TxTypes = transaction.type;
+				return {
+					...transaction.dataValues,
+					typeText: txTypeMap[txType],
+				};
+			});
 
 			return res
 				.status(HttpCodes.OK)
@@ -32,7 +50,7 @@ class RepliesController {
 						true,
 						HttpCodes.OK,
 						'Successfully retrieved user transactions',
-						transactions,
+						fomatedTransactions,
 					),
 				);
 		} catch (error) {

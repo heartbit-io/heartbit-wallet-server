@@ -16,6 +16,13 @@ export interface ReplyResponseInterface extends FormatResponse {
 		classification: string;
 		reply: string;
 		createdAt: Date;
+		plan?: string;
+		majorComplaint?: string;
+		medicalHistory?: string;
+		currentMedications?: string;
+		assessment?: string;
+		triage?: string;
+		content?: string;
 	};
 }
 
@@ -125,6 +132,14 @@ class RepliesController {
 			let name: string;
 			let classification: string;
 			let createdAt: Date;
+			let plan = '';
+			let majorComplaint = '';
+			let medicalHistory = '';
+			let currentMedications = '';
+			let assessment = '';
+			let triage = '';
+			let content = '';
+
 			const replyForDoctor = await ReplyService.getReplyByQuestionId(
 				Number(questionId),
 			);
@@ -170,6 +185,14 @@ class RepliesController {
 					doctorDetails.fields['Last Name'];
 				reply = replyForDoctor.content; // TODO(david): Add Health records using JSON format
 				classification = 'General physician'; // TODO(david): Get from user like user.classification
+				plan = replyForDoctor.plan;
+				majorComplaint = replyForDoctor.majorComplaint;
+				medicalHistory = replyForDoctor.medicalHistory;
+				currentMedications = replyForDoctor.currentMedications;
+				assessment = replyForDoctor.assessment;
+				triage = replyForDoctor.triage;
+				content = replyForDoctor.content;
+
 				createdAt = replyForDoctor.createdAt;
 			} else {
 				const replyForChatGpt =
@@ -195,11 +218,24 @@ class RepliesController {
 			}
 
 			// set response
-			const replyResponseInterface: ReplyResponseInterface = {
+			const replyResponseInterface = {
 				success: true,
 				statusCode: HttpCodes.OK,
 				message: 'Reply retrieved successfully',
-				data: {replyType, name, classification, reply, createdAt},
+				data: {
+					replyType,
+					name,
+					classification,
+					reply,
+					createdAt,
+					plan,
+					majorComplaint,
+					medicalHistory,
+					currentMedications,
+					assessment,
+					triage,
+					content,
+				},
 			};
 
 			return res.status(HttpCodes.OK).json(replyResponseInterface);
