@@ -18,6 +18,23 @@ const replyResponseData = {
 			example:
 				'This is a reply to your question and it has the following content',
 		},
+		replyType: {
+			type: 'string',
+			example: 'DOCTOR',
+		},
+		reply: {
+			type: 'string',
+			example:
+				'This is a reply to your question and it has the following content',
+		},
+		classification: {
+			type: 'string',
+			example: 'General physician',
+		},
+		name: {
+			type: 'string',
+			example: 'Dr. John Doe',
+		},
 		plan: {
 			type: 'string',
 			example: 'daily',
