@@ -19,6 +19,13 @@ module.exports = {
       amount: {
         type: Sequelize.DOUBLE
       },
+      fee: {
+        type: Sequelize.DOUBLE,
+        defaultValue: 0,
+      },
+      type: {
+        type: Sequelize.STRING,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
