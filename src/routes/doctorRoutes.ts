@@ -2,6 +2,7 @@ import DoctorsController from '../controllers/DoctorsController';
 import RepliesValidator from '../lib/RepliesValidator';
 import {Router} from 'express';
 import Validation from '../middleware/Validation';
+import DoctorAuth from '../middleware/DoctorAuth';
 
 const router = Router();
 

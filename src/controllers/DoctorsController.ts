@@ -9,6 +9,7 @@ import TransactionService from '../services/TransactionService';
 import {TxTypes} from '../util/enums/txTypes';
 import {UserRoles} from '../util/enums/userRoles';
 import UserService from '../services/UserService';
+import { DoctorRequest } from '../middleware/DoctorAuth';
 
 // after doctor auth, remove this
 const TEMP_DOCTOR_EMAIL = 'nodirbek7077@gmail.com';
@@ -181,7 +182,7 @@ class DoctorsController {
 	}
 
 	async getQuestions(
-		req: DecodedRequest,
+		req: DoctorRequest,
 		res: Response,
 	): Promise<Response<FormatResponse>> {
 		const limit = (req.query.limit as number | undefined) || 1;
@@ -200,8 +201,21 @@ class DoctorsController {
 				);
 		}
 
+			if (!email || !role) {
+				return res
+					.status(HttpCodes.BAD_REQUEST)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.BAD_REQUEST,
+							'Email and role are required',
+							null,
+						),
+					);
+			}
+		
 		//check that it is a doctor
-		const doctor = await UserService.getUserDetailsByEmail(req.email);
+		const doctor = await UserService.getUserDetailsByEmail(email);
 
 		if (!doctor || doctor.role !== UserRoles.DOCTOR) {
 			return res
