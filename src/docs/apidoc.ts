@@ -16,6 +16,7 @@ import {
 	updateReply,
 } from './replies';
 import {createUser, createUserBody, getUser} from './users';
+import {getDoctorQuestion, getDoctorQuestions} from './doctors';
 import {
 	internalError,
 	notFoundError,
@@ -24,7 +25,6 @@ import {
 
 import env from '../config/env';
 import {getCoinExchangeRates} from './coinExchangeRate';
-import {getQuestions} from './doctors';
 import {getUserTransactions} from './transactions';
 import {log} from 'console';
 
@@ -122,7 +122,10 @@ const apiDocumentation = {
 			get: getCoinExchangeRates,
 		},
 		'/doctors/questions': {
-			get: getQuestions,
+			get: getDoctorQuestions,
+		},
+		'/doctors/questions/{questionId}': {
+			get: getDoctorQuestion,
 		},
 	},
 	components: {

@@ -76,6 +76,15 @@ class QuestionService {
 			where: {userId, status},
 		});
 	}
+
+	async getDoctorQuestion(id: number) {
+		return await QuestionInstance.findOne({
+			where: {
+				id,
+				status: QuestionStatus.Open,
+			},
+		});
+	}
 }
 
 export default new QuestionService();

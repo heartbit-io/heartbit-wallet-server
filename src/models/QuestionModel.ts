@@ -22,6 +22,8 @@ export class QuestionInstance extends Model<QuestionAttributes> {
 	declare bountyAmount: number;
 	declare status: string;
 	declare dataValues: QuestionAttributes;
+	declare createdAt?: Date;
+	declare updatedAt?: Date;
 
 	static associate(models: any) {
 		// define association here
