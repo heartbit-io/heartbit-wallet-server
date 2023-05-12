@@ -56,9 +56,14 @@ class QuestionService {
 		return await QuestionInstance.findAll({where: {userId}});
 	}
 
-	async getOpenQuestionsOrderByBounty() {
+	async getOpenQuestionsOrderByBounty(
+		limit?: number | undefined,
+		offset?: number | undefined,
+	) {
 		return await QuestionInstance.findAll({
 			where: {status: QuestionStatus.Open},
+			limit,
+			offset,
 			order: [
 				['bountyAmount', 'DESC'],
 				['createdAt', 'ASC'],
@@ -66,10 +71,7 @@ class QuestionService {
 		});
 	}
 
-	async getUserQuestionsByStatus(
-		userId: number,
-		status: QuestionStatus,
-	) {
+	async getUserQuestionsByStatus(userId: number, status: QuestionStatus) {
 		return await QuestionInstance.findAll({
 			where: {userId, status},
 		});

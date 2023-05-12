@@ -24,6 +24,7 @@ import {
 
 import env from '../config/env';
 import {getCoinExchangeRates} from './coinExchangeRate';
+import {getQuestions} from './doctors';
 import {getUserTransactions} from './transactions';
 import {log} from 'console';
 
@@ -119,6 +120,9 @@ const apiDocumentation = {
 		},
 		'/coin-exchange-rates/btc': {
 			get: getCoinExchangeRates,
+		},
+		'/doctors/questions': {
+			get: getQuestions,
 		},
 	},
 	components: {

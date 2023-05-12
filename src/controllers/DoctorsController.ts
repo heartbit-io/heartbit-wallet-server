@@ -180,6 +180,9 @@ class DoctorsController {
 		req: DecodedRequest,
 		res: Response,
 	): Promise<Response<FormatResponse>> {
+		const limit = (req.query.limit as number | undefined) || 1;
+		const offset = req.query.offset as number | undefined;
+
 		if (!req.email) {
 			return res
 				.status(HttpCodes.UNAUTHORIZED)
@@ -209,7 +212,10 @@ class DoctorsController {
 				);
 		}
 
-		const openQuestions = await QuestionService.getOpenQuestionsOrderByBounty();
+		const openQuestions = await QuestionService.getOpenQuestionsOrderByBounty(
+			limit,
+			offset,
+		);
 
 		return res
 			.status(HttpCodes.OK)
