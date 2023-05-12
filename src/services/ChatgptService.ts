@@ -16,7 +16,7 @@ export interface JsonAnswerInterface {
 	chiefComplaint: string;
 	medicalHistory: string;
 	currentMedication: string;
-	accessment: string;
+	assessment: string;
 	plan: string;
 	doctorNote: string;
 }
@@ -79,7 +79,7 @@ class ChatgptService {
 						chiefComplaint: 'chiefComplaint',
 						medicalHistory: 'medicalHistory',
 						currentMedication: 'currentMedication',
-						accessment: 'accessment',
+						assessment: 'assessment',
 						plan: 'plan',
 						doctorNote: 'doctorNote',
 					}),

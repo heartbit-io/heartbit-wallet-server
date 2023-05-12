@@ -28,7 +28,7 @@ export function makeAnswerToJson(answer: string): JsonAnswerInterface {
 		chiefComplaint: '',
 		medicalHistory: '',
 		currentMedication: '',
-		accessment: '',
+		assessment: '',
 		plan: '',
 		doctorNote: '',
 	};
@@ -39,8 +39,8 @@ export function makeAnswerToJson(answer: string): JsonAnswerInterface {
 		triageGuide: /Triage and guide:\s*([\s\S]*?)Chief complaint:/,
 		chiefComplaint: /Chief complaint:\s*([\s\S]*?)Medical history:/,
 		medicalHistory: /Medical history:\s*([\s\S]*?)Current medication:/,
-		currentMedication: /Current medication:\s*([\s\S]*)Accessment:/,
-		accessment: /Accessment:\s*([\s\S]*)Plan:/,
+		currentMedication: /Current medication:\s*([\s\S]*)assessment:/,
+		assessment: /assessment:\s*([\s\S]*)Plan:/,
 		plan: /Plan:\s*([\s\S]*)Doctor's Note:/,
 		doctorNote: /Doctor's Note:\s*([\s\S]*)/,
 	};

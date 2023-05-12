@@ -8,7 +8,7 @@ export interface JsonAnswerInterface {
 	chiefComplaint: string;
 	medicalHistory: string;
 	currentMedication: string;
-	accessment: string;
+	assessment: string;
 	plan: string;
 	doctorNote: string;
 }
