@@ -1,10 +1,9 @@
+import {Op, Sequelize} from 'sequelize';
 import {
 	QuestionAttributes,
 	QuestionInstance,
 	QuestionStatus,
 } from '../models/QuestionModel';
-
-import {Sequelize} from 'sequelize';
 
 class QuestionService {
 	async create(question: QuestionAttributes) {
@@ -83,6 +82,19 @@ class QuestionService {
 				id,
 				status: QuestionStatus.Open,
 			},
+		});
+	}
+
+	async getDoctorAnswerdQuestionsByQuestionIds(
+		limit: number | undefined,
+		offset: number | undefined,
+		questionIds: Array<number>,
+	) {
+		return await QuestionInstance.findAll({
+			where: {id: {[Op.in]: questionIds}},
+			limit,
+			offset,
+			order: [['createdAt', 'DESC']],
 		});
 	}
 }

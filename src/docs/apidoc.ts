@@ -16,7 +16,11 @@ import {
 	updateReply,
 } from './replies';
 import {createUser, createUserBody, getUser} from './users';
-import {getDoctorQuestion, getDoctorQuestions} from './doctors';
+import {
+	getDoctorAnsweredQuestions,
+	getDoctorQuestion,
+	getDoctorQuestions,
+} from './doctors';
 import {
 	internalError,
 	notFoundError,
@@ -126,6 +130,9 @@ const apiDocumentation = {
 		},
 		'/doctors/questions/{questionId}': {
 			get: getDoctorQuestion,
+		},
+		'/doctors/answered-questions': {
+			get: getDoctorAnsweredQuestions,
 		},
 	},
 	components: {

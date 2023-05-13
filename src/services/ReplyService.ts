@@ -33,6 +33,12 @@ class ReplyService {
 		});
 	}
 
+	async getDoctorReplies(userId: number) {
+		return await ReplyInstance.findAll({
+			where: {userId},
+		});
+	}
+
 	async deleteReply(reply: ReplyInstance) {
 		return await reply.destroy();
 	}
