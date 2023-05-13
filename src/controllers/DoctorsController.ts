@@ -4,12 +4,13 @@ import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
 import QuestionService from '../services/QuestionService';
 import ReplyService from '../services/ReplyService';
-import {Response} from 'express';
+import {Response, Request} from 'express';
 import TransactionService from '../services/TransactionService';
 import {TxTypes} from '../util/enums/txTypes';
 import {UserRoles} from '../util/enums/userRoles';
 import UserService from '../services/UserService';
 import { DoctorRequest } from '../middleware/DoctorAuth';
+import path from 'path';
 
 // after doctor auth, remove this
 const TEMP_DOCTOR_EMAIL = 'nodirbek7077@gmail.com';

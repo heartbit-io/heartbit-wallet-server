@@ -5,7 +5,8 @@ import dbconnection from './util/dbconnection';
 import env from './config/env';
 import helmet from 'helmet';
 import {log} from 'console';
-import {routes} from './routes';
+import { routes } from './routes';
+import path from 'path';
 
 const PORT = Number(env.PORT);
 
@@ -14,7 +15,8 @@ const app: Application = express();
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // handle cors
 app.use((_req, res, next) => {
