@@ -33,6 +33,18 @@ class ReplyService {
 		});
 	}
 
+	async getDoctorReplies(userId: number) {
+		return await ReplyInstance.findAll({
+			where: {userId},
+		});
+	}
+
+	async getDoctorReply(questionId: number, userId: number) {
+		return await ReplyInstance.findOne({
+			where: {questionId, userId},
+		});
+	}
+
 	async deleteReply(reply: ReplyInstance) {
 		return await reply.destroy();
 	}

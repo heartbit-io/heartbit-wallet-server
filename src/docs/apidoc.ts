@@ -17,6 +17,12 @@ import {
 } from './replies';
 import {createUser, createUserBody, getUser} from './users';
 import {
+	getDoctorAnsweredQuestion,
+	getDoctorAnsweredQuestions,
+	getDoctorQuestion,
+	getDoctorQuestions,
+} from './doctors';
+import {
 	internalError,
 	notFoundError,
 	unprocessedContentError,
@@ -119,6 +125,18 @@ const apiDocumentation = {
 		},
 		'/coin-exchange-rates/btc': {
 			get: getCoinExchangeRates,
+		},
+		'/doctors/questions': {
+			get: getDoctorQuestions,
+		},
+		'/doctors/questions/{questionId}': {
+			get: getDoctorQuestion,
+		},
+		'/doctors/answered-questions': {
+			get: getDoctorAnsweredQuestions,
+		},
+		'/doctors/answered-questions/{questionId}': {
+			get: getDoctorAnsweredQuestion,
 		},
 	},
 	components: {

@@ -1,10 +1,9 @@
+import {Op, Sequelize} from 'sequelize';
 import {
 	QuestionAttributes,
 	QuestionInstance,
 	QuestionStatus,
 } from '../models/QuestionModel';
-
-import {Sequelize} from 'sequelize';
 
 class QuestionService {
 	async create(question: QuestionAttributes) {
@@ -56,9 +55,14 @@ class QuestionService {
 		return await QuestionInstance.findAll({where: {userId}});
 	}
 
-	async getOpenQuestionsOrderByBounty() {
+	async getOpenQuestionsOrderByBounty(
+		limit?: number | undefined,
+		offset?: number | undefined,
+	) {
 		return await QuestionInstance.findAll({
 			where: {status: QuestionStatus.Open},
+			limit,
+			offset,
 			order: [
 				['bountyAmount', 'DESC'],
 				['createdAt', 'ASC'],
@@ -66,12 +70,31 @@ class QuestionService {
 		});
 	}
 
-	async getUserQuestionsByStatus(
-		userId: number,
-		status: QuestionStatus,
-	) {
+	async getUserQuestionsByStatus(userId: number, status: QuestionStatus) {
 		return await QuestionInstance.findAll({
 			where: {userId, status},
+		});
+	}
+
+	async getDoctorQuestion(id: number) {
+		return await QuestionInstance.findOne({
+			where: {
+				id,
+				status: QuestionStatus.Open,
+			},
+		});
+	}
+
+	async getDoctorAnswerdQuestionsByQuestionIds(
+		limit: number | undefined,
+		offset: number | undefined,
+		questionIds: Array<number>,
+	) {
+		return await QuestionInstance.findAll({
+			where: {id: {[Op.in]: questionIds}},
+			limit,
+			offset,
+			order: [['createdAt', 'DESC']],
 		});
 	}
 }
