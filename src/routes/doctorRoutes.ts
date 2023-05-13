@@ -8,6 +8,9 @@ const router = Router();
 router.get('/questions', DoctorsController.getQuestions);
 router.get('/questions/:questionId', DoctorsController.getQuestion);
 router.get('/answered-questions', DoctorsController.getDoctorAnsweredQuestions);
-// router.get('/replies/:replyId', DoctorsController.getReply);
+router.get(
+	'/answered-questions/:questionId',
+	DoctorsController.getDoctorAnsweredQuestion,
+);
 
 export {router as doctorRoutes};

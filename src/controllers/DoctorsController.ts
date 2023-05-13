@@ -409,6 +409,97 @@ class DoctorsController {
 				),
 			);
 	}
+
+	async getDoctorAnsweredQuestion(
+		req: DecodedRequest,
+		res: Response,
+	): Promise<Response<FormatResponse>> {
+		const {questionId} = req.params;
+
+		req.email = TEMP_DOCTOR_EMAIL;
+		if (!req.email) {
+			return res
+				.status(HttpCodes.UNAUTHORIZED)
+				.json(
+					new FormatResponse(
+						false,
+						HttpCodes.UNAUTHORIZED,
+						'Error getting user email',
+						null,
+					),
+				);
+		}
+
+		// check that it is a doctor
+		const doctor = await UserService.getUserDetailsByEmail(req.email);
+
+		if (!doctor || doctor.role !== UserRoles.DOCTOR) {
+			return res
+				.status(HttpCodes.UNAUTHORIZED)
+				.json(
+					new FormatResponse(
+						false,
+						HttpCodes.UNAUTHORIZED,
+						'User must be a doctor to get user questions',
+						null,
+					),
+				);
+		}
+
+		// check that the question is answered by the doctor
+		const doctorReply = await ReplyService.getDoctorReply(
+			Number(questionId),
+			Number(doctor.id),
+		);
+
+		if (!doctorReply) {
+			return res
+				.status(HttpCodes.NOT_FOUND)
+				.json(
+					new FormatResponse(
+						false,
+						HttpCodes.NOT_FOUND,
+						'Doctor reply was not found',
+						null,
+					),
+				);
+		}
+
+		const question = await QuestionService.getDoctorQuestion(
+			Number(questionId),
+		);
+
+		if (!question) {
+			return res
+				.status(HttpCodes.NOT_FOUND)
+				.json(
+					new FormatResponse(
+						false,
+						HttpCodes.NOT_FOUND,
+						'Question was not found',
+						null,
+					),
+				);
+		}
+
+		return res.status(HttpCodes.OK).json(
+			new FormatResponse(true, HttpCodes.OK, 'Replies retrieved successfully', {
+				bountyAmount: question.bountyAmount,
+				createdAt: question.createdAt,
+				updatedAt: question.updatedAt,
+				content: question.content,
+				userId: question.userId,
+				title: doctorReply.title || '',
+				chiefComplaint: doctorReply.majorComplaint,
+				medicalHistory: doctorReply.medicalHistory,
+				currentMedications: doctorReply.currentMedications,
+				assessment: doctorReply.assessment,
+				plan: doctorReply.plan,
+				triage: doctorReply.triage,
+				doctorNote: doctorReply.content,
+			}),
+		);
+	}
 }
 
 export default new DoctorsController();

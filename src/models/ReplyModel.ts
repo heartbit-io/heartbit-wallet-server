@@ -20,6 +20,7 @@ export interface RepliesAttributes {
 export class ReplyInstance extends Model<RepliesAttributes> {
 	declare id: number;
 	declare questionId: CreationOptional<number>;
+	declare title: string;
 	declare content: string;
 	declare status: ReplyStatus;
 	declare userId: number;

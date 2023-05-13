@@ -17,6 +17,7 @@ import {
 } from './replies';
 import {createUser, createUserBody, getUser} from './users';
 import {
+	getDoctorAnsweredQuestion,
 	getDoctorAnsweredQuestions,
 	getDoctorQuestion,
 	getDoctorQuestions,
@@ -133,6 +134,9 @@ const apiDocumentation = {
 		},
 		'/doctors/answered-questions': {
 			get: getDoctorAnsweredQuestions,
+		},
+		'/doctors/answered-questions/{questionId}': {
+			get: getDoctorAnsweredQuestion,
 		},
 	},
 	components: {
