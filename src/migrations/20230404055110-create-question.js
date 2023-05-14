@@ -13,6 +13,9 @@ module.exports = {
 			content: {
 				type: Sequelize.TEXT,
 			},
+			rawContent: {
+				type: Sequelize.TEXT,
+			},
 			userId: {
 				type: Sequelize.INTEGER,
 			},
@@ -21,7 +24,7 @@ module.exports = {
 			},
 			status: {
 				type: Sequelize.STRING,
-				defaultValue: "Open",
+				defaultValue: 'Open',
 			},
 			createdAt: {
 				allowNull: false,
@@ -34,7 +37,7 @@ module.exports = {
 			deletedAt: {
 				allowNull: true,
 				type: Sequelize.DATE,
-			}
+			},
 		});
 	},
 	async down(queryInterface, Sequelize) {

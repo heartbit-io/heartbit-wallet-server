@@ -11,6 +11,7 @@ export interface QuestionAttributes {
 	id?: number;
 	totalBounty?: unknown;
 	content: string;
+	rawContent: string;
 	userId: number;
 	bountyAmount: number;
 	status?: QuestionStatus;
@@ -18,6 +19,7 @@ export interface QuestionAttributes {
 export class QuestionInstance extends Model<QuestionAttributes> {
 	declare id: number;
 	declare content: string;
+	declare rawContent: string;
 	declare userId: number;
 	declare bountyAmount: number;
 	declare status: string;
@@ -39,6 +41,10 @@ QuestionInstance.init(
 			primaryKey: true,
 		},
 		content: {
+			type: DataTypes.TEXT,
+			allowNull: false,
+		},
+		rawContent: {
 			type: DataTypes.TEXT,
 			allowNull: false,
 		},
