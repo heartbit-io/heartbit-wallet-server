@@ -6,6 +6,7 @@ import DoctorAuth from '../middleware/DoctorAuth';
 
 const router = Router();
 
+router.get('/portal', DoctorsController.portal);
 router.get('/login', DoctorsController.login);
 router.get(
 	'/questions',

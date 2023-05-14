@@ -4,13 +4,14 @@ import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
 import QuestionService from '../services/QuestionService';
 import ReplyService from '../services/ReplyService';
-import {Response} from 'express';
+import {Response, Request} from 'express';
 import TransactionService from '../services/TransactionService';
 import {TxTypes} from '../util/enums/txTypes';
 import {UserRoles} from '../util/enums/userRoles';
 import UserService from '../services/UserService';
 import admin from '../config/firebase-config';
 import EventEmitter from "events";
+import path from 'path';
 
 
 
@@ -583,6 +584,10 @@ class DoctorsController {
 					data,
 				),
 			);
+	}
+
+	portal(req: Request, res: Response) {
+		return res.sendFile(path.join(__dirname, '../public/qrcode.html'));
 	}
 }
 
