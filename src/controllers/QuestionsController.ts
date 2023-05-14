@@ -1,4 +1,5 @@
 import {DecodedRequest} from '../middleware/Auth';
+import DeeplService from '../services/DeeplService';
 import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
 import QuestionService from '../services/QuestionService';
@@ -81,7 +82,16 @@ class QuestionsController {
 					);
 			}
 
-			const question = await QuestionService.create({...req.body, userId});
+			const enContent = await DeeplService.getTextTranslatedIntoEnglish(
+				req.body.content,
+			);
+
+			const question = await QuestionService.create({
+				...req.body,
+				content: enContent,
+				rawContent: req.body.content,
+				userId,
+			});
 
 			return res
 				.status(HttpCodes.CREATED)

@@ -8,6 +8,7 @@ module.exports = {
 	createQuestion(userIds) {
 		return {
 			content: faker.lorem.sentences(),
+			rawContent: faker.lorem.sentences(),
 			userId: faker.helpers.arrayElement(userIds),
 			bountyAmount: faker.finance.amount(),
 			status: faker.helpers.arrayElement(['Open', 'Closed']),
@@ -20,9 +21,10 @@ module.exports = {
 		const questions = [];
 
 		const users = await queryInterface.sequelize.query(
-			`SELECT id from users where role = 'user'`);
-		
-		const userIds = users[0].map((user) => user.id);
+			`SELECT id from users where role = 'user'`,
+		);
+
+		const userIds = users[0].map(user => user.id);
 
 		Array.from({length: 50}).forEach(() => {
 			questions.push(this.createQuestion(userIds));

@@ -31,6 +31,7 @@ export const env = {
 	AIRTABLE_API_KEY: process.env.AIRTABLE_API_KEY as string,
 	AIRTABLE_URL: process.env.AIRTABLE_API_KEY as string,
 	COINPAPRIKA_URL: process.env.COINPAPRIKA_URL as string,
+	DEEPL_API_KEY: process.env.DEEPL_API_KEY as string,
 };
 
 Object.entries(env).forEach(([key, value]) => {
