@@ -6,9 +6,22 @@ import DoctorAuth from '../middleware/DoctorAuth';
 
 const router = Router();
 
-router.get('/questions', DoctorsController.getQuestions);
-router.get('/questions/:questionId', DoctorsController.getQuestion);
-router.get('/answered-questions', DoctorsController.getDoctorAnsweredQuestions);
+router.get('/login', DoctorsController.login);
+router.get(
+	'/questions',
+	DoctorAuth.verifyToken,
+	DoctorsController.getQuestions,
+);
+router.get(
+	'/questions/:questionId',
+	DoctorAuth.verifyToken,
+	DoctorsController.getQuestion,
+);
+router.get(
+	'/answered-questions',
+	DoctorAuth.verifyToken,
+	DoctorsController.getDoctorAnsweredQuestions,
+);
 router.get(
 	'/answered-questions/:questionId',
 	DoctorsController.getDoctorAnsweredQuestion,
