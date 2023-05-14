@@ -4,12 +4,18 @@ import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
 import QuestionService from '../services/QuestionService';
 import ReplyService from '../services/ReplyService';
-import {Response} from 'express';
+import {Response, Request} from 'express';
 import TransactionService from '../services/TransactionService';
 import {TxTypes} from '../util/enums/txTypes';
 import {UserRoles} from '../util/enums/userRoles';
 import UserService from '../services/UserService';
+import admin from '../config/firebase-config';
+import EventEmitter from "events";
+import path from 'path';
 
+
+
+const eventEmitter = new EventEmitter();
 // after doctor auth, remove this
 const TEMP_DOCTOR_EMAIL = 'nodirbek7077@gmail.com';
 
@@ -179,7 +185,6 @@ class DoctorsController {
 				);
 		}
 	}
-
 	async getQuestions(
 		req: DecodedRequest,
 		res: Response,
@@ -499,6 +504,90 @@ class DoctorsController {
 				doctorNote: doctorReply.content,
 			}),
 		);
+	}
+
+	async login(req: DecodedRequest, res: Response) {
+		const token = req.headers.authorization?.split(' ')[1] || '';
+
+		if (!token) {
+			return res
+				.status(HttpCodes.UNAUTHORIZED)
+				.json(
+					new FormatResponse(
+						false,
+						HttpCodes.UNAUTHORIZED,
+						'No token provided',
+						null,
+					),
+				);
+		}
+
+		const decoded = await admin.auth().verifyIdToken(token);
+
+		if (!decoded || !decoded.email) { 
+			return res
+				.status(HttpCodes.UNAUTHORIZED)
+				.json(
+					new FormatResponse(
+						false,
+						HttpCodes.UNAUTHORIZED,
+						'Invalid token',
+						null,
+					),
+				);
+		}
+
+		const user = await UserService.getUserDetailsByEmail(decoded.email);
+
+		if (!user) { 
+			return res
+				.status(HttpCodes.UNAUTHORIZED)
+				.json(
+					new FormatResponse(
+						false,
+						HttpCodes.UNAUTHORIZED,
+						'User not found',
+						null,
+					),
+				);
+		}
+
+		if (user.role !== UserRoles.DOCTOR) {
+			return res
+				.status(HttpCodes.UNAUTHORIZED)
+				.json(
+					new FormatResponse(
+						false,
+						HttpCodes.UNAUTHORIZED,
+						'User is not a doctor',
+						null,
+					),
+				);
+		}
+
+
+		const data = {
+			email: user.email,
+			role: user.role,
+			token,
+		}
+
+		eventEmitter.emit('event:doctor_verified', data);
+
+		return res
+			.status(HttpCodes.OK)
+			.json(
+				new FormatResponse(
+					true,
+					HttpCodes.OK,
+					'User logged in successfully',
+					data,
+				),
+			);
+	}
+
+	portal(req: Request, res: Response) {
+		return res.sendFile(path.join(__dirname, '../public/qrcode.html'));
 	}
 }
 
