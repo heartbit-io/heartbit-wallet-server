@@ -36,6 +36,10 @@ const replyBodyData = {
 		type: 'string',
 		example: 'You need to take paracetamol',
 	},
+	doctorNote: {
+		type: 'string',
+		example: 'You need to take paracetamol',
+	},
 	status: {
 		type: 'string',
 		example: 'done',
