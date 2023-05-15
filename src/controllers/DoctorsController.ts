@@ -156,7 +156,7 @@ class DoctorsController {
 
 			const reply = await ReplyService.createReply({
 				...req.body,
-				userId: user.id,
+				userId: doctor.id,
 				userEmail: email,
 			});
 
