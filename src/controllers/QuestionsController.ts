@@ -69,7 +69,7 @@ class QuestionsController {
 					);
 			}
 
-			if (totalBounty > Number(userBalance.btcBalance)) {
+			if (Number(req.body.bountyAmount) > Number(userBalance.btcBalance)) {
 				return res
 					.status(HttpCodes.NOT_FOUND)
 					.json(
