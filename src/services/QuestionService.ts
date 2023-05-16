@@ -10,6 +10,10 @@ class QuestionService {
 		return await QuestionInstance.create({...question});
 	}
 
+	async updateStatus(status: QuestionStatus, id: number) {
+		return await QuestionInstance.update({status}, {where: {id}});
+	}
+
 	//get all user questions
 	async getAll(
 		userId: number,
