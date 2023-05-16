@@ -1,19 +1,19 @@
+import {Request, Response} from 'express';
+
 import ChatgptService from '../services/ChatgptService';
 import {DecodedRequest} from '../middleware/Auth';
+import EventEmitter from 'events';
 import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
 import QuestionService from '../services/QuestionService';
+import {QuestionStatus} from '../models/QuestionModel';
 import ReplyService from '../services/ReplyService';
-import {Response, Request} from 'express';
 import TransactionService from '../services/TransactionService';
 import {TxTypes} from '../util/enums/txTypes';
 import {UserRoles} from '../util/enums/userRoles';
 import UserService from '../services/UserService';
 import admin from '../config/firebase-config';
-import EventEmitter from "events";
 import path from 'path';
-
-
 
 const eventEmitter = new EventEmitter();
 // after doctor auth, remove this
@@ -103,62 +103,73 @@ class DoctorsController {
 					);
 			}
 
-			// XXX, TODO(david) start a database transaction
-			// debit user bounty amount
-			const userBalance = user.btcBalance - question.bountyAmount;
-			const userDebit = UserService.updateUserBtcBalance(userBalance, user.id);
+			// If the bounty is 0, no bounty is calculated.
+			if (question.bountyAmount) {
+				// XXX, TODO(david) start a database transaction
+				// debit user bounty amount
+				const userBalance = user.btcBalance - question.bountyAmount;
+				const userDebit = UserService.updateUserBtcBalance(
+					userBalance,
+					user.id,
+				);
 
-			if (!userDebit) {
-				return res
-					.status(HttpCodes.UNPROCESSED_CONTENT)
-					.json(
-						new FormatResponse(
-							false,
-							HttpCodes.UNPROCESSED_CONTENT,
-							'error debit user account',
-							null,
-						),
-					);
+				if (!userDebit) {
+					return res
+						.status(HttpCodes.UNPROCESSED_CONTENT)
+						.json(
+							new FormatResponse(
+								false,
+								HttpCodes.UNPROCESSED_CONTENT,
+								'error debit user account',
+								null,
+							),
+						);
+				}
+
+				// 100 is default sats
+				const calulatedFee =
+					100 + Math.floor((question.bountyAmount - 100) * 0.02);
+
+				const doctorBalance =
+					doctor.btcBalance + question.bountyAmount - calulatedFee;
+				const creditDoctor = await UserService.updateUserBtcBalance(
+					doctorBalance,
+					doctor.id,
+				);
+
+				if (!creditDoctor) {
+					return res
+						.status(HttpCodes.UNPROCESSED_CONTENT)
+						.json(
+							new FormatResponse(
+								false,
+								HttpCodes.UNPROCESSED_CONTENT,
+								'error crediting doctor account',
+								null,
+							),
+						);
+				}
+				// create a transaction
+				await TransactionService.createTransaction({
+					amount: question.bountyAmount - calulatedFee,
+					toUserPubkey: doctor.pubkey,
+					fromUserPubkey: user.pubkey,
+					fee: calulatedFee,
+					type: TxTypes.BOUNTY_EARNED,
+				});
 			}
-
-			// 100 is default sats
-			const calulatedFee =
-				100 + Math.floor((question.bountyAmount - 100) * 0.02);
-
-			const doctorBalance =
-				doctor.btcBalance + question.bountyAmount - calulatedFee;
-			const creditDoctor = await UserService.updateUserBtcBalance(
-				doctorBalance,
-				doctor.id,
-			);
-
-			if (!creditDoctor) {
-				return res
-					.status(HttpCodes.UNPROCESSED_CONTENT)
-					.json(
-						new FormatResponse(
-							false,
-							HttpCodes.UNPROCESSED_CONTENT,
-							'error crediting doctor account',
-							null,
-						),
-					);
-			}
-
-			//create a transaction
-			await TransactionService.createTransaction({
-				amount: question.bountyAmount - calulatedFee,
-				toUserPubkey: doctor.pubkey,
-				fromUserPubkey: user.pubkey,
-				fee: calulatedFee,
-				type: TxTypes.BOUNTY_EARNED,
-			});
 
 			const reply = await ReplyService.createReply({
 				...req.body,
 				userId: doctor.id,
 				userEmail: email,
 			});
+
+			// question status update
+			await QuestionService.updateStatus(
+				QuestionStatus.Closed,
+				Number(question.id),
+			);
 
 			// XXX, TODO(david): end a database transaction
 
@@ -524,7 +535,7 @@ class DoctorsController {
 
 		const decoded = await admin.auth().verifyIdToken(token);
 
-		if (!decoded || !decoded.email) { 
+		if (!decoded || !decoded.email) {
 			return res
 				.status(HttpCodes.UNAUTHORIZED)
 				.json(
@@ -539,7 +550,7 @@ class DoctorsController {
 
 		const user = await UserService.getUserDetailsByEmail(decoded.email);
 
-		if (!user) { 
+		if (!user) {
 			return res
 				.status(HttpCodes.UNAUTHORIZED)
 				.json(
@@ -565,12 +576,11 @@ class DoctorsController {
 				);
 		}
 
-
 		const data = {
 			email: user.email,
 			role: user.role,
 			token,
-		}
+		};
 
 		eventEmitter.emit('event:doctor_verified', data);
 
