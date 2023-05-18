@@ -12,16 +12,23 @@ class DeeplService {
 	 * @description - Get translated english text from DeepL
 	 * @param text - text to translate
 	 */
-	async getTextTranslatedIntoEnglish(text: string): Promise<any> {
+	async getTextTranslatedIntoEnglish(
+		text: string,
+		targetLanguage?: translate.DeeplLanguages,
+	): Promise<any> {
 		try {
+			const language: translate.DeeplLanguages = targetLanguage
+				? targetLanguage
+				: 'EN-US';
+
 			const result = await translate({
 				free_api: true,
 				text,
-				target_lang: 'EN-US',
+				target_lang: language,
 				auth_key: this.apiKey,
 			});
 
-			return result.data.translations[0].text;
+			return result.data.translations[0];
 		} catch (error) {
 			// TODO(david): Sentry alert in slack
 			logger.warn(error);

@@ -2,6 +2,7 @@ import {Request, Response} from 'express';
 
 import AirtableService from '../services/AirtableService';
 import ChatgptService from '../services/ChatgptService';
+import DeeplService from '../services/DeeplService';
 import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
 import QuestionService from '../services/QuestionService';
@@ -49,6 +50,8 @@ class RepliesController {
 					);
 			}
 
+			const rawContentLanguage: any = question.dataValues.rawContentLanguage;
+
 			const {content} = question;
 
 			const replyForChatGpt = await ChatgptService.getChatGptReplyByQuestionId(
@@ -92,6 +95,11 @@ class RepliesController {
 					);
 			}
 
+			const translatedReply = await DeeplService.getTextTranslatedIntoEnglish(
+				chatgptReply.jsonAnswer.triageGuide,
+				rawContentLanguage,
+			);
+
 			// set response
 			const replyResponseInterface: ReplyResponseInterface = {
 				success: true,
@@ -101,7 +109,7 @@ class RepliesController {
 					replyType: ReplyTypes.AI,
 					name: 'Advice by GPT-3.5', // TODO(david): formatting
 					classification: 'Open AI',
-					reply: chatgptReply.jsonAnswer.triageGuide || '',
+					reply: translatedReply.text,
 					createdAt: chatgptReply.createdAt, // TODO(david): date formatting, 1 Apr 2023
 				},
 			};
@@ -139,6 +147,21 @@ class RepliesController {
 			let assessment = '';
 			let triage = '';
 			let content = '';
+
+			const question = await QuestionService.getQuestion(Number(questionId));
+			if (!question) {
+				return res
+					.status(HttpCodes.NOT_FOUND)
+					.json(
+						new FormatResponse(
+							false,
+							HttpCodes.NOT_FOUND,
+							'Question was not exist',
+							null,
+						),
+					);
+			}
+			const rawContentLanguage: any = question.dataValues.rawContentLanguage;
 
 			const replyForDoctor = await ReplyService.getReplyByQuestionId(
 				Number(questionId),
@@ -210,9 +233,15 @@ class RepliesController {
 							),
 						);
 				}
+
+				const translatedReply = await DeeplService.getTextTranslatedIntoEnglish(
+					replyForChatGpt.jsonAnswer.triageGuide,
+					rawContentLanguage,
+				);
+
 				replyType = ReplyTypes.AI;
 				name = 'Advice by GPT-3.5'; // TODO(david): formatting
-				reply = replyForChatGpt.jsonAnswer.triageGuide;
+				reply = translatedReply.text;
 				classification = 'Open AI';
 				createdAt = replyForChatGpt.createdAt;
 			}

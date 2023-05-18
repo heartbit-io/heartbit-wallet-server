@@ -88,7 +88,8 @@ class QuestionsController {
 
 			const question = await QuestionService.create({
 				...req.body,
-				content: enContent,
+				content: enContent.text,
+				rawContentLanguage: enContent.detected_source_language, // snake case because deepl response
 				rawContent: req.body.content,
 				userId,
 			});
@@ -255,16 +256,19 @@ class QuestionsController {
 				order,
 			);
 
-			return res
-				.status(HttpCodes.OK)
-				.json(
-					new FormatResponse(
-						true,
-						HttpCodes.OK,
-						`Successfully retrieved all user questions according to: limit: ${limit}, offset: ${limit}, order: ${order}`,
-						questions,
-					),
-				);
+			return res.status(HttpCodes.OK).json(
+				new FormatResponse(
+					true,
+					HttpCodes.OK,
+					`Successfully retrieved all user questions according to: limit: ${limit}, offset: ${limit}, order: ${order}`,
+					questions.map(question => {
+						return {
+							...question.dataValues,
+							content: question.dataValues.rawContent,
+						};
+					}),
+				),
+			);
 		} catch (error) {
 			return res
 				.status(HttpCodes.INTERNAL_SERVER_ERROR)
@@ -433,6 +437,7 @@ class QuestionsController {
 			}
 
 			const response = question.dataValues;
+			response.content = response.rawContent;
 
 			return res
 				.status(HttpCodes.OK)
