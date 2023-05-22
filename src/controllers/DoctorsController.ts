@@ -16,8 +16,6 @@ import admin from '../config/firebase-config';
 import path from 'path';
 
 const eventEmitter = new EventEmitter();
-// after doctor auth, remove this
-const TEMP_DOCTOR_EMAIL = 'nodirbek7077@gmail.com';
 
 class DoctorsController {
 	async createDoctorReply(
@@ -202,7 +200,7 @@ class DoctorsController {
 	): Promise<Response<FormatResponse>> {
 		const limit = (req.query.limit as number | undefined) || 1;
 		const offset = req.query.offset as number | undefined;
-		req.email = TEMP_DOCTOR_EMAIL;
+
 		if (!req.email) {
 			return res
 				.status(HttpCodes.UNAUTHORIZED)
@@ -277,7 +275,6 @@ class DoctorsController {
 	): Promise<Response<FormatResponse>> {
 		const {questionId} = req.params;
 
-		req.email = TEMP_DOCTOR_EMAIL;
 		if (!req.email) {
 			return res
 				.status(HttpCodes.UNAUTHORIZED)
@@ -374,7 +371,7 @@ class DoctorsController {
 	): Promise<Response<FormatResponse>> {
 		const limit = (req.query.limit as number | undefined) || 1;
 		const offset = req.query.offset as number | undefined;
-		req.email = TEMP_DOCTOR_EMAIL;
+
 		if (!req.email) {
 			return res
 				.status(HttpCodes.UNAUTHORIZED)
@@ -432,7 +429,6 @@ class DoctorsController {
 	): Promise<Response<FormatResponse>> {
 		const {questionId} = req.params;
 
-		req.email = TEMP_DOCTOR_EMAIL;
 		if (!req.email) {
 			return res
 				.status(HttpCodes.UNAUTHORIZED)
