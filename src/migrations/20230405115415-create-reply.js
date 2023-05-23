@@ -16,6 +16,9 @@ module.exports = {
 			userId: {
 				type: Sequelize.INTEGER,
 			},
+			title: {
+				type: Sequelize.TEXT,
+			},
 			majorComplaint: {
 				type: Sequelize.TEXT,
 			},
@@ -51,7 +54,7 @@ module.exports = {
 			deletedAt: {
 				allowNull: true,
 				type: Sequelize.DATE,
-			}
+			},
 		});
 	},
 	async down(queryInterface, Sequelize) {

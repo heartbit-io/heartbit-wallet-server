@@ -7,6 +7,7 @@ export interface RepliesAttributes {
 	id?: number;
 	questionId: number;
 	userId: number;
+	title: string;
 	content: string;
 	status: ReplyStatus;
 	majorComplaint: string;
@@ -50,6 +51,10 @@ ReplyInstance.init(
 			allowNull: false,
 			autoIncrement: true,
 			primaryKey: true,
+		},
+		title: {
+			type: DataTypes.TEXT,
+			allowNull: true,
 		},
 		majorComplaint: {
 			type: DataTypes.TEXT,
