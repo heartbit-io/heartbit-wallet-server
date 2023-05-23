@@ -84,7 +84,6 @@ class QuestionService {
 		return await QuestionInstance.findOne({
 			where: {
 				id,
-				status: QuestionStatus.Open,
 			},
 		});
 	}
