@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('transactions', {
+    await queryInterface.createTable('btc_transactions', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -11,10 +11,12 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       fromUserPubkey: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        field: 'from_user_pubkey',
       },
       toUserPubkey: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        field: 'to_user_pubkey',
       },
       amount: {
         type: Sequelize.DOUBLE
@@ -28,19 +30,22 @@ module.exports = {
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        field: 'created_at',
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        field: 'updated_at',
       },
       deletedAt: {
 				allowNull: true,
-				type: Sequelize.DATE,
+        type: Sequelize.DATE,
+        field: 'deleted_at',
 			}
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('transactions');
+    await queryInterface.dropTable('btc_transactions');
   }
 };

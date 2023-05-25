@@ -9,11 +9,12 @@ module.exports = {
 	createUser() {
 		return {
 			role: faker.helpers.arrayElement(['user', 'doctor', 'admin']),
-			btcBalance: faker.finance.amount(),
+			btc_balance: faker.finance.amount(),
 			email: faker.internet.email(),
 			pubkey: faker.finance.bitcoinAddress() + new Date().getTime().toString(),
-			createdAt: new Date(),
-			updatedAt: new Date(),
+			created_at: new Date(),
+			updated_at: new Date(),
+			deleted_at: null,
 		};
 	},
 	async up(queryInterface, Sequelize) {

@@ -8,11 +8,12 @@ const {faker} = require('@faker-js/faker');
 module.exports = {
 	createTransaction(userPubkeys, doctorPubkeys) {
 		return {
-			fromUserPubkey: faker.helpers.arrayElement(userPubkeys),
-			toUserPubkey: faker.helpers.arrayElement(doctorPubkeys),
+			from_user_pubkey: faker.helpers.arrayElement(userPubkeys),
+			to_user_pubkey: faker.helpers.arrayElement(doctorPubkeys),
 			amount: faker.finance.amount(),
-			createdAt: new Date(),
-			updatedAt: new Date(),
+			created_at: new Date(),
+			updated_at: new Date(),
+			deleted_at: null,
 		};
 	},
 	async up(queryInterface, Sequelize) {
