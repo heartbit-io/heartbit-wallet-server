@@ -1,24 +1,24 @@
-import {UserAttributes, UserInstance} from '../models/UserModel';
+import {UserAttributes, User} from '../models/UserModel';
 
 class UserService {
-	async getUserDetailsById(id: number): Promise<UserInstance | null> {
-		return await UserInstance.findOne({where: {id}});
+	async getUserDetailsById(id: number): Promise<User | null> {
+		return await User.findOne({where: {id}});
 	}
 
-	async getUserDetailsByEmail(email: string): Promise<UserInstance | null> {
-		return await UserInstance.findOne({where: {email}});
+	async getUserDetailsByEmail(email: string): Promise<User | null> {
+		return await User.findOne({where: {email}});
 	}
 
-	async getUserDetailsByPubkey(pubkey: string): Promise<UserInstance | null> {
-		return await UserInstance.findOne({where: {pubkey}});
+	async getUserDetailsByPubkey(pubkey: string): Promise<User | null> {
+		return await User.findOne({where: {pubkey}});
 	}
 
 	async createUser(user: UserAttributes, dbTransaction?: any) {
-		return await UserInstance.create({...user}, {transaction: dbTransaction});
+		return await User.create({...user}, {transaction: dbTransaction});
 	}
 
-	async getUserBalance(id: number): Promise<UserInstance | null> {
-		return await UserInstance.findOne({
+	async getUserBalance(id: number): Promise<User | null> {
+		return await User.findOne({
 			where: {id},
 			attributes: ['btcBalance'],
 			plain: true,
@@ -26,7 +26,7 @@ class UserService {
 	}
 
 	async updateUserBtcBalance(btcBalance: number, id: number) {
-		return await UserInstance.update({btcBalance}, {where: {id}});
+		return await User.update({btcBalance}, {where: {id}});
 	}
 }
 

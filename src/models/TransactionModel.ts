@@ -11,7 +11,7 @@ export interface TransactionAttributes {
 	type: TxTypes;
 	fee: number;
 }
-export class TransactionInstance extends Model<TransactionAttributes> {
+export class Transaction extends Model<TransactionAttributes> {
 	declare id: number;
 	declare fromUserPubkey: string;
 	declare toUserPubkey: string;
@@ -24,7 +24,7 @@ export class TransactionInstance extends Model<TransactionAttributes> {
 	}
 }
 
-TransactionInstance.init(
+Transaction.init(
 	{
 		id: {
 			type: DataTypes.INTEGER,
@@ -39,6 +39,7 @@ TransactionInstance.init(
 				model: 'users',
 				key: 'pubkey',
 			},
+			field: 'from_user_pubkey',
 		},
 		toUserPubkey: {
 			type: DataTypes.STRING,
@@ -47,6 +48,7 @@ TransactionInstance.init(
 				model: 'users',
 				key: 'pubkey',
 			},
+			field: 'to_user_pubkey',
 		},
 		amount: {
 			type: DataTypes.DOUBLE,
@@ -64,8 +66,9 @@ TransactionInstance.init(
 	},
 	{
 		sequelize: dbconnection,
-		tableName: 'transactions',
+		tableName: 'btc_transactions',
 		timestamps: true,
 		paranoid: true,
+		underscored: true,
 	},
 );

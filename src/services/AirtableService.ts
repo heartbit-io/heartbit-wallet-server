@@ -10,7 +10,7 @@ class AirtableService {
 
 	private fetchData = async (airTableRecordId: string) => {
 		return new Promise((resolve, reject) => {
-			const url = process.env.AIRTABLE_URL + '/' + `${airTableRecordId}`;
+			const url = env.AIRTABLE_URL + '/' + `${airTableRecordId}`;
 			const options = {
 				method: 'GET',
 				headers: {

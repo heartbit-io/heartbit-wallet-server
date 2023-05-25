@@ -1,6 +1,7 @@
 import NodeCache from 'node-cache';
 import https from 'https';
 import logger from '../util/logger';
+import env from '../config/env';
 
 const cache = new NodeCache();
 
@@ -14,7 +15,7 @@ class CoinPaprikaService {
 		// get 10,000(0.0001 btc) satoshi to usd
 		const value = new Promise((resolve, reject) => {
 			const url =
-				process.env.COINPAPRIKA_URL +
+				env.COINPAPRIKA_URL +
 				'price-converter?base_currency_id=btc-bitcoin&quote_currency_id=usd-us-dollars&amount=0.0001';
 			const options = {
 				method: 'GET',

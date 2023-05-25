@@ -17,7 +17,7 @@ export interface QuestionAttributes {
 	bountyAmount: number;
 	status?: QuestionStatus;
 }
-export class QuestionInstance extends Model<QuestionAttributes> {
+export class Question extends Model<QuestionAttributes> {
 	declare id: number;
 	declare content: string;
 	declare rawContentLanguage: string;
@@ -34,7 +34,7 @@ export class QuestionInstance extends Model<QuestionAttributes> {
 	}
 }
 
-QuestionInstance.init(
+Question.init(
 	{
 		id: {
 			type: DataTypes.INTEGER,
@@ -49,18 +49,22 @@ QuestionInstance.init(
 		rawContentLanguage: {
 			type: DataTypes.STRING,
 			allowNull: true,
+			field: 'raw_content_language',
 		},
 		rawContent: {
 			type: DataTypes.TEXT,
 			allowNull: false,
+			field: 'raw_content',
 		},
 		userId: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
+			field: 'user_id',
 		},
 		bountyAmount: {
 			type: DataTypes.DOUBLE,
 			allowNull: false,
+			field: 'bounty_amount',
 		},
 		status: {
 			type: DataTypes.ENUM('Open', 'Closed'),
@@ -73,5 +77,6 @@ QuestionInstance.init(
 		tableName: 'questions',
 		timestamps: true,
 		paranoid: true,
+		underscored: true,
 	},
 );

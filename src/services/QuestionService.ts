@@ -1,17 +1,17 @@
 import {Op, Sequelize} from 'sequelize';
 import {
 	QuestionAttributes,
-	QuestionInstance,
+	Question,
 	QuestionStatus,
 } from '../models/QuestionModel';
 
 class QuestionService {
 	async create(question: QuestionAttributes) {
-		return await QuestionInstance.create({...question});
+		return await Question.create({...question});
 	}
 
 	async updateStatus(status: QuestionStatus, id: number) {
-		return await QuestionInstance.update({status}, {where: {id}});
+		return await Question.update({status}, {where: {id}});
 	}
 
 	//get all user questions
@@ -21,7 +21,7 @@ class QuestionService {
 		offset: number | undefined,
 		order: string,
 	) {
-		return await QuestionInstance.findAll({
+		return await Question.findAll({
 			where: {userId},
 			limit,
 			offset,
@@ -30,7 +30,7 @@ class QuestionService {
 	}
 
 	async sumUserOpenBountyAmount(userId: number) {
-		return await QuestionInstance.findAll({
+		return await Question.findAll({
 			where: {userId, status: QuestionStatus.Open},
 			attributes: [
 				[Sequelize.fn('sum', Sequelize.col('bountyAmount')), 'totalBounty'],
@@ -40,13 +40,13 @@ class QuestionService {
 	}
 
 	async getQuestion(id: number) {
-		return await QuestionInstance.findOne({
+		return await Question.findOne({
 			where: {id},
 		});
 	}
 
 	async getUserOpenQuestion(id: number, userId: number) {
-		return await QuestionInstance.findOne({
+		return await Question.findOne({
 			where: {
 				id,
 				userId,
@@ -55,15 +55,15 @@ class QuestionService {
 		});
 	}
 
-	async getUserQuestions(userId: number): Promise<QuestionInstance[]> {
-		return await QuestionInstance.findAll({where: {userId}});
+	async getUserQuestions(userId: number): Promise<Question[]> {
+		return await Question.findAll({where: {userId}});
 	}
 
 	async getOpenQuestionsOrderByBounty(
 		limit?: number | undefined,
 		offset?: number | undefined,
 	) {
-		return await QuestionInstance.findAll({
+		return await Question.findAll({
 			where: {status: QuestionStatus.Open},
 			limit,
 			offset,
@@ -75,13 +75,13 @@ class QuestionService {
 	}
 
 	async getUserQuestionsByStatus(userId: number, status: QuestionStatus) {
-		return await QuestionInstance.findAll({
+		return await Question.findAll({
 			where: {userId, status},
 		});
 	}
 
 	async getDoctorQuestion(id: number) {
-		return await QuestionInstance.findOne({
+		return await Question.findOne({
 			where: {
 				id,
 			},
@@ -93,7 +93,7 @@ class QuestionService {
 		offset: number | undefined,
 		questionIds: Array<number>,
 	) {
-		return await QuestionInstance.findAll({
+		return await Question.findAll({
 			where: {id: {[Op.in]: questionIds}},
 			limit,
 			offset,

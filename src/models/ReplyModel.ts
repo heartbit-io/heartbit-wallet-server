@@ -18,7 +18,7 @@ export interface RepliesAttributes {
 	triage: string;
 }
 
-export class ReplyInstance extends Model<RepliesAttributes> {
+export class Reply extends Model<RepliesAttributes> {
 	declare id: number;
 	declare questionId: CreationOptional<number>;
 	declare title: string;
@@ -37,14 +37,14 @@ export class ReplyInstance extends Model<RepliesAttributes> {
 
 	static associate(models: any) {
 		// define association here
-		ReplyInstance.belongsTo(models.questions, {
+		Reply.belongsTo(models.questions, {
 			targetKey: 'id',
 			foreignKey: 'questionId',
 		});
 	}
 }
 
-ReplyInstance.init(
+Reply.init(
 	{
 		id: {
 			type: DataTypes.INTEGER,
@@ -59,12 +59,15 @@ ReplyInstance.init(
 		majorComplaint: {
 			type: DataTypes.TEXT,
 			allowNull: true,
+			field: 'major_complaint',
 		},
 		medicalHistory: {
 			type: DataTypes.TEXT,
+			field: 'medical_history',
 		},
 		currentMedications: {
 			type: DataTypes.TEXT,
+			field: 'current_medications',
 		},
 		assessment: {
 			type: DataTypes.TEXT,
@@ -87,10 +90,12 @@ ReplyInstance.init(
 		userId: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
+			field: 'user_id',
 		},
 		questionId: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
+			field: 'question_id',
 		},
 	},
 	{
@@ -98,5 +103,6 @@ ReplyInstance.init(
 		tableName: 'replies',
 		timestamps: true,
 		paranoid: true,
+		underscored: true,
 	},
 );
