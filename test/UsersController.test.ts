@@ -2,7 +2,7 @@ import app from '../src/index';
 import {expect} from 'chai';
 import {agent as request} from 'supertest';
 import {HttpCodes} from '../src/util/HttpCodes';
-import {UserInstance, UserAttributes} from '../src/models/UserModel';
+import {User, UserAttributes} from '../src/models/UserModel';
 import {faker} from '@faker-js/faker';
 
 const base_url = '/api/v1';
@@ -26,7 +26,7 @@ describe('User endpoints', () => {
 
 	describe('create user', () => {
 		afterEach(async () => {
-			await UserInstance.destroy({where: {}, truncate: true});
+			await User.destroy({where: {}, truncate: true});
 		});
 
 		it('should register a user', async () => {

@@ -3,7 +3,6 @@ import {Request, Response} from 'express';
 import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
 import TransactionService from '../services/TransactionService';
-import {TxTypes} from '../util/enums';
 
 class RepliesController {
 	async getUserTransactions(req: Request, res: Response) {
