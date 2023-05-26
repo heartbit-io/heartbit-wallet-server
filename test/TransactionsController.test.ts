@@ -1,10 +1,10 @@
 import {HttpCodes} from '../src/util/HttpCodes';
 import {QuestionAttributes} from '../src/models/QuestionModel';
-import {QuestionInstance} from '../src/models/QuestionModel';
+import {Question} from '../src/models/QuestionModel';
 import {RepliesAttributes} from '../src/models/ReplyModel';
-import {TransactionInstance} from '../src/models/TransactionModel';
+import {Transaction} from '../src/models/TransactionModel';
 import {UserAttributes} from '../src/models/UserModel';
-import {UserInstance} from '../src/models/UserModel';
+import {User} from '../src/models/UserModel';
 import app from '../src/index';
 import {expect} from 'chai';
 import {faker} from '@faker-js/faker';
@@ -14,9 +14,9 @@ const base_url = '/api/v1';
 
 describe('Transactions endpoints', () => {
 	afterEach(async () => {
-		await UserInstance.destroy({where: {}, truncate: true});
-		await QuestionInstance.destroy({where: {}, truncate: true});
-		await TransactionInstance.destroy({where: {}, truncate: true});
+		await User.destroy({where: {}, truncate: true});
+		await Question.destroy({where: {}, truncate: true});
+		await Transaction.destroy({where: {}, truncate: true});
 	});
 
 	const newUser = () => {

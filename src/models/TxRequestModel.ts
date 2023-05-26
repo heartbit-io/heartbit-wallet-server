@@ -9,7 +9,7 @@ export interface TxRequestAttributes {
 	status?: string;
 }
 
-export class TxRequestInstance extends Model<TxRequestAttributes> {
+export class TxRequest extends Model<TxRequestAttributes> {
 	declare id: number;
 	declare userId: number;
 	declare amount: number;
@@ -20,7 +20,7 @@ export class TxRequestInstance extends Model<TxRequestAttributes> {
 	static associate(models: any) {}
 }
 
-TxRequestInstance.init(
+TxRequest.init(
 	{
 		id: {
 			type: DataTypes.INTEGER,
@@ -44,8 +44,9 @@ TxRequestInstance.init(
 	},
 	{
 		sequelize: dbconnection,
-		tableName: 'txRequests',
+		tableName: 'tx_requests',
 		timestamps: true,
 		paranoid: true,
+		underscored: true,
 	},
 );

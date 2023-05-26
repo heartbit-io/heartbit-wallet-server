@@ -17,7 +17,7 @@ export interface QuestionAttributes {
 	bountyAmount: number;
 	status?: QuestionStatus;
 }
-export class QuestionInstance extends Model<QuestionAttributes> {
+export class Question extends Model<QuestionAttributes> {
 	declare id: number;
 	declare content: string;
 	declare rawContentLanguage: string;
@@ -34,7 +34,7 @@ export class QuestionInstance extends Model<QuestionAttributes> {
 	}
 }
 
-QuestionInstance.init(
+Question.init(
 	{
 		id: {
 			type: DataTypes.INTEGER,
@@ -73,5 +73,6 @@ QuestionInstance.init(
 		tableName: 'questions',
 		timestamps: true,
 		paranoid: true,
+		underscored: true,
 	},
 );

@@ -1,12 +1,12 @@
 import {
 	QuestionAttributes,
-	QuestionInstance,
+	Question,
 } from '../src/models/QuestionModel';
-import {UserAttributes, UserInstance} from '../src/models/UserModel';
+import {UserAttributes, User} from '../src/models/UserModel';
 
 import {HttpCodes} from '../src/util/HttpCodes';
 import {RepliesAttributes} from '../src/models/ReplyModel';
-import {ReplyInstance} from '../src/models/ReplyModel';
+import {Reply} from '../src/models/ReplyModel';
 import app from '../src/index';
 import {expect} from 'chai';
 import {faker} from '@faker-js/faker';
@@ -16,9 +16,9 @@ const base_url = '/api/v1';
 
 describe('Replies endpoints', () => {
 	afterEach(async () => {
-		await UserInstance.destroy({where: {}, truncate: true});
-		await QuestionInstance.destroy({where: {}, truncate: true});
-		await ReplyInstance.destroy({where: {}, truncate: true});
+		await User.destroy({where: {}, truncate: true});
+		await Question.destroy({where: {}, truncate: true});
+		await Reply.destroy({where: {}, truncate: true});
 	});
 
 	const newUser = () => {

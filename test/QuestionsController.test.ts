@@ -1,9 +1,9 @@
 import {
 	QuestionAttributes,
-	QuestionInstance,
+	Question,
 	QuestionStatus,
 } from '../src/models/QuestionModel';
-import {UserAttributes, UserInstance} from '../src/models/UserModel';
+import {UserAttributes, User} from '../src/models/UserModel';
 
 import {HttpCodes} from '../src/util/HttpCodes';
 import app from '../src/index';
@@ -15,8 +15,8 @@ const base_url = '/api/v1';
 
 describe('Questions endpoints', () => {
 	afterEach(async () => {
-		await UserInstance.destroy({where: {}, truncate: true});
-		await QuestionInstance.destroy({where: {}, truncate: true});
+		await User.destroy({where: {}, truncate: true});
+		await Question.destroy({where: {}, truncate: true});
 	});
 
 	const newUser = () => {

@@ -1,6 +1,6 @@
 import {
 	TransactionAttributes,
-	TransactionInstance,
+	Transaction,
 } from '../models/TransactionModel';
 
 import {Op} from 'sequelize';
@@ -9,8 +9,8 @@ class TransactionService {
 	async createTransaction(
 		transaction: TransactionAttributes,
 		dbTransaction?: any,
-	): Promise<TransactionInstance> {
-		return await TransactionInstance.create(
+	): Promise<Transaction> {
+		return await Transaction.create(
 			{
 				amount: transaction.amount,
 				fromUserPubkey: transaction.fromUserPubkey,
@@ -24,8 +24,8 @@ class TransactionService {
 
 	async getUserTransactions(
 		userPubkey: string,
-	): Promise<TransactionInstance[]> {
-		return await TransactionInstance.findAll({
+	): Promise<Transaction[]> {
+		return await Transaction.findAll({
 			where: {
 				[Op.or]: [{fromUserPubkey: userPubkey}, {toUserPubkey: userPubkey}],
 			},

@@ -23,7 +23,7 @@ export interface ChatgptRepliesAttributes {
 	jsonAnswer: JsonAnswerInterface;
 }
 
-export class ChatgptReplyInstance extends Model<ChatgptRepliesAttributes> {
+export class ChatgptReply extends Model<ChatgptRepliesAttributes> {
 	declare id: number;
 	declare questionId: CreationOptional<number>;
 	declare model: string;
@@ -36,14 +36,14 @@ export class ChatgptReplyInstance extends Model<ChatgptRepliesAttributes> {
 
 	static associate(models: any) {
 		// define association here
-		ChatgptReplyInstance.belongsTo(models.questions, {
+		ChatgptReply.belongsTo(models.questions, {
 			targetKey: 'id',
-			foreignKey: 'questionId',
+			foreignKey: 'question_id',
 		});
 	}
 }
 
-ChatgptReplyInstance.init(
+ChatgptReply.init(
 	{
 		id: {
 			type: DataTypes.INTEGER,
@@ -78,8 +78,9 @@ ChatgptReplyInstance.init(
 	},
 	{
 		sequelize: dbconnection,
-		tableName: 'chatgptReplies',
+		tableName: 'chatgpt_replies',
 		timestamps: true,
 		paranoid: true,
+		underscored: true
 	},
 );

@@ -21,10 +21,12 @@ module.exports = {
 			},
 			btcBalance: {
 				type: Sequelize.DOUBLE,
+				field: 'btc_balance',
 			},
 			airTableRecordId: {
 				typr: Sequelize.STRING,
 				unique: true,
+				field: 'air_table_record_id',
 			},
 			email: {
 				type: Sequelize.STRING,
@@ -37,14 +39,17 @@ module.exports = {
 			createdAt: {
 				allowNull: false,
 				type: Sequelize.DATE,
+				field: 'created_at',
 			},
 			updatedAt: {
 				allowNull: false,
 				type: Sequelize.DATE,
+				field: 'updated_at',
 			},
 			deletedAt: {
 				allowNull: true,
 				type: Sequelize.DATE,
+				field: 'deleted_at'
 			},
 		});
 	},

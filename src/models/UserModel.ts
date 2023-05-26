@@ -12,7 +12,7 @@ export interface UserAttributes {
 	airTableRecordId: string;
 }
 
-export class UserInstance extends Model<UserAttributes> {
+export class User extends Model<UserAttributes> {
 	declare id: number;
 	declare pubkey: string;
 	declare email: string;
@@ -21,7 +21,7 @@ export class UserInstance extends Model<UserAttributes> {
 	declare airTableRecordId: string;
 
 	static associate(models: any) {
-		UserInstance.hasMany(models.questions, {
+		User.hasMany(models.questions, {
 			sourceKey: 'pubkey',
 			foreignKey: 'userId',
 		});
@@ -32,7 +32,7 @@ export class UserInstance extends Model<UserAttributes> {
 	}
 }
 
-UserInstance.init(
+User.init(
 	{
 		id: {
 			type: DataTypes.INTEGER,
@@ -68,5 +68,6 @@ UserInstance.init(
 		tableName: 'users',
 		timestamps: true,
 		paranoid: true,
+		underscored: true,
 	},
 );

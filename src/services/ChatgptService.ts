@@ -1,7 +1,6 @@
 import {Configuration, OpenAIApi} from 'openai';
 import {makeAnswerToJson, makePrompt} from '../util/chatgpt';
-
-import {ChatgptReplyInstance} from '../models/ChatgptReplyModel';
+import {ChatgptReply} from '../models/ChatgptReplyModel';
 import env from '../config/env';
 import logger from '../util/logger';
 
@@ -40,7 +39,7 @@ class ChatgptService {
 		questionContent: string,
 		model: string,
 		maxTokens: number,
-	): Promise<ChatgptReplyInstance | undefined> {
+	): Promise<ChatgptReply | undefined> {
 		const prompt = makePrompt(questionContent, '');
 		try {
 			// TODO(david): Add patient profile parameter
@@ -54,7 +53,7 @@ class ChatgptService {
 			const rawAnswer = completion.data.choices[0].message?.content || '';
 			const jsonAnswer: JsonAnswerInterface = makeAnswerToJson(rawAnswer);
 
-			return await ChatgptReplyInstance.create({
+			return await ChatgptReply.create({
 				questionId,
 				model,
 				maxTokens,
@@ -66,7 +65,7 @@ class ChatgptService {
 			// TODO(david): Sentry alert in slack
 			logger.warn(error);
 			// XXX(david): temp logic for client developement
-			return await ChatgptReplyInstance.create({
+			return await ChatgptReply.create({
 				questionId,
 				model,
 				maxTokens,
@@ -94,9 +93,9 @@ class ChatgptService {
 	 */
 	async getChatGptReplyByQuestionId(
 		questionId: number,
-	): Promise<ChatgptReplyInstance | undefined> {
+	): Promise<ChatgptReply | undefined> {
 		try {
-			const chatGptReply = await ChatgptReplyInstance.findOne({
+			const chatGptReply = await ChatgptReply.findOne({
 				where: {questionId},
 				attributes: ['model', 'jsonAnswer', 'createdAt'],
 			});

@@ -12,21 +12,26 @@ module.exports = {
 			},
 			questionId: {
 				type: Sequelize.INTEGER,
+				field: 'question_id',
 			},
 			userId: {
 				type: Sequelize.INTEGER,
+				field: 'user_id',
 			},
 			title: {
 				type: Sequelize.TEXT,
 			},
 			majorComplaint: {
 				type: Sequelize.TEXT,
+				field: 'major_complaint',
 			},
 			medicalHistory: {
 				type: Sequelize.TEXT,
+				field: 'medical_history',
 			},
 			currentMedications: {
 				type: Sequelize.TEXT,
+				field: 'current_medications',
 			},
 			assessment: {
 				type: Sequelize.TEXT,
@@ -46,14 +51,17 @@ module.exports = {
 			createdAt: {
 				allowNull: false,
 				type: Sequelize.DATE,
+				field: 'created_at',
 			},
 			updatedAt: {
 				allowNull: false,
 				type: Sequelize.DATE,
+				field: 'updated_at',
 			},
 			deletedAt: {
 				allowNull: true,
 				type: Sequelize.DATE,
+				field: 'deleted_at'
 			},
 		});
 	},

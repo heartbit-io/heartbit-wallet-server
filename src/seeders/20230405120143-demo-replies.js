@@ -7,19 +7,20 @@ const {faker} = require('@faker-js/faker');
 module.exports = {
 	createReply(index, doctorIds) {
 		return {
-			questionId: index,
-			userId: faker.helpers.arrayElement(doctorIds),
+			question_id: index,
+			user_id: faker.helpers.arrayElement(doctorIds),
 			content: faker.lorem.paragraph(),
 			title: faker.lorem.paragraph(),
-			majorComplaint: faker.lorem.paragraph(),
-			medicalHistory: faker.lorem.paragraph(),
-			currentMedications: faker.lorem.paragraph(),
+			major_complaint: faker.lorem.paragraph(),
+			medical_history: faker.lorem.paragraph(),
+			current_medications: faker.lorem.paragraph(),
 			assessment: faker.lorem.paragraph(),
 			plan: faker.lorem.paragraph(),
 			triage: faker.lorem.paragraph(),
 			status: faker.helpers.arrayElement(['open', 'closed']),
-			createdAt: new Date(),
-			updatedAt: new Date(),
+			created_at: new Date(),
+			updated_at: new Date(),
+			deleted_at: null,
 		};
 	},
 	async up(queryInterface, Sequelize) {

@@ -8,12 +8,13 @@ module.exports = {
 	createQuestion(userIds) {
 		return {
 			content: faker.lorem.sentences(),
-			rawContent: faker.lorem.sentences(),
-			userId: faker.helpers.arrayElement(userIds),
-			bountyAmount: faker.finance.amount(),
+			raw_content: faker.lorem.sentences(),
+			user_id: faker.helpers.arrayElement(userIds),
+			bounty_amount: faker.finance.amount(),
 			status: faker.helpers.arrayElement(['Open', 'Closed']),
 			createdAt: new Date(),
 			updatedAt: new Date(),
+			deletedAt: null,
 		};
 	},
 

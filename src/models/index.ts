@@ -1,9 +1,9 @@
 import {Dialect, Sequelize} from 'sequelize';
 
-import {QuestionInstance} from './QuestionModel';
-import {ReplyInstance} from './ReplyModel';
-import {TransactionInstance} from './TransactionModel';
-import {UserInstance} from './UserModel';
+import {Question } from './QuestionModel';
+import {Reply} from './ReplyModel';
+import {Transaction} from './TransactionModel';
+import {User} from './UserModel';
 import env from '../config/env';
 
 const dbToUse = env.NODE_ENV === 'test' ? env.TEST_DB_NAME : env.DB_NAME;
@@ -17,10 +17,10 @@ const sequelize = new Sequelize(dbToUse, env.DB_USER, env.DB_PASSWORD, {
 const db = {
 	sequelize,
 	Sequelize,
-	QuestionInstance,
-	UserInstance,
-	TransactionInstance,
-	ReplyInstance,
+	Question,
+	User,
+	Transaction,
+	Reply,
 };
 
 Object.values(db).forEach((model: any) => {
@@ -29,13 +29,13 @@ Object.values(db).forEach((model: any) => {
 	}
 });
 
-QuestionInstance.belongsTo(UserInstance, {
+Question.belongsTo(User, {
 	as: 'User',
 	onDelete: 'CASCADE',
 	foreignKey: 'userId',
 });
 
-UserInstance.hasMany(QuestionInstance, {
+User.hasMany(Question, {
 	as: 'Questions',
 	onDelete: 'CASCADE',
 	foreignKey: 'userId',
