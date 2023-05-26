@@ -1,13 +1,13 @@
 import * as Sentry from '@sentry/node';
 
 import {DecodedRequest} from '../middleware/Auth';
-import DeeplService from '../services/DeeplService';
 import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
 import QuestionService from '../services/QuestionService';
 import {QuestionStatus} from '../models/QuestionModel';
 import {Response} from 'express';
 import UserService from '../services/UserService';
+import ResponseDto from '../dto/ResponseDTO';
 
 class QuestionsController {
 	async create(
@@ -15,99 +15,7 @@ class QuestionsController {
 		res: Response,
 	): Promise<Response<FormatResponse>> {
 		try {
-			if (!req.email) {
-				Sentry.captureMessage(
-					`[${HttpCodes.UNAUTHORIZED}] Error getting user email`,
-				);
-				return res
-					.status(HttpCodes.UNAUTHORIZED)
-					.json(
-						new FormatResponse(
-							false,
-							HttpCodes.UNAUTHORIZED,
-							'Error getting user email',
-							null,
-						),
-					);
-			}
-
-			const user = await UserService.getUserDetailsByEmail(req.email);
-
-			if (!user) {
-				Sentry.captureMessage(
-					`[${HttpCodes.NOT_FOUND}] No user exists for the email`,
-				);
-				return res
-					.status(HttpCodes.NOT_FOUND)
-					.json(
-						new FormatResponse(
-							false,
-							HttpCodes.NOT_FOUND,
-							'No user exists for the email',
-							null,
-						),
-					);
-			}
-
-			const userId: number = user.id;
-
-			const userOpenBounty = await QuestionService.sumUserOpenBountyAmount(
-				userId,
-			);
-
-			const userOpenBountyTotal = userOpenBounty[0]
-				? userOpenBounty[0].dataValues.totalBounty
-				: 0;
-
-			const totalBounty =
-				Number(userOpenBountyTotal) + Number(req.body.bountyAmount);
-
-			const userBalance = await UserService.getUserBalance(userId);
-
-			if (!userBalance) {
-				Sentry.captureMessage(
-					`[${HttpCodes.NOT_FOUND}] Error getting user balance`,
-				);
-				return res
-					.status(HttpCodes.NOT_FOUND)
-					.json(
-						new FormatResponse(
-							false,
-							HttpCodes.NOT_FOUND,
-							'Error getting user balance',
-							null,
-						),
-					);
-			}
-
-			if (Number(req.body.bountyAmount) > Number(userBalance.btcBalance)) {
-				Sentry.captureMessage(
-					`[${HttpCodes.NOT_FOUND}] You do not have enough sats to post a new question`,
-				);
-				return res
-					.status(HttpCodes.NOT_FOUND)
-					.json(
-						new FormatResponse(
-							false,
-							HttpCodes.NOT_FOUND,
-							'You do not have enough sats to post a new question',
-							null,
-						),
-					);
-			}
-
-			const enContent = await DeeplService.getTextTranslatedIntoEnglish(
-				req.body.content,
-			);
-
-			const question = await QuestionService.create({
-				...req.body,
-				content: enContent.text,
-				rawContentLanguage: enContent.detected_source_language, // snake case because deepl response
-				rawContent: req.body.content,
-				userId,
-			});
-
+			const newQuestion = await QuestionService.create(req.body, req.email);
 			return res
 				.status(HttpCodes.CREATED)
 				.json(
@@ -115,18 +23,17 @@ class QuestionsController {
 						true,
 						HttpCodes.CREATED,
 						'Question posted successfully',
-						question,
+						newQuestion,
 					),
 				);
-		} catch (error) {
-			Sentry.captureMessage(`[${HttpCodes.INTERNAL_SERVER_ERROR}] ${error}`);
+		} catch (error: any) {
 			return res
-				.status(HttpCodes.INTERNAL_SERVER_ERROR)
+				.status(error.code ? error.code : HttpCodes.INTERNAL_SERVER_ERROR)
 				.json(
-					new FormatResponse(
+					new ResponseDto(
 						false,
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						error,
+						error.code ? error.code : HttpCodes.INTERNAL_SERVER_ERROR,
+						error.message ? error.message : 'HTTP error',
 						null,
 					),
 				);

@@ -3,14 +3,18 @@ import QuestionsValidator from '../lib/QuestionsValidator';
 import RepliesController from '../controllers/RepliesController';
 import {Router} from 'express';
 import Validation from '../middleware/Validation';
+import Auth from '../middleware/Auth';
+
 const router = Router();
 
 router.post(
 	'/',
+	Auth.verifyToken,
 	QuestionsValidator.checkCreateQuestion(),
 	Validation.validate,
 	QuestionsController.create,
 );
+
 router.get('/open', QuestionsController.getOpenQuestionsOrderByBounty);
 router.get(
 	'/status',
@@ -43,6 +47,5 @@ router.delete(
 router.get('/:questionId/replies', RepliesController.get);
 
 router.post('/chat-gpt-replies', RepliesController.createChatGPTReply);
-
 
 export {router as questionRoutes};

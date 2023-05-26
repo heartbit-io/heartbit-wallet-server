@@ -403,7 +403,9 @@ class DoctorsController {
 
 		// TODO(david): Join the question and reply table
 		const replies = await ReplyService.getDoctorReplies(Number(doctor.id));
-		const questionIds = replies.map((reply: { questionId: any; }) => reply.questionId);
+		const questionIds = replies.map(
+			(reply: {questionId: any}) => reply.questionId,
+		);
 		const questions =
 			await QuestionService.getDoctorAnswerdQuestionsByQuestionIds(
 				limit,

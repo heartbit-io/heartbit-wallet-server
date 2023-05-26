@@ -5,9 +5,6 @@ import {NextFunction, Request, Response} from 'express';
 import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
 import admin from '../config/firebase-config';
-import {config} from 'dotenv';
-
-config();
 
 export interface DecodedRequest extends Request {
 	email?: string;
@@ -20,7 +17,7 @@ class Auth {
 		try {
 			const decodeValue = await admin.auth().verifyIdToken(token);
 
-			if (decodeValue) {
+			if (decodeValue && decodeValue.email) {
 				req.email = decodeValue.email;
 				return next();
 			}
