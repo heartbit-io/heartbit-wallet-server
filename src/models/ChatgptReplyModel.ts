@@ -54,7 +54,6 @@ ChatgptReply.init(
 		questionId: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
-			field: 'question_id',
 		},
 		model: {
 			type: DataTypes.STRING,
@@ -63,7 +62,6 @@ ChatgptReply.init(
 		maxTokens: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
-			field: 'max_tokens',
 		},
 		prompt: {
 			type: DataTypes.TEXT,
@@ -72,12 +70,10 @@ ChatgptReply.init(
 		rawAnswer: {
 			type: DataTypes.TEXT,
 			allowNull: false,
-			field: 'raw_answer',
 		},
 		jsonAnswer: {
 			type: DataTypes.JSON,
 			allowNull: false,
-			field: 'json_answer',
 		},
 	},
 	{

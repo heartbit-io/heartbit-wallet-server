@@ -49,22 +49,18 @@ Question.init(
 		rawContentLanguage: {
 			type: DataTypes.STRING,
 			allowNull: true,
-			field: 'raw_content_language',
 		},
 		rawContent: {
 			type: DataTypes.TEXT,
 			allowNull: false,
-			field: 'raw_content',
 		},
 		userId: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
-			field: 'user_id',
 		},
 		bountyAmount: {
 			type: DataTypes.DOUBLE,
 			allowNull: false,
-			field: 'bounty_amount',
 		},
 		status: {
 			type: DataTypes.ENUM('Open', 'Closed'),

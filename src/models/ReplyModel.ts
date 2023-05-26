@@ -59,15 +59,12 @@ Reply.init(
 		majorComplaint: {
 			type: DataTypes.TEXT,
 			allowNull: true,
-			field: 'major_complaint',
 		},
 		medicalHistory: {
 			type: DataTypes.TEXT,
-			field: 'medical_history',
 		},
 		currentMedications: {
 			type: DataTypes.TEXT,
-			field: 'current_medications',
 		},
 		assessment: {
 			type: DataTypes.TEXT,
@@ -90,12 +87,10 @@ Reply.init(
 		userId: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
-			field: 'user_id',
 		},
 		questionId: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
-			field: 'question_id',
 		},
 	},
 	{

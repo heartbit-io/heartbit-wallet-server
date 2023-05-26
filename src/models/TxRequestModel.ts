@@ -30,7 +30,6 @@ TxRequest.init(
 		},
 		userId: {
 			type: DataTypes.INTEGER,
-			field: 'user_id',
 		},
 		amount: {
 			type: DataTypes.DOUBLE,

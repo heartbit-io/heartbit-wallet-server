@@ -39,7 +39,6 @@ Transaction.init(
 				model: 'users',
 				key: 'pubkey',
 			},
-			field: 'from_user_pubkey',
 		},
 		toUserPubkey: {
 			type: DataTypes.STRING,
@@ -48,7 +47,6 @@ Transaction.init(
 				model: 'users',
 				key: 'pubkey',
 			},
-			field: 'to_user_pubkey',
 		},
 		amount: {
 			type: DataTypes.DOUBLE,
