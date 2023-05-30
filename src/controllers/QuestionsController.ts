@@ -1,13 +1,12 @@
 import * as Sentry from '@sentry/node';
 
-import {NextFunction, Response} from 'express';
-
 import {DecodedRequest} from '../middleware/Auth';
 import DeeplService from '../services/DeeplService';
 import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
 import QuestionService from '../services/QuestionService';
 import {QuestionStatus} from '../models/QuestionModel';
+import {Response} from 'express';
 import UserService from '../services/UserService';
 
 class QuestionsController {
