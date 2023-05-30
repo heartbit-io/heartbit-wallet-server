@@ -89,3 +89,19 @@ eb deploy [enviroment-name]
     - DEV, TEST: dev-heartbit-wallet-server-env
     - PROD: (TODO)
 
+## Monitoring
+
+### Sentry
+- create project(express), required each enviroments
+- set sentry dns in env(SENTRY_DSN)
+- slack notification setting
+  1. select sentry project > settings > integrations > slack (add installation)
+  2. select sentry project > alerts > new alert rule > set 'Send a notification to the {workspace} Slack workspace to #{channel}'
+- how to use in code
+  - Write code like the example below where you want to receive the error alert
+```
+// e.g
+Sentry.captureMessage('[${HttpCodes.INTERNAL_SERVER_ERROR}] ${error}');
+```
+- You can access Sentry via a notification in slack channel to see more information about the error.
+- If you don't have a sentry account, find david(david@heartbit.io).
