@@ -1,3 +1,5 @@
+import * as Sentry from '@sentry/node';
+
 import {NextFunction, Request, Response} from 'express';
 
 import FormatResponse from '../lib/FormatResponse';
@@ -23,6 +25,7 @@ class Auth {
 				return next();
 			}
 
+			Sentry.captureMessage(`[${HttpCodes.UNAUTHORIZED}] Unauthorized`);
 			return res
 				.status(HttpCodes.UNAUTHORIZED)
 				.json(
@@ -34,6 +37,7 @@ class Auth {
 					),
 				);
 		} catch (error) {
+			Sentry.captureMessage(`[${HttpCodes.INTERNAL_SERVER_ERROR}] ${error}`);
 			return res
 				.status(HttpCodes.INTERNAL_SERVER_ERROR)
 				.json(

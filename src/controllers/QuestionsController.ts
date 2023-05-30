@@ -1,10 +1,13 @@
+import * as Sentry from '@sentry/node';
+
+import {NextFunction, Response} from 'express';
+
 import {DecodedRequest} from '../middleware/Auth';
 import DeeplService from '../services/DeeplService';
 import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
 import QuestionService from '../services/QuestionService';
 import {QuestionStatus} from '../models/QuestionModel';
-import {Response} from 'express';
 import UserService from '../services/UserService';
 
 class QuestionsController {
@@ -14,6 +17,9 @@ class QuestionsController {
 	): Promise<Response<FormatResponse>> {
 		try {
 			if (!req.email) {
+				Sentry.captureMessage(
+					`[${HttpCodes.UNAUTHORIZED}] Error getting user email`,
+				);
 				return res
 					.status(HttpCodes.UNAUTHORIZED)
 					.json(
@@ -29,13 +35,16 @@ class QuestionsController {
 			const user = await UserService.getUserDetailsByEmail(req.email);
 
 			if (!user) {
+				Sentry.captureMessage(
+					`[${HttpCodes.NOT_FOUND}] No user exists for the email`,
+				);
 				return res
 					.status(HttpCodes.NOT_FOUND)
 					.json(
 						new FormatResponse(
 							false,
 							HttpCodes.NOT_FOUND,
-							'No user exists for the email.',
+							'No user exists for the email',
 							null,
 						),
 					);
@@ -57,6 +66,9 @@ class QuestionsController {
 			const userBalance = await UserService.getUserBalance(userId);
 
 			if (!userBalance) {
+				Sentry.captureMessage(
+					`[${HttpCodes.NOT_FOUND}] Error getting user balance`,
+				);
 				return res
 					.status(HttpCodes.NOT_FOUND)
 					.json(
@@ -70,6 +82,9 @@ class QuestionsController {
 			}
 
 			if (Number(req.body.bountyAmount) > Number(userBalance.btcBalance)) {
+				Sentry.captureMessage(
+					`[${HttpCodes.NOT_FOUND}] You do not have enough sats to post a new question`,
+				);
 				return res
 					.status(HttpCodes.NOT_FOUND)
 					.json(
@@ -105,6 +120,7 @@ class QuestionsController {
 					),
 				);
 		} catch (error) {
+			Sentry.captureMessage(`[${HttpCodes.INTERNAL_SERVER_ERROR}] ${error}`);
 			return res
 				.status(HttpCodes.INTERNAL_SERVER_ERROR)
 				.json(
@@ -128,6 +144,9 @@ class QuestionsController {
 			const question = await QuestionService.getQuestion(Number(questionId));
 
 			if (!question) {
+				Sentry.captureMessage(
+					`[${HttpCodes.NOT_FOUND}] Question was not found`,
+				);
 				return res
 					.status(HttpCodes.NOT_FOUND)
 					.json(
@@ -141,6 +160,9 @@ class QuestionsController {
 			}
 
 			if (!req.email) {
+				Sentry.captureMessage(
+					`[${HttpCodes.NOT_FOUND}] Error getting user email`,
+				);
 				return res
 					.status(HttpCodes.NOT_FOUND)
 					.json(
@@ -156,6 +178,9 @@ class QuestionsController {
 			const user = await UserService.getUserDetailsByEmail(req.email);
 
 			if (!user) {
+				Sentry.captureMessage(
+					`[${HttpCodes.NOT_FOUND}] Error getting user email`,
+				);
 				return res
 					.status(HttpCodes.NOT_FOUND)
 					.json(
@@ -171,6 +196,9 @@ class QuestionsController {
 			const userId: number = user.id;
 
 			if (question.userId !== userId) {
+				Sentry.captureMessage(
+					`[${HttpCodes.UNAUTHORIZED}] Only users who posted a question can delete the question`,
+				);
 				return res
 					.status(HttpCodes.UNAUTHORIZED)
 					.json(
@@ -196,6 +224,7 @@ class QuestionsController {
 					),
 				);
 		} catch (error) {
+			Sentry.captureMessage(`[${HttpCodes.INTERNAL_SERVER_ERROR}] ${error}`);
 			return res
 				.status(HttpCodes.INTERNAL_SERVER_ERROR)
 				.json(
@@ -213,6 +242,7 @@ class QuestionsController {
 	async getAllQuestions(
 		req: DecodedRequest,
 		res: Response,
+		next: NextFunction,
 	): Promise<Response<FormatResponse>> {
 		try {
 			const limit = (req.query.limit as number | undefined) || 50;
@@ -220,6 +250,9 @@ class QuestionsController {
 			const order = (req.query.order as string | undefined) || 'DESC';
 
 			if (!req.email) {
+				Sentry.captureMessage(
+					`[${HttpCodes.UNAUTHORIZED}] Error getting user email`,
+				);
 				return res
 					.status(HttpCodes.UNAUTHORIZED)
 					.json(
@@ -235,6 +268,9 @@ class QuestionsController {
 			const user = await UserService.getUserDetailsByEmail(req.email);
 
 			if (!user) {
+				Sentry.captureMessage(
+					`[${HttpCodes.NOT_FOUND}] Error getting user email`,
+				);
 				return res
 					.status(HttpCodes.NOT_FOUND)
 					.json(
@@ -270,6 +306,7 @@ class QuestionsController {
 				),
 			);
 		} catch (error) {
+			Sentry.captureMessage(`[${HttpCodes.INTERNAL_SERVER_ERROR}] ${error}`);
 			return res
 				.status(HttpCodes.INTERNAL_SERVER_ERROR)
 				.json(
@@ -299,6 +336,7 @@ class QuestionsController {
 					),
 				);
 		} catch (error) {
+			Sentry.captureMessage(`[${HttpCodes.INTERNAL_SERVER_ERROR}] ${error}`);
 			return res
 				.status(HttpCodes.INTERNAL_SERVER_ERROR)
 				.json(
@@ -315,6 +353,9 @@ class QuestionsController {
 	async getUserQuestionsByStatus(req: DecodedRequest, res: Response) {
 		try {
 			if (!req.email) {
+				Sentry.captureMessage(
+					`[${HttpCodes.UNAUTHORIZED}] Error getting user email`,
+				);
 				return res
 					.status(HttpCodes.UNAUTHORIZED)
 					.json(
@@ -331,6 +372,9 @@ class QuestionsController {
 			const user = await UserService.getUserDetailsByEmail(email);
 
 			if (!user) {
+				Sentry.captureMessage(
+					`[${HttpCodes.NOT_FOUND}] Error getting user details`,
+				);
 				return res
 					.status(HttpCodes.NOT_FOUND)
 					.json(
@@ -361,6 +405,7 @@ class QuestionsController {
 					),
 				);
 		} catch (error) {
+			Sentry.captureMessage(`[${HttpCodes.INTERNAL_SERVER_ERROR}] ${error}`);
 			return res
 				.status(HttpCodes.INTERNAL_SERVER_ERROR)
 				.json(
@@ -382,6 +427,9 @@ class QuestionsController {
 
 			const question = await QuestionService.getQuestion(Number(questionId));
 			if (!question) {
+				Sentry.captureMessage(
+					`[${HttpCodes.NOT_FOUND}] Question was not found`,
+				);
 				return res
 					.status(HttpCodes.NOT_FOUND)
 					.json(
@@ -395,6 +443,9 @@ class QuestionsController {
 			}
 
 			if (!req.email) {
+				Sentry.captureMessage(
+					`[${HttpCodes.UNAUTHORIZED}] Error getting user email`,
+				);
 				return res
 					.status(HttpCodes.UNAUTHORIZED)
 					.json(
@@ -410,6 +461,9 @@ class QuestionsController {
 			const user = await UserService.getUserDetailsByEmail(req.email);
 
 			if (!user) {
+				Sentry.captureMessage(
+					`[${HttpCodes.NOT_FOUND}] Error getting user details`,
+				);
 				return res
 					.status(HttpCodes.NOT_FOUND)
 					.json(
@@ -424,6 +478,9 @@ class QuestionsController {
 
 			// TODO: check if user is admin or doctor
 			if (question.userId !== user.id && !user.isDoctor) {
+				Sentry.captureMessage(
+					`[${HttpCodes.UNAUTHORIZED}] Only users who posted a question can view the question`,
+				);
 				return res
 					.status(HttpCodes.UNAUTHORIZED)
 					.json(
@@ -450,6 +507,7 @@ class QuestionsController {
 					),
 				);
 		} catch (error) {
+			Sentry.captureMessage(`[${HttpCodes.INTERNAL_SERVER_ERROR}] ${error}`);
 			return res
 				.status(HttpCodes.INTERNAL_SERVER_ERROR)
 				.json(
@@ -473,6 +531,9 @@ class QuestionsController {
 			);
 
 			if (!question) {
+				Sentry.captureMessage(
+					`[${HttpCodes.NOT_FOUND}] Check that the question exist and has not already been closed`,
+				);
 				return res
 					.status(HttpCodes.NOT_FOUND)
 					.json(
@@ -500,6 +561,7 @@ class QuestionsController {
 					),
 				);
 		} catch (error) {
+			Sentry.captureMessage(`[${HttpCodes.INTERNAL_SERVER_ERROR}] ${error}`);
 			return res
 				.status(HttpCodes.INTERNAL_SERVER_ERROR)
 				.json(
