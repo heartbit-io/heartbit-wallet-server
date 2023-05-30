@@ -242,7 +242,6 @@ class QuestionsController {
 	async getAllQuestions(
 		req: DecodedRequest,
 		res: Response,
-		next: NextFunction,
 	): Promise<Response<FormatResponse>> {
 		try {
 			const limit = (req.query.limit as number | undefined) || 50;
