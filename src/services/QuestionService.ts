@@ -9,6 +9,7 @@ import {CustomError} from '../util/CustomError';
 import {HttpCodes} from '../util/HttpCodes';
 import QuestionRepository from '../Repositories/QuestionRepository';
 import DeeplService from './DeeplService';
+import UserRepository from '../Repositories/UserRepository';
 
 class QuestionService {
 	async create(question: QuestionAttributes, email: string | undefined) {
@@ -69,23 +70,93 @@ class QuestionService {
 		}
 	}
 
+	async deleteQuestion(questionId: number, email: string | undefined) {
+		try {
+			const question = await QuestionRepository.getQuestion(questionId);
+			if (!question)
+				throw new CustomError(HttpCodes.NOT_FOUND, 'Question was not found');
+
+			if (!email)
+				throw new CustomError(HttpCodes.UNAUTHORIZED, 'Email is required');
+
+			const user = await UserService.getUserDetailsByEmail(email);
+
+			if (!user) throw new CustomError(HttpCodes.NOT_FOUND, 'User not found');
+
+			const userId: number = user.id;
+
+			if (question.userId !== userId)
+				throw new CustomError(
+					HttpCodes.UNAUTHORIZED,
+					'Only users who posted a question can delete the question',
+				);
+
+			await QuestionRepository.deleteQuestion(question);
+
+			return true;
+		} catch (error: any) {
+			throw error.code && error.message
+				? error
+				: new CustomError(
+						HttpCodes.INTERNAL_SERVER_ERROR,
+						'Internal Server Error',
+				  );
+		}
+	}
+
+	async getUserQuestionsByStatus(
+		email: string | undefined,
+		status: QuestionStatus,
+	) {
+		try {
+			if (!email)
+				throw new CustomError(HttpCodes.UNAUTHORIZED, 'Email required');
+
+			const user = await UserRepository.getUserDetailsByEmail(email);
+
+			if (!user)
+				throw new CustomError(
+					HttpCodes.NOT_FOUND,
+					'Error getting user details',
+				);
+
+			const questions = await QuestionRepository.getUserQuestionsByStatus(
+				user.id,
+				status,
+			);
+
+			return questions;
+		} catch (error: any) {
+			throw error.code && error.message
+				? error
+				: new CustomError(
+						HttpCodes.INTERNAL_SERVER_ERROR,
+						'Internal Server Error',
+				  );
+		}
+	}
+
 	async updateStatus(status: QuestionStatus, id: number) {
 		return await Question.update({status}, {where: {id}});
 	}
 
 	//get all user questions
 	async getAll(
-		userId: number,
+		email: string | undefined,
 		limit: number | undefined,
 		offset: number | undefined,
 		order: string,
 	) {
-		return await Question.findAll({
-			where: {userId},
-			limit,
-			offset,
-			order: [['created_at', order]],
-		});
+		if (!email)
+			throw new CustomError(HttpCodes.UNAUTHORIZED, 'Email is required');
+
+		const user = await UserRepository.getUserDetailsByEmail(email);
+
+		if (!user) throw new CustomError(HttpCodes.NOT_FOUND, 'User not found');
+
+		const userId: number = user.id;
+
+		return await QuestionRepository.getAll(userId, limit, offset, order);
 	}
 
 	async sumUserOpenBountyAmount(userId: number) {
@@ -98,10 +169,37 @@ class QuestionService {
 		});
 	}
 
-	async getQuestion(id: number) {
-		return await Question.findOne({
-			where: {id},
-		});
+	async getQuestion(questionId: number, email: string | undefined) {
+		try {
+			const question = await QuestionRepository.getQuestion(questionId);
+			if (!question)
+				throw new CustomError(HttpCodes.NOT_FOUND, 'Question not found');
+
+			if (!email)
+				throw new CustomError(HttpCodes.UNAUTHORIZED, 'Email is required');
+
+			const user = await UserRepository.getUserDetailsByEmail(email);
+
+			if (!user) throw new CustomError(HttpCodes.NOT_FOUND, 'User not found');
+
+			if (question.userId !== user.id && !user.isDoctor)
+				throw new CustomError(
+					HttpCodes.UNAUTHORIZED,
+					'Only users who posted a question can view the question',
+				);
+
+			const response = question.dataValues;
+			response.content = response.rawContent;
+
+			return response;
+		} catch (error: any) {
+			throw error.code && error.message
+				? error
+				: new CustomError(
+						HttpCodes.INTERNAL_SERVER_ERROR,
+						'Internal Server Error',
+				  );
+		}
 	}
 
 	async getUserOpenQuestion(id: number, userId: number) {
@@ -122,21 +220,10 @@ class QuestionService {
 		limit?: number | undefined,
 		offset?: number | undefined,
 	) {
-		return await Question.findAll({
-			where: {status: QuestionStatus.Open},
+		return await QuestionRepository.getOpenQuestionsOrderByBounty(
 			limit,
 			offset,
-			order: [
-				['bounty_amount', 'DESC'],
-				['created_at', 'ASC'],
-			],
-		});
-	}
-
-	async getUserQuestionsByStatus(userId: number, status: QuestionStatus) {
-		return await Question.findAll({
-			where: {userId, status},
-		});
+		);
 	}
 
 	async getDoctorQuestion(id: number) {

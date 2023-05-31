@@ -1,4 +1,4 @@
-import { DataTypes, Model } from 'sequelize';
+import {DataTypes, Model} from 'sequelize';
 import dbconnection from '../util/dbconnection';
 
 export interface TxRequestAttributes {

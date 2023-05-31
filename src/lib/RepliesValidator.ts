@@ -1,8 +1,8 @@
 import {body, param} from 'express-validator';
 
-import QuestionService from '../services/QuestionService';
 import ReplyService from '../services/ReplyService';
 import UserService from '../services/UserService';
+import QuestionRepository from '../Repositories/QuestionRepository';
 
 class RepliesValidator {
 	checkCreateReply() {
@@ -25,7 +25,7 @@ class RepliesValidator {
 				.notEmpty()
 				.withMessage('indicate the question you are responding to')
 				.custom(async value => {
-					const question = await QuestionService.getQuestion(Number(value));
+					const question = await QuestionRepository.getQuestion(Number(value));
 
 					if (!question) {
 						throw new Error('Question does not exist');

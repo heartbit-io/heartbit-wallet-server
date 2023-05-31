@@ -100,6 +100,10 @@ class QuestionRepository {
 			order: [['createdAt', 'DESC']],
 		});
 	}
+
+	async deleteQuestion(question: Question) {
+		return await question.destroy();
+	}
 }
 
 export default new QuestionRepository();

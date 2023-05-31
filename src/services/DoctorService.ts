@@ -6,45 +6,123 @@ import EventEmitter from 'events';
 import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
 import QuestionService from '../services/QuestionService';
+import {QuestionStatus} from '../models/QuestionModel';
 import ReplyService from '../services/ReplyService';
+import TransactionService from '../services/TransactionService';
+import {TxTypes} from '../util/enums/txTypes';
 import {UserRoles} from '../util/enums/userRoles';
 import UserService from '../services/UserService';
 import admin from '../config/firebase-config';
 import path from 'path';
-import ResponseDto from '../dto/ResponseDTO';
-import DoctorService from '../services/DoctorService';
+import {CustomError} from '../util/CustomError';
+import UserRepository from '../Repositories/UserRepository';
+import QuestionRepository from '../Repositories/QuestionRepository';
+import ReplyRepository from '../Repositories/ReplyRepository';
+import {RepliesAttributes} from '../models/ReplyModel';
 
 const eventEmitter = new EventEmitter();
 
-class DoctorsController {
+class DoctorService {
 	async createDoctorReply(
-		req: DecodedRequest,
-		res: Response,
-	): Promise<Response<FormatResponse>> {
+		requestBody: RepliesAttributes,
+		email: string | undefined,
+	) {
 		try {
-			const reply = await DoctorService.createDoctorReply(req.body, req.email);
+			// check that the user is logged in
+			if (!email)
+				throw new CustomError(HttpCodes.UNAUTHORIZED, 'User not logged in');
 
-			return res
-				.status(HttpCodes.CREATED)
-				.json(
-					new FormatResponse(
-						true,
-						HttpCodes.CREATED,
-						'Reply created successfully',
-						reply,
-					),
+			// check that it is a doctor
+			const doctor = await UserRepository.getUserDetailsByEmail(email);
+
+			if (!doctor || !doctor.isDoctor) {
+				throw new CustomError(
+					HttpCodes.UNAUTHORIZED,
+					'Only doctors can reply to a question',
 				);
+			}
+
+			const question = await QuestionRepository.getQuestion(
+				requestBody.questionId,
+			);
+
+			if (!question)
+				throw new CustomError(HttpCodes.NOT_FOUND, 'Question was not found');
+
+			// create a transaction
+			const user = await UserService.getUserDetailsById(question.userId);
+
+			if (!user) throw new CustomError(HttpCodes.NOT_FOUND, 'User not found');
+
+			if (user.id === doctor.id)
+				throw new CustomError(
+					HttpCodes.BAD_REQUEST,
+					'User and doctor cannot be the same',
+				);
+
+			// If the bounty is 0, no bounty is calculated.
+			if (question.bountyAmount) {
+				// XXX, TODO(david) start a database transaction
+				// debit user bounty amount
+				const userBalance = user.btcBalance - question.bountyAmount;
+				const userDebit = UserService.updateUserBtcBalance(
+					userBalance,
+					user.id,
+				);
+
+				if (!userDebit)
+					throw new CustomError(
+						HttpCodes.UNPROCESSED_CONTENT,
+						'error debiting user account',
+					);
+				// 100 is default sats
+				const calulatedFee =
+					100 + Math.floor((question.bountyAmount - 100) * 0.02);
+
+				const doctorBalance =
+					doctor.btcBalance + question.bountyAmount - calulatedFee;
+				const creditDoctor = await UserService.updateUserBtcBalance(
+					doctorBalance,
+					doctor.id,
+				);
+
+				if (!creditDoctor)
+					throw new CustomError(
+						HttpCodes.UNPROCESSED_CONTENT,
+						'error crediting doctor account',
+					);
+
+				// create a transaction
+				await TransactionService.createTransaction({
+					amount: question.bountyAmount - calulatedFee,
+					toUserPubkey: doctor.pubkey,
+					fromUserPubkey: user.pubkey,
+					fee: calulatedFee,
+					type: TxTypes.BOUNTY_EARNED,
+				});
+			}
+
+			const reply = await ReplyRepository.createReply({
+				...requestBody,
+				userId: doctor.id,
+			});
+
+			// question status update
+			await QuestionService.updateStatus(
+				QuestionStatus.Closed,
+				Number(question.id),
+			);
+
+			// XXX, TODO(david): end a database transaction
+
+			return reply;
 		} catch (error: any) {
-			return res
-				.status(error.code ? error.code : HttpCodes.INTERNAL_SERVER_ERROR)
-				.json(
-					new ResponseDto(
-						false,
-						error.code ? error.code : HttpCodes.INTERNAL_SERVER_ERROR,
-						error.message ? error.message : 'HTTP error',
-						null,
-					),
-				);
+			throw error.code && error.message
+				? error
+				: new CustomError(
+						HttpCodes.INTERNAL_SERVER_ERROR,
+						'Internal Server Error',
+				  );
 		}
 	}
 	async getQuestions(
@@ -452,4 +530,4 @@ class DoctorsController {
 	}
 }
 
-export default new DoctorsController();
+export default new DoctorService();
