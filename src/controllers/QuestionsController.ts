@@ -1,5 +1,3 @@
-import * as Sentry from '@sentry/node';
-
 import {DecodedRequest} from '../middleware/Auth';
 import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';

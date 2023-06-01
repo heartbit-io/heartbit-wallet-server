@@ -1,5 +1,5 @@
 import {Request, Response} from 'express';
-
+import * as Sentry from '@sentry/node';
 import CoinPaprikaService from '../services/CoinPaprikaService';
 import {HttpCodes} from '../util/HttpCodes';
 import ResponseDto from '../dto/ResponseDTO';

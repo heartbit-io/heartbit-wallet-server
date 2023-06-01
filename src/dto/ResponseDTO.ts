@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/node';
 import {HttpCodes} from '../util/HttpCodes';
 
 class ResponseDto<T> {
@@ -19,6 +20,13 @@ class ResponseDto<T> {
 		this.statusCode = statusCode;
 		this.message = message;
 		this.data = data;
+		if (!this.success) {
+			this.logToSentry();
+		}
+	}
+
+	logToSentry() {
+		Sentry.captureMessage(`[${this.statusCode}] ${this.message}`);
 	}
 }
 
