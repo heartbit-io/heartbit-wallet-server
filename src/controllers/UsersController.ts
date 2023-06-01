@@ -15,38 +15,57 @@ class UsersController {
 		const dbTransaction = await dbconnection.transaction();
 
 		try {
-			const user = await UserService.createUser(
-				{
-					...req.body,
-					pubkey: req.body.pubkey.toLowerCase(),
-					email: req.body.email.toLowerCase(),
-				},
-				dbTransaction,
+			const isExsist = await UserService.getUserDetailsByEmail(
+				req.body.email.toLowerCase(),
 			);
 
-			await TransactionService.createTransaction(
-				{
-					amount: 1000, // SIGN_UP_BONUS
-					toUserPubkey: user.pubkey,
-					fromUserPubkey: user.pubkey, // Initial transcation
-					type: TxTypes.SIGN_UP_BONUS,
-					fee: 0,
-				},
-				dbTransaction,
-			);
-
-			await dbTransaction.commit();
-
-			return res
-				.status(HttpCodes.CREATED)
-				.json(
-					new FormatResponse(
-						true,
-						HttpCodes.CREATED,
-						'User created successfully',
-						user,
-					),
+			if (isExsist) {
+				// Pass in the logic to create the user if it exists.
+				// Because we have only 1 process to sign up and sign in.
+				return res
+					.status(HttpCodes.OK)
+					.json(
+						new FormatResponse(
+							true,
+							HttpCodes.OK,
+							'User already exsist',
+							isExsist,
+						),
+					);
+			} else {
+				const user = await UserService.createUser(
+					{
+						...req.body,
+						pubkey: req.body.pubkey.toLowerCase(),
+						email: req.body.email.toLowerCase(),
+					},
+					dbTransaction,
 				);
+
+				await TransactionService.createTransaction(
+					{
+						amount: 1000, // SIGN_UP_BONUS
+						toUserPubkey: user.pubkey,
+						fromUserPubkey: user.pubkey, // Initial transcation
+						type: TxTypes.SIGN_UP_BONUS,
+						fee: 0,
+					},
+					dbTransaction,
+				);
+
+				await dbTransaction.commit();
+
+				return res
+					.status(HttpCodes.CREATED)
+					.json(
+						new FormatResponse(
+							true,
+							HttpCodes.CREATED,
+							'User created successfully',
+							user,
+						),
+					);
+			}
 		} catch (error) {
 			await dbTransaction.rollback();
 
