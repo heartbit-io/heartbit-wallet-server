@@ -1,4 +1,4 @@
-import UserService from '../services/UserService';
+import UserRepository from '../Repositories/UserRepository';
 import {body} from 'express-validator';
 
 class UsersValidator {
@@ -11,7 +11,7 @@ class UsersValidator {
 				.withMessage('Supply a valid public key')
 				.custom(async value => {
 					// TODO(david): pubkey validation(length? format? etc)
-					const user = await UserService.getUserDetailsByPubkey(
+					const user = await UserRepository.getUserDetailsByPubkey(
 						value.toLowerCase(),
 					);
 					if (user) {
@@ -25,7 +25,7 @@ class UsersValidator {
 				.escape()
 				.withMessage('Supply a valid email address')
 				.custom(async value => {
-					const user = await UserService.getUserDetailsByEmail(
+					const user = await UserRepository.getUserDetailsByEmail(
 						value.toLowerCase(),
 					);
 					if (user) {
@@ -55,7 +55,7 @@ class UsersValidator {
 				.escape()
 				.withMessage('User email is required to login')
 				.custom(async value => {
-					const user = await UserService.getUserDetailsById(value);
+					const user = await UserRepository.getUserDetailsById(value);
 					if (!user) {
 						throw new Error('User with given email does not exit');
 					}

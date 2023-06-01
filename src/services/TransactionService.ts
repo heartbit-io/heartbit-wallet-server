@@ -1,35 +1,43 @@
-import {
-	TransactionAttributes,
-	Transaction,
-} from '../models/TransactionModel';
-
-import {Op} from 'sequelize';
+import {CustomError} from '../util/CustomError';
+import {HttpCodes} from '../util/HttpCodes';
+import TransactionsRepository from '../Repositories/TransactionsRepository';
 
 class TransactionService {
-	async createTransaction(
-		transaction: TransactionAttributes,
-		dbTransaction?: any,
-	): Promise<Transaction> {
-		return await Transaction.create(
-			{
-				amount: transaction.amount,
-				fromUserPubkey: transaction.fromUserPubkey,
-				toUserPubkey: transaction.toUserPubkey,
-				fee: transaction.fee,
-				type: transaction.type,
-			},
-			{transaction: dbTransaction},
-		);
-	}
+	txTypeMap = {
+		deposit: 'Deposit',
+		withdraw: 'Withdraw',
+		sign_up_bonus: 'Sign-up bonus',
+		bounty_earned: 'Bounty earned',
+		bounty_pledged: 'Bounty pledged',
+		bounty_refunded: 'Bounty refunded',
+	};
 
-	async getUserTransactions(
-		userPubkey: string,
-	): Promise<Transaction[]> {
-		return await Transaction.findAll({
-			where: {
-				[Op.or]: [{fromUserPubkey: userPubkey}, {toUserPubkey: userPubkey}],
-			},
-		});
+	async getUserTransactions(userPubkey: string) {
+		try {
+			const transactions = await TransactionsRepository.getUserTransactions(
+				userPubkey,
+			);
+			if (!transactions || transactions.length === 0)
+				throw new CustomError(
+					HttpCodes.NOT_FOUND,
+					'User does not have any transaction',
+				);
+			const fomatedTransactions = transactions.map(transaction => {
+				return {
+					...transaction.dataValues,
+					type: this.txTypeMap[transaction.type],
+				};
+			});
+
+			return fomatedTransactions;
+		} catch (error: any) {
+			throw error.code && error.message
+				? error
+				: new CustomError(
+						HttpCodes.INTERNAL_SERVER_ERROR,
+						'Internal Server Error',
+				  );
+		}
 	}
 }
 

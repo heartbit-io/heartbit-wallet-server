@@ -8,7 +8,7 @@ import Validation from '../middleware/Validation';
 const router = Router();
 
 router.get('/portal', DoctorsController.portal);
-router.get('/login', DoctorsController.login);
+router.get('/login', Auth.verifyToken, DoctorsController.login);
 router.get('/questions', Auth.verifyToken, DoctorsController.getQuestions);
 router.get(
 	'/questions/:questionId',

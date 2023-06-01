@@ -6,7 +6,6 @@ import {HttpCodes} from '../util/HttpCodes';
 import QuestionService from '../services/QuestionService';
 import {QuestionStatus} from '../models/QuestionModel';
 import {Response} from 'express';
-import UserService from '../services/UserService';
 import ResponseDto from '../dto/ResponseDTO';
 
 class QuestionsController {
@@ -52,7 +51,7 @@ class QuestionsController {
 			return res
 				.status(HttpCodes.OK)
 				.json(
-					new FormatResponse(
+					new ResponseDto(
 						true,
 						HttpCodes.OK,
 						'Question deleted successfully',
@@ -91,7 +90,7 @@ class QuestionsController {
 			);
 
 			return res.status(HttpCodes.OK).json(
-				new FormatResponse(
+				new ResponseDto(
 					true,
 					HttpCodes.OK,
 					`Successfully retrieved all user questions according to: limit: ${limit}, offset: ${limit}, order: ${order}`,
@@ -131,7 +130,7 @@ class QuestionsController {
 			return res
 				.status(HttpCodes.OK)
 				.json(
-					new FormatResponse(
+					new ResponseDto(
 						true,
 						HttpCodes.OK,
 						'Successfully retrieved open questions',
@@ -164,7 +163,7 @@ class QuestionsController {
 			return res
 				.status(HttpCodes.OK)
 				.json(
-					new FormatResponse(
+					new ResponseDto(
 						true,
 						HttpCodes.OK,
 						'Successfully retrieved all user open questions',
@@ -198,7 +197,7 @@ class QuestionsController {
 			return res
 				.status(HttpCodes.OK)
 				.json(
-					new FormatResponse(
+					new ResponseDto(
 						true,
 						HttpCodes.OK,
 						'Successfully retrieved question details',
@@ -213,60 +212,6 @@ class QuestionsController {
 						false,
 						error.code ? error.code : HttpCodes.INTERNAL_SERVER_ERROR,
 						error.message ? error.message : 'HTTP error',
-						null,
-					),
-				);
-		}
-	}
-
-	async updateQuestion(req: DecodedRequest, res: Response) {
-		try {
-			const {questionId} = req.params;
-
-			const question = await QuestionService.getUserOpenQuestion(
-				Number(questionId),
-				req.body.userId,
-			);
-
-			if (!question) {
-				Sentry.captureMessage(
-					`[${HttpCodes.NOT_FOUND}] Check that the question exist and has not already been closed`,
-				);
-				return res
-					.status(HttpCodes.NOT_FOUND)
-					.json(
-						new FormatResponse(
-							false,
-							HttpCodes.NOT_FOUND,
-							'Check that the question exist and has not already been closed',
-							null,
-						),
-					);
-			}
-
-			const updatedQuestion = await question.update({
-				status: req.body.status,
-			});
-
-			return res
-				.status(HttpCodes.OK)
-				.json(
-					new FormatResponse(
-						true,
-						HttpCodes.OK,
-						'Successfully update question status',
-						updatedQuestion,
-					),
-				);
-		} catch (error) {
-			Sentry.captureMessage(`[${HttpCodes.INTERNAL_SERVER_ERROR}] ${error}`);
-			return res
-				.status(HttpCodes.INTERNAL_SERVER_ERROR)
-				.json(
-					new FormatResponse(
-						false,
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						error,
 						null,
 					),
 				);

@@ -1,8 +1,7 @@
 import {body, param} from 'express-validator';
-
-import ReplyService from '../services/ReplyService';
-import UserService from '../services/UserService';
 import QuestionRepository from '../Repositories/QuestionRepository';
+import ReplyRepository from '../Repositories/ReplyRepository';
+import UserRepository from '../Repositories/UserRepository';
 
 class RepliesValidator {
 	checkCreateReply() {
@@ -14,7 +13,7 @@ class RepliesValidator {
 				.escape()
 				.withMessage('User is required to respond to a question')
 				.custom(async value => {
-					const user = await UserService.getUserDetailsById(Number(value));
+					const user = await UserRepository.getUserDetailsById(Number(value));
 
 					if (!user) {
 						throw new Error('User with given public key does not exit');
@@ -59,7 +58,7 @@ class RepliesValidator {
 				.escape()
 				.withMessage('User public key is required to delete a reply')
 				.custom(async value => {
-					const user = await UserService.getUserDetailsById(Number(value));
+					const user = await UserRepository.getUserDetailsById(Number(value));
 
 					if (!user) {
 						throw new Error('User with given public key does not exit');
@@ -70,7 +69,7 @@ class RepliesValidator {
 				.notEmpty()
 				.withMessage('indicate the reply you want to delete')
 				.custom(async value => {
-					const reply = await ReplyService.getReplyById(Number(value));
+					const reply = await ReplyRepository.getReplyById(Number(value));
 					if (!reply) {
 						throw new Error('Reply does not exist');
 					}

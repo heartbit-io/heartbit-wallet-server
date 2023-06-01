@@ -3,6 +3,7 @@ import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
 import ReplyService from '../services/ReplyService';
 import {ReplyTypes} from '../util/enums/replyTypes';
+import ResponseDto from '../dto/ResponseDTO';
 
 export interface ReplyResponseInterface extends FormatResponse {
 	data: {
@@ -36,12 +37,7 @@ class RepliesController {
 			return res
 				.status(HttpCodes.INTERNAL_SERVER_ERROR)
 				.json(
-					new FormatResponse(
-						false,
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						error,
-						null,
-					),
+					new ResponseDto(false, HttpCodes.INTERNAL_SERVER_ERROR, error, null),
 				);
 		}
 	}
@@ -59,12 +55,7 @@ class RepliesController {
 			return res
 				.status(HttpCodes.INTERNAL_SERVER_ERROR)
 				.json(
-					new FormatResponse(
-						false,
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						error,
-						null,
-					),
+					new ResponseDto(false, HttpCodes.INTERNAL_SERVER_ERROR, error, null),
 				);
 		}
 	}
@@ -73,31 +64,12 @@ class RepliesController {
 		try {
 			const {replyId} = req.params;
 
-			const reply = await ReplyService.getUserReply(
-				Number(replyId),
-				req.body.userId,
-			);
-			if (!reply) {
-				return res
-					.status(HttpCodes.NOT_FOUND)
-					.json(
-						new FormatResponse(
-							false,
-							HttpCodes.NOT_FOUND,
-							'Reply was not found',
-							null,
-						),
-					);
-			}
-
-			await ReplyService.deleteReply(reply);
-
-			// TODO(david): maybe question status also need to be updated(closed to open)
+			await ReplyService.deleteReply(Number(replyId), Number(req.body.userId));
 
 			return res
 				.status(HttpCodes.OK)
 				.json(
-					new FormatResponse(
+					new ResponseDto(
 						true,
 						HttpCodes.OK,
 						'Reply deleted successfully',
@@ -108,12 +80,7 @@ class RepliesController {
 			return res
 				.status(HttpCodes.INTERNAL_SERVER_ERROR)
 				.json(
-					new FormatResponse(
-						false,
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						error,
-						null,
-					),
+					new ResponseDto(false, HttpCodes.INTERNAL_SERVER_ERROR, error, null),
 				);
 		}
 	}

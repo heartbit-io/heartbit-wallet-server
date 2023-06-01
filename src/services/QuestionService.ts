@@ -1,4 +1,4 @@
-import {Op, Sequelize} from 'sequelize';
+import {Sequelize} from 'sequelize';
 import {
 	Question,
 	QuestionAttributes,
@@ -12,12 +12,15 @@ import DeeplService from './DeeplService';
 import UserRepository from '../Repositories/UserRepository';
 
 class QuestionService {
-	async create(question: QuestionAttributes, email: string | undefined) {
+	async create(
+		question: QuestionAttributes,
+		email: string | undefined,
+	): Promise<Question | CustomError> {
 		try {
 			if (!email)
 				throw new CustomError(HttpCodes.BAD_REQUEST, 'Email is required');
 
-			const user = await UserService.getUserDetailsByEmail(email);
+			const user = await UserRepository.getUserDetailsByEmail(email);
 
 			if (!user) throw new CustomError(HttpCodes.NOT_FOUND, 'User not found');
 
@@ -70,7 +73,10 @@ class QuestionService {
 		}
 	}
 
-	async deleteQuestion(questionId: number, email: string | undefined) {
+	async deleteQuestion(
+		questionId: number,
+		email: string | undefined,
+	): Promise<Boolean | CustomError> {
 		try {
 			const question = await QuestionRepository.getQuestion(questionId);
 			if (!question)
@@ -79,7 +85,7 @@ class QuestionService {
 			if (!email)
 				throw new CustomError(HttpCodes.UNAUTHORIZED, 'Email is required');
 
-			const user = await UserService.getUserDetailsByEmail(email);
+			const user = await UserRepository.getUserDetailsByEmail(email);
 
 			if (!user) throw new CustomError(HttpCodes.NOT_FOUND, 'User not found');
 
@@ -107,7 +113,7 @@ class QuestionService {
 	async getUserQuestionsByStatus(
 		email: string | undefined,
 		status: QuestionStatus,
-	) {
+	): Promise<Question[] | CustomError> {
 		try {
 			if (!email)
 				throw new CustomError(HttpCodes.UNAUTHORIZED, 'Email required');
@@ -136,10 +142,6 @@ class QuestionService {
 		}
 	}
 
-	async updateStatus(status: QuestionStatus, id: number) {
-		return await Question.update({status}, {where: {id}});
-	}
-
 	//get all user questions
 	async getAll(
 		email: string | undefined,
@@ -147,26 +149,31 @@ class QuestionService {
 		offset: number | undefined,
 		order: string,
 	) {
-		if (!email)
-			throw new CustomError(HttpCodes.UNAUTHORIZED, 'Email is required');
+		try {
+			if (!email)
+				throw new CustomError(HttpCodes.UNAUTHORIZED, 'Email is required');
 
-		const user = await UserRepository.getUserDetailsByEmail(email);
+			const user = await UserRepository.getUserDetailsByEmail(email);
 
-		if (!user) throw new CustomError(HttpCodes.NOT_FOUND, 'User not found');
+			if (!user) throw new CustomError(HttpCodes.NOT_FOUND, 'User not found');
 
-		const userId: number = user.id;
+			const userId: number = user.id;
 
-		return await QuestionRepository.getAll(userId, limit, offset, order);
-	}
-
-	async sumUserOpenBountyAmount(userId: number) {
-		return await Question.findAll({
-			where: {userId, status: QuestionStatus.Open},
-			attributes: [
-				[Sequelize.fn('sum', Sequelize.col('bounty_amount')), 'total_bounty'],
-			],
-			group: ['user_id'],
-		});
+			const questions = await QuestionRepository.getAll(
+				userId,
+				limit,
+				offset,
+				order,
+			);
+			return questions;
+		} catch (error: any) {
+			throw error.code && error.message
+				? error
+				: new CustomError(
+						HttpCodes.INTERNAL_SERVER_ERROR,
+						'Internal Server Error',
+				  );
+		}
 	}
 
 	async getQuestion(questionId: number, email: string | undefined) {
@@ -202,49 +209,23 @@ class QuestionService {
 		}
 	}
 
-	async getUserOpenQuestion(id: number, userId: number) {
-		return await Question.findOne({
-			where: {
-				id,
-				userId,
-				status: QuestionStatus.Open,
-			},
-		});
-	}
-
-	async getUserQuestions(userId: number): Promise<Question[]> {
-		return await Question.findAll({where: {userId}});
-	}
-
 	async getOpenQuestionsOrderByBounty(
 		limit?: number | undefined,
 		offset?: number | undefined,
-	) {
-		return await QuestionRepository.getOpenQuestionsOrderByBounty(
-			limit,
-			offset,
-		);
-	}
-
-	async getDoctorQuestion(id: number) {
-		return await Question.findOne({
-			where: {
-				id,
-			},
-		});
-	}
-
-	async getDoctorAnswerdQuestionsByQuestionIds(
-		limit: number | undefined,
-		offset: number | undefined,
-		questionIds: Array<number>,
-	) {
-		return await Question.findAll({
-			where: {id: {[Op.in]: questionIds}},
-			limit,
-			offset,
-			order: [['created_at', 'DESC']],
-		});
+	): Promise<Question[] | CustomError> {
+		try {
+			return await QuestionRepository.getOpenQuestionsOrderByBounty(
+				limit,
+				offset,
+			);
+		} catch (error: any) {
+			throw error.code && error.message
+				? error
+				: new CustomError(
+						HttpCodes.INTERNAL_SERVER_ERROR,
+						'Internal Server Error',
+				  );
+		}
 	}
 }
 

@@ -1,6 +1,6 @@
 import ChatGPTRepository from '../Repositories/ChatGPTRepository';
 import QuestionRepository from '../Repositories/QuestionRepository';
-import {RepliesAttributes, Reply} from '../models/ReplyModel';
+import {RepliesAttributes} from '../models/ReplyModel';
 import {CustomError} from '../util/CustomError';
 import {HttpCodes} from '../util/HttpCodes';
 import DeeplService from '../services/DeeplService';
@@ -160,46 +160,22 @@ class ReplyService {
 		}
 	}
 
-	async createReply(reply: RepliesAttributes) {
-		return await Reply.create({
-			...reply,
-		});
-	}
+	async deleteReply(replyId: number, userId: number) {
+		try {
+			const reply = await ReplyRepository.getUserReply(replyId, userId);
+			if (!reply) throw new CustomError(HttpCodes.NOT_FOUND, 'Reply not found');
 
-	async getReplyById(id: number) {
-		return await Reply.findOne({
-			where: {id},
-		});
-	}
+			await ReplyRepository.deleteReply(reply);
 
-	async getUserReplies(userId: number) {
-		return await Reply.findAll({where: {userId}});
-	}
-
-	async getQuestionReplies(questionId: number) {
-		return await Reply.findAll({where: {questionId}});
-	}
-
-	async getUserReply(id: number, userId: number) {
-		return await Reply.findOne({
-			where: {id, userId},
-		});
-	}
-
-	async getDoctorReplies(userId: number) {
-		return await Reply.findAll({
-			where: {userId},
-		});
-	}
-
-	async getDoctorReply(questionId: number, userId: number) {
-		return await Reply.findOne({
-			where: {questionId, userId},
-		});
-	}
-
-	async deleteReply(reply: Reply) {
-		return await reply.destroy();
+			return true;
+		} catch (error: any) {
+			throw error.code && error.message
+				? error
+				: new CustomError(
+						HttpCodes.INTERNAL_SERVER_ERROR,
+						'Internal Server Error',
+				  );
+		}
 	}
 }
 
