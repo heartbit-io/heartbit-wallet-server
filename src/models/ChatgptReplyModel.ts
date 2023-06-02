@@ -81,6 +81,6 @@ ChatgptReply.init(
 		tableName: 'chatgpt_replies',
 		timestamps: true,
 		paranoid: true,
-		underscored: true
+		underscored: true,
 	},
 );

@@ -1,8 +1,8 @@
 import {Request, Response} from 'express';
-
+import * as Sentry from '@sentry/node';
 import CoinPaprikaService from '../services/CoinPaprikaService';
-import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
+import ResponseDto from '../dto/ResponseDTO';
 
 class CoinExchangeRateController {
 	async getBtcExchangeRate(req: Request, res: Response) {
@@ -16,7 +16,7 @@ class CoinExchangeRateController {
 			return res
 				.status(HttpCodes.OK)
 				.json(
-					new FormatResponse(
+					new ResponseDto(
 						true,
 						HttpCodes.OK,
 						'Successfully retrieved btc exchage rate',
@@ -27,12 +27,7 @@ class CoinExchangeRateController {
 			return res
 				.status(HttpCodes.INTERNAL_SERVER_ERROR)
 				.json(
-					new FormatResponse(
-						false,
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						error,
-						null,
-					),
+					new ResponseDto(false, HttpCodes.INTERNAL_SERVER_ERROR, error, null),
 				);
 		}
 	}

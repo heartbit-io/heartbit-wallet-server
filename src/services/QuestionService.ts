@@ -1,104 +1,231 @@
-import {Op, Sequelize} from 'sequelize';
+import {Sequelize} from 'sequelize';
 import {
 	Question,
 	QuestionAttributes,
 	QuestionStatus,
 } from '../models/QuestionModel';
+import UserService from '../services/UserService';
+import {CustomError} from '../util/CustomError';
+import {HttpCodes} from '../util/HttpCodes';
+import QuestionRepository from '../Repositories/QuestionRepository';
+import DeeplService from './DeeplService';
+import UserRepository from '../Repositories/UserRepository';
 
 class QuestionService {
-	async create(question: QuestionAttributes) {
-		return await Question.create({...question});
+	async create(
+		question: QuestionAttributes,
+		email: string | undefined,
+	): Promise<Question | CustomError> {
+		try {
+			if (!email)
+				throw new CustomError(HttpCodes.BAD_REQUEST, 'Email is required');
+
+			const user = await UserRepository.getUserDetailsByEmail(email);
+
+			if (!user) throw new CustomError(HttpCodes.NOT_FOUND, 'User not found');
+
+			const userOpenBounty = await QuestionRepository.sumUserOpenBountyAmount(
+				user.id,
+			);
+
+			const userOpenBountyTotal = userOpenBounty[0]
+				? userOpenBounty[0].dataValues.totalBounty
+				: 0;
+
+			const totalBounty: number =
+				Number(userOpenBountyTotal) + Number(question.bountyAmount);
+
+			const userBtcBalance = user.get('btcBalance') as number;
+
+			if (!userBtcBalance)
+				throw new CustomError(
+					HttpCodes.NOT_FOUND,
+					'Error getting user balance',
+				);
+
+			if (totalBounty > userBtcBalance) {
+				throw new CustomError(
+					HttpCodes.BAD_REQUEST,
+					'You do not have enough sats to post a new question',
+				);
+			}
+
+			const enContent = await DeeplService.getTextTranslatedIntoEnglish(
+				question.content,
+			);
+
+			const newQuestion = await QuestionRepository.create({
+				...question,
+				content: enContent.text,
+				rawContentLanguage: enContent.detected_source_language, // snake case because deepl response
+				rawContent: question.content,
+				userId: user.id,
+			});
+
+			return newQuestion;
+		} catch (error: any) {
+			throw error.code && error.message
+				? error
+				: new CustomError(
+						HttpCodes.INTERNAL_SERVER_ERROR,
+						'Internal Server Error',
+				  );
+		}
 	}
 
-	async updateStatus(status: QuestionStatus, id: number) {
-		return await Question.update({status}, {where: {id}});
+	async deleteQuestion(
+		questionId: number,
+		email: string | undefined,
+	): Promise<Boolean | CustomError> {
+		try {
+			const question = await QuestionRepository.getQuestion(questionId);
+			if (!question)
+				throw new CustomError(HttpCodes.NOT_FOUND, 'Question was not found');
+
+			if (!email)
+				throw new CustomError(HttpCodes.UNAUTHORIZED, 'Email is required');
+
+			const user = await UserRepository.getUserDetailsByEmail(email);
+
+			if (!user) throw new CustomError(HttpCodes.NOT_FOUND, 'User not found');
+
+			const userId: number = user.id;
+
+			if (question.userId !== userId)
+				throw new CustomError(
+					HttpCodes.UNAUTHORIZED,
+					'Only users who posted a question can delete the question',
+				);
+
+			await QuestionRepository.deleteQuestion(question);
+
+			return true;
+		} catch (error: any) {
+			throw error.code && error.message
+				? error
+				: new CustomError(
+						HttpCodes.INTERNAL_SERVER_ERROR,
+						'Internal Server Error',
+				  );
+		}
+	}
+
+	async getUserQuestionsByStatus(
+		email: string | undefined,
+		status: QuestionStatus,
+	): Promise<Question[] | CustomError> {
+		try {
+			if (!email)
+				throw new CustomError(HttpCodes.UNAUTHORIZED, 'Email required');
+
+			const user = await UserRepository.getUserDetailsByEmail(email);
+
+			if (!user)
+				throw new CustomError(
+					HttpCodes.NOT_FOUND,
+					'Error getting user details',
+				);
+
+			const questions = await QuestionRepository.getUserQuestionsByStatus(
+				user.id,
+				status,
+			);
+
+			return questions;
+		} catch (error: any) {
+			throw error.code && error.message
+				? error
+				: new CustomError(
+						HttpCodes.INTERNAL_SERVER_ERROR,
+						'Internal Server Error',
+				  );
+		}
 	}
 
 	//get all user questions
 	async getAll(
-		userId: number,
+		email: string | undefined,
 		limit: number | undefined,
 		offset: number | undefined,
 		order: string,
 	) {
-		return await Question.findAll({
-			where: {userId},
-			limit,
-			offset,
-			order: [['created_at', order]],
-		});
-	}
+		try {
+			if (!email)
+				throw new CustomError(HttpCodes.UNAUTHORIZED, 'Email is required');
 
-	async sumUserOpenBountyAmount(userId: number) {
-		return await Question.findAll({
-			where: {userId, status: QuestionStatus.Open},
-			attributes: [
-				[Sequelize.fn('sum', Sequelize.col('bounty_amount')), 'total_bounty'],
-			],
-			group: ['user_id'],
-		});
-	}
+			const user = await UserRepository.getUserDetailsByEmail(email);
 
-	async getQuestion(id: number) {
-		return await Question.findOne({
-			where: {id},
-		});
-	}
+			if (!user) throw new CustomError(HttpCodes.NOT_FOUND, 'User not found');
 
-	async getUserOpenQuestion(id: number, userId: number) {
-		return await Question.findOne({
-			where: {
-				id,
+			const userId: number = user.id;
+
+			const questions = await QuestionRepository.getAll(
 				userId,
-				status: QuestionStatus.Open,
-			},
-		});
+				limit,
+				offset,
+				order,
+			);
+			return questions;
+		} catch (error: any) {
+			throw error.code && error.message
+				? error
+				: new CustomError(
+						HttpCodes.INTERNAL_SERVER_ERROR,
+						'Internal Server Error',
+				  );
+		}
 	}
 
-	async getUserQuestions(userId: number): Promise<Question[]> {
-		return await Question.findAll({where: {userId}});
+	async getQuestion(questionId: number, email: string | undefined) {
+		try {
+			const question = await QuestionRepository.getQuestion(questionId);
+			if (!question)
+				throw new CustomError(HttpCodes.NOT_FOUND, 'Question not found');
+
+			if (!email)
+				throw new CustomError(HttpCodes.UNAUTHORIZED, 'Email is required');
+
+			const user = await UserRepository.getUserDetailsByEmail(email);
+
+			if (!user) throw new CustomError(HttpCodes.NOT_FOUND, 'User not found');
+
+			if (question.userId !== user.id && !user.isDoctor)
+				throw new CustomError(
+					HttpCodes.UNAUTHORIZED,
+					'Only users who posted a question can view the question',
+				);
+
+			const response = question.dataValues;
+			response.content = response.rawContent;
+
+			return response;
+		} catch (error: any) {
+			throw error.code && error.message
+				? error
+				: new CustomError(
+						HttpCodes.INTERNAL_SERVER_ERROR,
+						'Internal Server Error',
+				  );
+		}
 	}
 
 	async getOpenQuestionsOrderByBounty(
 		limit?: number | undefined,
 		offset?: number | undefined,
-	) {
-		return await Question.findAll({
-			where: {status: QuestionStatus.Open},
-			limit,
-			offset,
-			order: [
-				['bounty_amount', 'DESC'],
-				['created_at', 'ASC'],
-			],
-		});
-	}
-
-	async getUserQuestionsByStatus(userId: number, status: QuestionStatus) {
-		return await Question.findAll({
-			where: {userId, status},
-		});
-	}
-
-	async getDoctorQuestion(id: number) {
-		return await Question.findOne({
-			where: {
-				id,
-			},
-		});
-	}
-
-	async getDoctorAnswerdQuestionsByQuestionIds(
-		limit: number | undefined,
-		offset: number | undefined,
-		questionIds: Array<number>,
-	) {
-		return await Question.findAll({
-			where: {id: {[Op.in]: questionIds}},
-			limit,
-			offset,
-			order: [['created_at', 'DESC']],
-		});
+	): Promise<Question[] | CustomError> {
+		try {
+			return await QuestionRepository.getOpenQuestionsOrderByBounty(
+				limit,
+				offset,
+			);
+		} catch (error: any) {
+			throw error.code && error.message
+				? error
+				: new CustomError(
+						HttpCodes.INTERNAL_SERVER_ERROR,
+						'Internal Server Error',
+				  );
+		}
 	}
 }
 

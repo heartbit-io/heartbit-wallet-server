@@ -1,4 +1,4 @@
-import UserService from '../services/UserService';
+import UserRepository from '../Repositories/UserRepository';
 import {param} from 'express-validator';
 
 class TransactionsValidator {
@@ -11,7 +11,7 @@ class TransactionsValidator {
 				.escape()
 				.withMessage('User public key is required to get their transactions')
 				.custom(async value => {
-					const user = await UserService.getUserDetailsByPubkey(
+					const user = await UserRepository.getUserDetailsByPubkey(
 						value.toLowerCase(),
 					);
 					if (!user) {

@@ -1,4 +1,5 @@
 import {body, param, query} from 'express-validator';
+import QuestionRepository from '../Repositories/QuestionRepository';
 
 class QuestionsValidator {
 	checkCreateQuestion() {
@@ -55,6 +56,15 @@ class QuestionsValidator {
 				.withMessage('status must be OPEN or CLOSED')
 				.trim()
 				.escape(),
+		];
+	}
+
+	deleteQuestion() {
+		return [
+			param('questionId')
+				.notEmpty()
+				.isNumeric()
+				.withMessage('supply question Id to delete'),
 		];
 	}
 }
