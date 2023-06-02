@@ -1,7 +1,3 @@
-/* eslint-disable no-undef */
-'use strict';
-
-/** @type {import('sequelize-cli').Migration} */
 module.exports = {
 	async up(queryInterface, Sequelize) {
 		await queryInterface.createTable('users', {
@@ -24,7 +20,7 @@ module.exports = {
 				field: 'btc_balance',
 			},
 			airTableRecordId: {
-				typr: Sequelize.STRING,
+				type: Sequelize.STRING,
 				unique: true,
 				field: 'air_table_record_id',
 			},
@@ -49,7 +45,7 @@ module.exports = {
 			deletedAt: {
 				allowNull: true,
 				type: Sequelize.DATE,
-				field: 'deleted_at'
+				field: 'deleted_at',
 			},
 		});
 	},
