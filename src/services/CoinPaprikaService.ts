@@ -32,8 +32,10 @@ class CoinPaprikaService {
 					reject(error);
 				});
 		});
+
 		// auto delete after 1 hour
-		cache.set(cacheKey, value, 3600);
+		cache.set(cacheKey, await value, 3600);
+
 		return value;
 	};
 

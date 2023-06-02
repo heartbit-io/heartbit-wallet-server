@@ -1,7 +1,7 @@
 import {Op, Sequelize} from 'sequelize';
 import {
-	QuestionAttributes,
 	Question,
+	QuestionAttributes,
 	QuestionStatus,
 } from '../models/QuestionModel';
 
@@ -25,7 +25,7 @@ class QuestionService {
 			where: {userId},
 			limit,
 			offset,
-			order: [['createdAt', order]],
+			order: [['created_at', order]],
 		});
 	}
 
@@ -33,9 +33,9 @@ class QuestionService {
 		return await Question.findAll({
 			where: {userId, status: QuestionStatus.Open},
 			attributes: [
-				[Sequelize.fn('sum', Sequelize.col('bountyAmount')), 'totalBounty'],
+				[Sequelize.fn('sum', Sequelize.col('bounty_amount')), 'total_bounty'],
 			],
-			group: ['userId'],
+			group: ['user_id'],
 		});
 	}
 
@@ -68,8 +68,8 @@ class QuestionService {
 			limit,
 			offset,
 			order: [
-				['bountyAmount', 'DESC'],
-				['createdAt', 'ASC'],
+				['bounty_amount', 'DESC'],
+				['created_at', 'ASC'],
 			],
 		});
 	}
@@ -97,7 +97,7 @@ class QuestionService {
 			where: {id: {[Op.in]: questionIds}},
 			limit,
 			offset,
-			order: [['createdAt', 'DESC']],
+			order: [['created_at', 'DESC']],
 		});
 	}
 }
