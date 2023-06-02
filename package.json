@@ -24,7 +24,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@faker-js/faker": "^7.6.0",
+    "@faker-js/faker": "^8.0.2",
     "@types/chai": "^4.3.4",
     "@types/cors": "^2.8.13",
     "@types/dotenv": "^8.2.0",

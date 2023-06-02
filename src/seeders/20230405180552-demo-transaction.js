@@ -11,6 +11,15 @@ module.exports = {
 			from_user_pubkey: faker.helpers.arrayElement(userPubkeys),
 			to_user_pubkey: faker.helpers.arrayElement(doctorPubkeys),
 			amount: faker.finance.amount(),
+			fee: faker.finance.amount(1, 20),
+			type: faker.helpers.arrayElement([
+				'deposit',
+				'withdraw',
+				'sign_up_bonus',
+				'bounty_pledged',
+				'bounty_earned',
+				'bounty_refunded',
+			]),
 			created_at: new Date(),
 			updated_at: new Date(),
 			deleted_at: null,
@@ -20,21 +29,22 @@ module.exports = {
 		const dataArray = [];
 
 		const userPublicKeys = await queryInterface.sequelize.query(
-			`SELECT pubkey from users where role = 'user'`);
-		
-		const userPubkeys = userPublicKeys[0].map((user) => user.pubkey);
+			`SELECT pubkey from users where role = 'user'`,
+		);
+
+		const userPubkeys = userPublicKeys[0].map(user => user.pubkey);
 
 		const doctorPublickeys = await queryInterface.sequelize.query(
-			`SELECT pubkey from users where role = 'doctor'`);
-		
-		const doctorPubkeys = doctorPublickeys[0].map((doctor) => doctor.pubkey);
-	
+			`SELECT pubkey from users where role = 'doctor'`,
+		);
+
+		const doctorPubkeys = doctorPublickeys[0].map(doctor => doctor.pubkey);
 
 		for (let i = 0; i < 50; i++) {
 			dataArray.push(this.createTransaction(userPubkeys, doctorPubkeys));
 		}
 
-		return queryInterface.bulkInsert('transactions', dataArray);
+		return queryInterface.bulkInsert('btc_transactions', dataArray);
 	},
 
 	async down(queryInterface, Sequelize) {
