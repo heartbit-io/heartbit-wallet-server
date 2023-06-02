@@ -1,4 +1,4 @@
-import {UserAttributes, User} from '../models/UserModel';
+import {User, UserAttributes} from '../models/UserModel';
 
 class UserService {
 	async getUserDetailsById(id: number): Promise<User | null> {
@@ -20,7 +20,7 @@ class UserService {
 	async getUserBalance(id: number): Promise<User | null> {
 		return await User.findOne({
 			where: {id},
-			attributes: ['btcBalance'],
+			attributes: ['btc_balance'],
 			plain: true,
 		});
 	}
