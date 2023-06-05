@@ -1,37 +1,27 @@
 /* eslint-disable no-undef */
-
+'use strict';
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
 	async up(queryInterface, Sequelize) {
-		await queryInterface.createTable('questions', {
+		await queryInterface.createTable('tx_requests', {
 			id: {
 				allowNull: false,
 				autoIncrement: true,
 				primaryKey: true,
 				type: Sequelize.INTEGER,
 			},
-			content: {
-				type: Sequelize.TEXT,
-			},
-			rawContentLanguage: {
-				type: Sequelize.STRING,
-				field: 'raw_content_language',
-			},
-			rawContent: {
-				type: Sequelize.TEXT,
-				field: 'raw_content',
-			},
 			userId: {
 				type: Sequelize.INTEGER,
 				field: 'user_id',
 			},
-			bountyAmount: {
+			amount: {
 				type: Sequelize.DOUBLE,
-				field: 'bounty_amount',
+			},
+			secret: {
+				type: Sequelize.STRING,
 			},
 			status: {
 				type: Sequelize.STRING,
-				defaultValue: 'Open',
 			},
 			createdAt: {
 				allowNull: false,
@@ -51,6 +41,6 @@ module.exports = {
 		});
 	},
 	async down(queryInterface, Sequelize) {
-		await queryInterface.dropTable('questions');
+		await queryInterface.dropTable('tx_requests');
 	},
 };

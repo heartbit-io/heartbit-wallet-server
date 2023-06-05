@@ -1,6 +1,6 @@
 import {Dialect, Sequelize} from 'sequelize';
 
-import {Question } from './QuestionModel';
+import {Question} from './QuestionModel';
 import {Reply} from './ReplyModel';
 import {Transaction} from './TransactionModel';
 import {User} from './UserModel';

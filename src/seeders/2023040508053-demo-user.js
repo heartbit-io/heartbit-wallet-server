@@ -6,12 +6,13 @@ const {faker} = require('@faker-js/faker');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-	createUser() {
+	createUser(index) {
 		return {
 			role: faker.helpers.arrayElement(['user', 'doctor', 'admin']),
 			btc_balance: faker.finance.amount(),
 			email: faker.internet.email(),
 			pubkey: faker.finance.bitcoinAddress() + new Date().getTime().toString(),
+			air_table_record_id: index,
 			created_at: new Date(),
 			updated_at: new Date(),
 			deleted_at: null,
@@ -20,9 +21,9 @@ module.exports = {
 	async up(queryInterface, Sequelize) {
 		let users = [];
 
-		Array.from({length: 50}).forEach(() => {
-			users.push(this.createUser());
-		});
+		for (let index = 1; index < 50; index++) {
+			users.push(this.createUser(index));
+		}
 
 		return queryInterface.bulkInsert('users', users);
 	},

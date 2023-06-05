@@ -1,4 +1,4 @@
-import env from "./env";
+import env from './env';
 
 const config = {
 	development: {
@@ -22,6 +22,6 @@ const config = {
 		host: 'localhost',
 		dialect: 'postgres',
 	},
-}
+};
 
 export default config;

@@ -9,12 +9,19 @@ module.exports = {
 		return {
 			content: faker.lorem.sentences(),
 			raw_content: faker.lorem.sentences(),
+			raw_content_language: faker.helpers.arrayElement([
+				'french',
+				'japanese',
+				'korean',
+				'chinese',
+				'tiv',
+			]),
 			user_id: faker.helpers.arrayElement(userIds),
 			bounty_amount: faker.finance.amount(),
 			status: faker.helpers.arrayElement(['Open', 'Closed']),
-			createdAt: new Date(),
-			updatedAt: new Date(),
-			deletedAt: null,
+			created_at: new Date(),
+			updated_at: new Date(),
+			deleted_at: null,
 		};
 	},
 
