@@ -89,15 +89,20 @@ eb deploy [enviroment-name]
     - DEV, TEST: dev-heartbit-wallet-server-env
     - PROD: (TODO)
 
-## Monitoring
+## 3rd parties
 
 ### Sentry
-- create project(express), required each enviroments
-- set sentry dns in env(SENTRY_DSN)
-- slack notification setting
-  1. select sentry project > settings > integrations > slack (add installation)
-  2. select sentry project > alerts > new alert rule > set 'Send a notification to the {workspace} Slack workspace to #{channel}'
-- how to use in code
+- Free plan
+- Docs: https://docs.sentry.io/api/
+- For error monitoring, alert
+
+#### Set up guide
+- Create project(express), required each enviroments
+- Set sentry dns in env(SENTRY_DSN)
+- Slack notification setting
+  1. Select sentry project > settings > integrations > slack (add installation)
+  2. Select sentry project > alerts > new alert rule > set 'Send a notification to the {workspace} Slack workspace to #{channel}'
+- How to use in code
   - Write code like the example below where you want to receive the error alert
 ```
 // e.g
@@ -105,3 +110,24 @@ Sentry.captureMessage('[${HttpCodes.INTERNAL_SERVER_ERROR}] ${error}');
 ```
 - You can access Sentry via a notification in slack channel to see more information about the error.
 - If you don't have a sentry account, find david(david@heartbit.io).
+
+
+### CoinPaprika
+- Free API
+- Docs: https://api.coinpaprika.com/
+- To get BTC price information
+
+### ChatGPT
+- Admin account: contact@heartbit.io
+- Docs: https://platform.openai.com/docs/introduction
+- To get ChatGPT answers
+
+### DeepL
+- Admin account: developer@heartbit.io
+- Docs: https://www.deepl.com/docs-api/
+- For translations (support 29 languages: https://www.deepl.com/docs-api/translate-text)
+
+### Airtable
+- Admin account: contact@heartbit.io
+- Docs: https://airtable.com/developers/web
+- For pseudo-registry management
