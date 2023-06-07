@@ -1,13 +1,10 @@
-import {Sequelize} from 'sequelize';
-import {
-	Question,
-	QuestionAttributes,
-	QuestionStatus,
-} from '../models/QuestionModel';
+import {Question, QuestionAttributes} from '../models/QuestionModel';
+
 import {CustomError} from '../util/CustomError';
+import DeeplService from './DeeplService';
 import {HttpCodes} from '../util/HttpCodes';
 import QuestionRepository from '../Repositories/QuestionRepository';
-import DeeplService from './DeeplService';
+import {QuestionStatus} from '../util/enums';
 import UserRepository from '../Repositories/UserRepository';
 
 class QuestionService {
@@ -56,6 +53,10 @@ class QuestionService {
 			const newQuestion = await QuestionRepository.create({
 				...question,
 				content: enContent.text,
+				basicInfo: question.basicInfo || '',
+				currentMedications: question.currentMedications || '',
+				pastIllnessHistory: question.pastIllnessHistory || '',
+				others: question.others || '',
 				rawContentLanguage: enContent.detected_source_language, // snake case because deepl response
 				rawContent: question.content,
 				userId: user.id,
