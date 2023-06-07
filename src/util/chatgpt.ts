@@ -3,7 +3,7 @@ import {QuestionAttributes} from '../models/QuestionModel';
 import {QuestionTypes} from '../util/enums/questionTypes';
 
 // TODO(david): Consider the patient's profile
-export function makePrompt(question: QuestionAttributes) {
+export function makePrompt(question: QuestionAttributes): string {
 	switch (question.type) {
 		case QuestionTypes.GENERAL:
 			return `
@@ -13,7 +13,7 @@ export function makePrompt(question: QuestionAttributes) {
 				- Question: ${question.content}
 				- Age, Sex, and Ethnicity: ${question.basicInfo}
 			`;
-		case QuestionTypes.ILLNESS:
+		default:
 			return `
 				You are an experienced licensed doctor who sees a patient in teleconsultation. I will show you a patient's case. Please organize the patient's description and write answers in a clinical record format with the following conditions:
 				- All descriptions and answers should be bullet-pointed and in markdown format.

@@ -40,7 +40,7 @@ class ChatgptService {
 		model: string,
 		maxTokens: number,
 	): Promise<ChatgptReply | undefined> {
-		const prompt = makePrompt(question) || '';
+		const prompt = makePrompt(question);
 		const questionId = Number(question.id);
 
 		try {
