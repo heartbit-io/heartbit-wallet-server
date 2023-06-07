@@ -19,8 +19,23 @@ class TransactionService {
 		);
 	}
 
-	async getUserTransactions(userPubkey: string): Promise<Transaction[]> {
+	async getUserTransactions(
+		userPubkey: string,
+		limit: number,
+		offset: number,
+	): Promise<Transaction[]> {
 		return await Transaction.findAll({
+			where: {
+				[Op.or]: [{fromUserPubkey: userPubkey}, {toUserPubkey: userPubkey}],
+			},
+			limit,
+			offset,
+			raw: true,
+		});
+	}
+
+	async getUserTransactionsCount(userPubkey: string): Promise<number> {
+		return await Transaction.count({
 			where: {
 				[Op.or]: [{fromUserPubkey: userPubkey}, {toUserPubkey: userPubkey}],
 			},

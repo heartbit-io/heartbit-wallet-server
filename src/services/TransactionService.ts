@@ -12,24 +12,25 @@ class TransactionService {
 		bounty_refunded: 'Bounty refunded',
 	};
 
-	async getUserTransactions(userPubkey: string) {
+	async getUserTransactions(userPubkey: string, limit: number, offset: number) {
 		try {
 			const transactions = await TransactionsRepository.getUserTransactions(
 				userPubkey,
+				limit,
+				offset,
 			);
+
 			if (!transactions || transactions.length === 0)
 				throw new CustomError(
 					HttpCodes.NOT_FOUND,
 					'User does not have any transaction',
 				);
-			const fomatedTransactions = transactions.map(transaction => {
-				return {
-					...transaction.dataValues,
-					type: this.txTypeMap[transaction.type],
-				};
-			});
+			const count = await TransactionsRepository.getUserTransactionsCount(
+				userPubkey,
+			);
+			const hasMore = offset + limit < count ? true : false;
 
-			return fomatedTransactions;
+			return {transactions, hasMore};
 		} catch (error: any) {
 			throw error.code && error.message
 				? error

@@ -104,6 +104,10 @@ class QuestionRepository {
 	async deleteQuestion(question: Question) {
 		return await question.destroy();
 	}
+
+	async countUserQuestions(userId: number): Promise<number> {
+		return await Question.count({where: {userId}});
+	}
 }
 
 export default new QuestionRepository();
