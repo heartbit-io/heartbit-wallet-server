@@ -1,9 +1,7 @@
 import {Op, Sequelize} from 'sequelize';
-import {
-	QuestionAttributes,
-	Question,
-	QuestionStatus,
-} from '../models/QuestionModel';
+import {Question, QuestionAttributes} from '../models/QuestionModel';
+
+import {QuestionStatus} from '../util/enums';
 
 class QuestionRepository {
 	async create(question: QuestionAttributes) {
@@ -31,7 +29,7 @@ class QuestionRepository {
 
 	async sumUserOpenBountyAmount(userId: number) {
 		return await Question.findAll({
-			where: {userId, status: QuestionStatus.Open},
+			where: {userId, status: QuestionStatus.OPEN},
 			attributes: [
 				[Sequelize.fn('sum', Sequelize.col('bountyAmount')), 'totalBounty'],
 			],
@@ -50,7 +48,7 @@ class QuestionRepository {
 			where: {
 				id,
 				userId,
-				status: QuestionStatus.Open,
+				status: QuestionStatus.OPEN,
 			},
 		});
 	}
@@ -64,7 +62,7 @@ class QuestionRepository {
 		offset?: number | undefined,
 	) {
 		return await Question.findAll({
-			where: {status: QuestionStatus.Open},
+			where: {status: QuestionStatus.OPEN},
 			limit,
 			offset,
 			order: [
