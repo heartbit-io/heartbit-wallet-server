@@ -1,17 +1,18 @@
+import {QuestionStatus, TxTypes} from '../util/enums';
+
+import ChatGPTRepository from '../Repositories/ChatGPTRepository';
 import ChatgptService from '../services/ChatgptService';
+import {CustomError} from '../util/CustomError';
 import EventEmitter from 'events';
 import {HttpCodes} from '../util/HttpCodes';
-import {Question, QuestionStatus} from '../models/QuestionModel';
-import {TxTypes} from '../util/enums/txTypes';
+import {Question} from '../models/QuestionModel';
+import QuestionRepository from '../Repositories/QuestionRepository';
+import {RepliesAttributes} from '../models/ReplyModel';
+import ReplyRepository from '../Repositories/ReplyRepository';
+import TransactionsRepository from '../Repositories/TransactionsRepository';
+import UserRepository from '../Repositories/UserRepository';
 import {UserRoles} from '../util/enums/userRoles';
 import admin from '../config/firebase-config';
-import {CustomError} from '../util/CustomError';
-import UserRepository from '../Repositories/UserRepository';
-import QuestionRepository from '../Repositories/QuestionRepository';
-import ReplyRepository from '../Repositories/ReplyRepository';
-import {RepliesAttributes} from '../models/ReplyModel';
-import ChatGPTRepository from '../Repositories/ChatGPTRepository';
-import TransactionsRepository from '../Repositories/TransactionsRepository';
 
 const eventEmitter = new EventEmitter();
 
@@ -102,7 +103,7 @@ class DoctorService {
 
 			// question status update
 			await QuestionRepository.updateStatus(
-				QuestionStatus.Closed,
+				QuestionStatus.CLOSED,
 				Number(question.id),
 			);
 
