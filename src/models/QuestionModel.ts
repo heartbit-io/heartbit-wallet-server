@@ -14,7 +14,6 @@ export interface QuestionAttributes {
 	status?: QuestionStatus;
 	type?: QuestionTypes;
 	basicInfo?: string;
-	currentMedications?: string;
 	pastIllnessHistory?: string;
 	others?: string;
 }
@@ -29,7 +28,6 @@ export class Question extends Model<QuestionAttributes> {
 	declare type: QuestionTypes;
 	declare dataValues: QuestionAttributes;
 	declare basicInfo?: string;
-	declare currentMedications?: string;
 	declare pastIllnessHistory?: string;
 	declare others?: string;
 	declare createdAt?: Date;
@@ -79,10 +77,6 @@ Question.init(
 			defaultValue: QuestionTypes.GENERAL,
 		},
 		basicInfo: {
-			type: DataTypes.TEXT,
-			allowNull: false,
-		},
-		currentMedications: {
 			type: DataTypes.TEXT,
 			allowNull: false,
 		},

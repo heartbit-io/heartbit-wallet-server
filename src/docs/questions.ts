@@ -47,10 +47,6 @@ const replyResponseData = {
 			type: 'string',
 			example: 'I have a history of heart disease',
 		},
-		currentMedications: {
-			type: 'string',
-			example: 'I am currently taking paracetamol',
-		},
 		assessment: {
 			type: 'string',
 			example: 'You have a headache',
@@ -84,6 +80,23 @@ const questionResponseData = {
 		type: 'string',
 		enum: ['open', 'closed'],
 		example: 'open',
+	},
+	type: {
+		type: 'string',
+		enum: ['general', 'illness'],
+		example: 'general',
+	},
+	basicInfo: {
+		type: 'string',
+		example: '24 yr old, male, korean',
+	},
+	pastIllnessHistory: {
+		type: 'string',
+		example: 'Early cataracts',
+	},
+	others: {
+		type: 'string',
+		example: 'Share anything that might help',
 	},
 	createdAt: {
 		type: 'string',
