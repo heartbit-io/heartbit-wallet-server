@@ -22,8 +22,6 @@ class ReplyService {
 
 			const rawContentLanguage: any = question.dataValues.rawContentLanguage;
 
-			const {content, basicInfo, pastIllnessHistory, others} = question;
-
 			const replyForChatGpt =
 				await ChatGPTRepository.getChatGptReplyByQuestionId(Number(questionId));
 
