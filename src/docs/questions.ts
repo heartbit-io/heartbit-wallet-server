@@ -47,10 +47,6 @@ const replyResponseData = {
 			type: 'string',
 			example: 'I have a history of heart disease',
 		},
-		currentMedications: {
-			type: 'string',
-			example: 'I am currently taking paracetamol',
-		},
 		assessment: {
 			type: 'string',
 			example: 'You have a headache',
@@ -84,6 +80,23 @@ const questionResponseData = {
 		type: 'string',
 		enum: ['open', 'closed'],
 		example: 'open',
+	},
+	type: {
+		type: 'string',
+		enum: ['general', 'illness'],
+		example: 'general',
+	},
+	ageSexEthnicity: {
+		type: 'string',
+		example: '24 yr old, male, korean',
+	},
+	pastIllnessHistory: {
+		type: 'string',
+		example: 'Early cataracts',
+	},
+	others: {
+		type: 'string',
+		example: 'Share anything that might help',
 	},
 	createdAt: {
 		type: 'string',
@@ -659,11 +672,31 @@ const createQuestionBody = {
 		content: {
 			type: 'string',
 			example:
-				'I have tooth sensitivity when I used toothpick today, what should I do?',
+				'(required) I have tooth sensitivity when I used toothpick today, what should I do?',
 		},
 		bountyAmount: {
 			type: 'number',
 			example: 10000,
+		},
+		type: {
+			type: 'number',
+			example: 10000,
+		},
+		currentMedication: {
+			type: 'string',
+			example: '(optional) I am taking paracetamol',
+		},
+		ageSexEthnicity: {
+			type: 'string',
+			example: '(optional) 24, male, korean',
+		},
+		pastIllnessHistory: {
+			type: 'string',
+			example: '(optional) Early cataracts',
+		},
+		others: {
+			type: 'string',
+			example: '(optional) Share anything that might help',
 		},
 	},
 };

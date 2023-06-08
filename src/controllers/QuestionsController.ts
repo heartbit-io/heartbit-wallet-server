@@ -2,7 +2,7 @@ import {DecodedRequest} from '../middleware/Auth';
 import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
 import QuestionService from '../services/QuestionService';
-import {QuestionStatus} from '../models/QuestionModel';
+import {QuestionStatus} from '../util/enums';
 import {Response} from 'express';
 import ResponseDto from '../dto/ResponseDTO';
 

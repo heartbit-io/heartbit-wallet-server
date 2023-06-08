@@ -29,6 +29,26 @@ module.exports = {
 				type: Sequelize.DOUBLE,
 				field: 'bounty_amount',
 			},
+			type: {
+				type: Sequelize.STRING,
+				defaultValue: 'GENERAL',
+			},
+			currentMedication: {
+				type: Sequelize.TEXT,
+				allowNull: false,
+			},
+			ageSexEthnicity: {
+				type: Sequelize.TEXT,
+				allowNull: false,
+			},
+			pastIllnessHistory: {
+				type: Sequelize.TEXT,
+				allowNull: false,
+			},
+			others: {
+				type: Sequelize.TEXT,
+				allowNull: false,
+			},
 			status: {
 				type: Sequelize.STRING,
 				defaultValue: 'Open',

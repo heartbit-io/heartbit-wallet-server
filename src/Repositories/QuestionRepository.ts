@@ -1,9 +1,7 @@
 import {Op, Sequelize} from 'sequelize';
-import {
-	QuestionAttributes,
-	Question,
-	QuestionStatus,
-} from '../models/QuestionModel';
+import {Question, QuestionAttributes} from '../models/QuestionModel';
+
+import {QuestionStatus} from '../util/enums';
 
 class QuestionRepository {
 	async create(question: QuestionAttributes) {
@@ -25,17 +23,17 @@ class QuestionRepository {
 			where: {userId},
 			limit,
 			offset,
-			order: [['createdAt', order]],
+			order: [['created_at', order]],
 		});
 	}
 
 	async sumUserOpenBountyAmount(userId: number) {
 		return await Question.findAll({
-			where: {userId, status: QuestionStatus.Open},
+			where: {userId, status: QuestionStatus.OPEN},
 			attributes: [
-				[Sequelize.fn('sum', Sequelize.col('bountyAmount')), 'totalBounty'],
+				[Sequelize.fn('sum', Sequelize.col('bounty_amount')), 'total_bounty'],
 			],
-			group: ['userId'],
+			group: ['user_id'],
 		});
 	}
 
@@ -50,7 +48,7 @@ class QuestionRepository {
 			where: {
 				id,
 				userId,
-				status: QuestionStatus.Open,
+				status: QuestionStatus.OPEN,
 			},
 		});
 	}
@@ -64,12 +62,12 @@ class QuestionRepository {
 		offset?: number | undefined,
 	) {
 		return await Question.findAll({
-			where: {status: QuestionStatus.Open},
+			where: {status: QuestionStatus.OPEN},
 			limit,
 			offset,
 			order: [
-				['bountyAmount', 'DESC'],
-				['createdAt', 'ASC'],
+				['bounty_amount', 'DESC'],
+				['created_at', 'ASC'],
 			],
 		});
 	}
@@ -97,7 +95,7 @@ class QuestionRepository {
 			where: {id: {[Op.in]: questionIds}},
 			limit,
 			offset,
-			order: [['createdAt', 'DESC']],
+			order: [['created_at', 'DESC']],
 		});
 	}
 

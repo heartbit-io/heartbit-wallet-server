@@ -1,6 +1,8 @@
 import {Configuration, OpenAIApi} from 'openai';
 import {makeAnswerToJson, makePrompt} from '../util/chatgpt';
+
 import {ChatgptReply} from '../models/ChatgptReplyModel';
+import {QuestionAttributes} from '../models/QuestionModel';
 import env from '../config/env';
 import logger from '../util/logger';
 
@@ -28,19 +30,19 @@ class ChatgptService {
 
 	/**
 	 * @description - Create ChatGPT Completion for prompt
-	 * @param questionId - Question ID
-	 * @param questionContent - Question content
+	 * @param question - Question
 	 * @param model - AI model
 	 * @param maxTokens - Max tokens upper: 2048, For English text, 1 token is approximately 4 characters or 0.75 words
 	 * @returns
 	 */
 	async create(
-		questionId: number,
-		questionContent: string,
+		question: QuestionAttributes,
 		model: string,
 		maxTokens: number,
 	): Promise<ChatgptReply | undefined> {
-		const prompt = makePrompt(questionContent, '');
+		const prompt = makePrompt(question);
+		const questionId = Number(question.id);
+
 		try {
 			// TODO(david): Add patient profile parameter
 

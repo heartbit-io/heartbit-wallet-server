@@ -1,11 +1,8 @@
-import {
-	QuestionAttributes,
-	Question,
-	QuestionStatus,
-} from '../src/models/QuestionModel';
-import {UserAttributes, User} from '../src/models/UserModel';
+import {Question, QuestionAttributes} from '../src/models/QuestionModel';
+import {User, UserAttributes} from '../src/models/UserModel';
 
 import {HttpCodes} from '../src/util/HttpCodes';
+import {QuestionStatus} from '../src/util/enums';
 import app from '../src/index';
 import {expect} from 'chai';
 import {faker} from '@faker-js/faker';
@@ -218,7 +215,7 @@ describe('Questions endpoints', () => {
 			const question_body = {
 				...question,
 				user_email: user.email,
-				status: QuestionStatus.Open,
+				status: QuestionStatus.OPEN,
 				bounty_amount: user.btc_balance / 2,
 			};
 
@@ -244,7 +241,7 @@ describe('Questions endpoints', () => {
 			const question_body = {
 				...question,
 				user_email: user.email,
-				status: QuestionStatus.Open,
+				status: QuestionStatus.OPEN,
 				bounty_amount: user.btc_balance / 2,
 			};
 			const create_question = await createQuestion(question_body);
@@ -275,7 +272,7 @@ describe('Questions endpoints', () => {
 			const question_body = {
 				...question,
 				user_email: user.email,
-				status: QuestionStatus.Open,
+				status: QuestionStatus.OPEN,
 				bounty_amount: user.btc_balance / 2,
 			};
 
