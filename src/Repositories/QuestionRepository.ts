@@ -23,7 +23,7 @@ class QuestionRepository {
 			where: {userId},
 			limit,
 			offset,
-			order: [['createdAt', order]],
+			order: [['created_at', order]],
 		});
 	}
 
@@ -31,9 +31,9 @@ class QuestionRepository {
 		return await Question.findAll({
 			where: {userId, status: QuestionStatus.OPEN},
 			attributes: [
-				[Sequelize.fn('sum', Sequelize.col('bountyAmount')), 'totalBounty'],
+				[Sequelize.fn('sum', Sequelize.col('bounty_amount')), 'total_bounty'],
 			],
-			group: ['userId'],
+			group: ['user_id'],
 		});
 	}
 
@@ -66,8 +66,8 @@ class QuestionRepository {
 			limit,
 			offset,
 			order: [
-				['bountyAmount', 'DESC'],
-				['createdAt', 'ASC'],
+				['bounty_amount', 'DESC'],
+				['created_at', 'ASC'],
 			],
 		});
 	}
@@ -95,7 +95,7 @@ class QuestionRepository {
 			where: {id: {[Op.in]: questionIds}},
 			limit,
 			offset,
-			order: [['createdAt', 'DESC']],
+			order: [['created_at', 'DESC']],
 		});
 	}
 
