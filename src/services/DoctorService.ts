@@ -57,7 +57,8 @@ class DoctorService {
 			// If the bounty is 0, no bounty is calculated.
 			if (question.bountyAmount) {
 				// XXX, TODO(david) start a database transaction
-				// debit user bounty amount
+				/**
+ 				* debiting user is done when a user posts a question
 				const userBalance = user.btcBalance - question.bountyAmount;
 				const userDebit = UserRepository.updateUserBtcBalance(
 					userBalance,
@@ -69,6 +70,8 @@ class DoctorService {
 						HttpCodes.UNPROCESSED_CONTENT,
 						'error debiting user account',
 					);
+ 				*/
+
 				// 100 is default sats
 				const calulatedFee =
 					100 + Math.floor((question.bountyAmount - 100) * 0.02);

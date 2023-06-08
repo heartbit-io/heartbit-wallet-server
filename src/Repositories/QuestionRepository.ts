@@ -5,7 +5,13 @@ import {QuestionStatus} from '../util/enums';
 
 class QuestionRepository {
 	async create(question: QuestionAttributes) {
-		return await Question.create({...question});
+		return await Question.create({
+			content: question.content,
+			bountyAmount: question.bountyAmount,
+			userId: question.userId,
+			rawContent: question.rawContent,
+			rawContentLanguage: question.rawContentLanguage,
+		});
 	}
 
 	async updateStatus(status: QuestionStatus, id: number) {
@@ -31,9 +37,10 @@ class QuestionRepository {
 		return await Question.findAll({
 			where: {userId, status: QuestionStatus.OPEN},
 			attributes: [
-				[Sequelize.fn('sum', Sequelize.col('bounty_amount')), 'total_bounty'],
+				[Sequelize.fn('sum', Sequelize.col('bounty_amount')), 'totalBounty'],
 			],
 			group: ['user_id'],
+			raw: true,
 		});
 	}
 
