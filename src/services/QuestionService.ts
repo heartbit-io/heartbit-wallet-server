@@ -4,7 +4,6 @@ import {
 	QuestionAttributes,
 	QuestionStatus,
 } from '../models/QuestionModel';
-import UserService from '../services/UserService';
 import {CustomError} from '../util/CustomError';
 import {HttpCodes} from '../util/HttpCodes';
 import QuestionRepository from '../Repositories/QuestionRepository';
@@ -145,8 +144,8 @@ class QuestionService {
 	//get all user questions
 	async getAll(
 		email: string | undefined,
-		limit: number | undefined,
-		offset: number | undefined,
+		limit: number,
+		offset: number,
 		order: string,
 	) {
 		try {
@@ -159,13 +158,25 @@ class QuestionService {
 
 			const userId: number = user.id;
 
+			const userQuestions = await QuestionRepository.countUserQuestions(userId);
+
+			if (!userQuestions)
+				throw new CustomError(HttpCodes.NOT_FOUND, 'User has no questions');
+
 			const questions = await QuestionRepository.getAll(
 				userId,
 				limit,
 				offset,
 				order,
 			);
-			return questions;
+			const hasMore = userQuestions > limit + offset ? true : false;
+			const formatedQuestions = questions.map(question => {
+				return {
+					...question.dataValues,
+					content: question.dataValues.rawContent,
+				};
+			});
+			return {questions: formatedQuestions, hasMore};
 		} catch (error: any) {
 			throw error.code && error.message
 				? error

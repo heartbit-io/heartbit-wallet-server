@@ -76,30 +76,27 @@ class QuestionsController {
 		res: Response,
 	): Promise<Response<FormatResponse>> {
 		try {
-			const limit = (req.query.limit as number | undefined) || 50;
-			const offset = req.query.offset as number | undefined;
+			const limit = req.query.limit ? Number(req.query.limit) : 20;
+			const offset = req.query.offset ? Number(req.query.offset) : 0;
 			const order = (req.query.order as string | undefined) || 'DESC';
 
-			const questions = await QuestionService.getAll(
+			const result = await QuestionService.getAll(
 				req.email,
 				limit,
 				offset,
 				order,
 			);
 
-			return res.status(HttpCodes.OK).json(
-				new ResponseDto(
-					true,
-					HttpCodes.OK,
-					`Successfully retrieved all user questions according to: limit: ${limit}, offset: ${limit}, order: ${order}`,
-					questions.map(question => {
-						return {
-							...question.dataValues,
-							content: question.dataValues.rawContent,
-						};
-					}),
-				),
-			);
+			return res
+				.status(HttpCodes.OK)
+				.json(
+					new ResponseDto(
+						true,
+						HttpCodes.OK,
+						`Successfully retrieved all user questions according to: limit: ${limit}, offset: ${limit}, order: ${order}`,
+						result,
+					),
+				);
 		} catch (error: any) {
 			return res
 				.status(error.code ? error.code : HttpCodes.INTERNAL_SERVER_ERROR)
@@ -117,7 +114,7 @@ class QuestionsController {
 	//get user open questions
 	async getOpenQuestionsOrderByBounty(req: DecodedRequest, res: Response) {
 		try {
-			const limit = (req.query.limit as number | undefined) || 50;
+			const limit = (req.query.limit as number | undefined) || 20;
 			const offset = req.query.offset as number | undefined;
 
 			const questions = await QuestionService.getOpenQuestionsOrderByBounty(

@@ -6,9 +6,14 @@ import TransactionService from '../services/TransactionService';
 class TransactionsController {
 	async getUserTransactions(req: Request, res: Response) {
 		try {
+			const limit = req.query.limit ? Number(req.query.limit) : 20;
+			const offset = req.query.offset ? Number(req.query.offset) : 0;
+
 			const {pubkey} = req.params;
 			const transactions = await TransactionService.getUserTransactions(
 				pubkey.toLocaleLowerCase(),
+				limit,
+				offset,
 			);
 			return res
 				.status(HttpCodes.OK)

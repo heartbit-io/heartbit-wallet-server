@@ -1,7 +1,7 @@
 import TransactionsRepository from '../Repositories/TransactionsRepository';
 import {getAuth, signInWithEmailAndPassword} from 'firebase/auth';
 import UserRepository from '../Repositories/UserRepository';
-import {UserAttributes, User} from '../models/UserModel';
+import {UserAttributes} from '../models/UserModel';
 import {CustomError} from '../util/CustomError';
 import {HttpCodes} from '../util/HttpCodes';
 import dbconnection from '../util/dbconnection';
