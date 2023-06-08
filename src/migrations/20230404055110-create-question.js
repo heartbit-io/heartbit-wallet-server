@@ -36,14 +36,17 @@ module.exports = {
 			currentMedication: {
 				type: Sequelize.TEXT,
 				allowNull: false,
+				field: 'current_medication',
 			},
 			ageSexEthnicity: {
 				type: Sequelize.TEXT,
 				allowNull: false,
+				field: 'age_sex_ethnicity',
 			},
 			pastIllnessHistory: {
 				type: Sequelize.TEXT,
 				allowNull: false,
+				field: 'past_illness_history',
 			},
 			others: {
 				type: Sequelize.TEXT,

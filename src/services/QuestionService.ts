@@ -29,17 +29,16 @@ class QuestionService {
 					HttpCodes.NOT_FOUND,
 					'Error getting user balance',
 				);
-
 			if (totalBounty > userBtcBalance) {
 				throw new CustomError(
 					HttpCodes.BAD_REQUEST,
 					'You do not have enough sats to post a new question',
 				);
 			}
-
 			const enContent = await DeeplService.getTextTranslatedIntoEnglish(
 				question.content,
 			);
+
 			const newQuestion = await QuestionRepository.create({
 				...question,
 				content: enContent.text,

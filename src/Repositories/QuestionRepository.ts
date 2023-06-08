@@ -6,11 +6,7 @@ import {QuestionStatus} from '../util/enums';
 class QuestionRepository {
 	async create(question: QuestionAttributes) {
 		return await Question.create({
-			content: question.content,
-			bountyAmount: question.bountyAmount,
-			userId: question.userId,
-			rawContent: question.rawContent,
-			rawContentLanguage: question.rawContentLanguage,
+			...question,
 		});
 	}
 
