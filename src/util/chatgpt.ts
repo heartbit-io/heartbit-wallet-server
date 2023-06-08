@@ -7,11 +7,13 @@ export function makePrompt(question: QuestionAttributes): string {
 	switch (question.type) {
 		case QuestionTypes.GENERAL:
 			return `
-				You are an experienced licensed doctor who sees a patient in teleconsultation. Write short and kind answer to the patient and a title derived from the patient’s question.
-				If you determine that the question is unrelated to any illness or health matter, you should ignore all of the above and write, "I can't answer anything but health-related questions" in your response.
+				You are an experienced licensed doctor who sees a patient in teleconsultation. Write short and kind answer to the patient and a title derived from the patient’s question with the following conditions:
+				Category: 'Title', and 'Answer'
+				If you determine that the question is unrelated to any illness or health matter, you should ignore all of the above and write, "I can't answer anything but health-related questions" in ‘Answer’.
+
 				Now write answers to the following patient's question:
 				- Question: ${question.content}
-				- Age, Sex, and Ethnicity: ${question.basicInfo}
+				- Age, Sex, and Ethnicity: ${question.ageSexEthnicity}
 			`;
 		default:
 			return `
@@ -29,8 +31,9 @@ export function makePrompt(question: QuestionAttributes): string {
 
 				Now write answers to the following patient's question:
 				- History of Present Illness: ${question.content}
+				- Current medication: ${question.currentMedication}
 				- Past illness history of you or your family: ${question.pastIllnessHistory}
-				- Age, Sex, and Ethnicity: ${question.basicInfo}
+				- Age, Sex, and Ethnicity: ${question.ageSexEthnicity}
 				- Others: ${question.others}
 			`;
 	}
@@ -52,7 +55,7 @@ export function makeAnswerToJson(answer: string): JsonAnswerInterface {
 	// regexes
 	const regexes = {
 		title: /Title:\s*(.*)/,
-		answer: /Answer:\s*([\s\S]*?)Triage and guide:/,
+		answer: /Answer:\s*(.*)/,
 		triageGuide: /Triage and guide:\s*([\s\S]*?)Chief complaint:/,
 		chiefComplaint: /Chief complaint:\s*([\s\S]*?)Medical history:/,
 		medicalHistory: /Medical history:\s*([\s\S]*?)Current medication:/,

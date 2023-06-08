@@ -4,6 +4,7 @@ import {CustomError} from '../util/CustomError';
 import DeeplService from '../services/DeeplService';
 import {HttpCodes} from '../util/HttpCodes';
 import QuestionRepository from '../Repositories/QuestionRepository';
+import {QuestionTypes} from '../util/enums';
 import {RepliesAttributes} from '../models/ReplyModel';
 import ReplyRepository from '../Repositories/ReplyRepository';
 import {ReplyResponseInterface} from '../controllers/RepliesController';
@@ -44,8 +45,13 @@ class ReplyService {
 			if (!chatgptReply)
 				throw new CustomError(HttpCodes.NOT_FOUND, 'ChatGPT not replied');
 
+			const translateText =
+				question.type === QuestionTypes.GENERAL
+					? chatgptReply.jsonAnswer.answer
+					: chatgptReply.jsonAnswer.triageGuide;
+
 			const translatedReply = await DeeplService.getTextTranslatedIntoEnglish(
-				chatgptReply.jsonAnswer.triageGuide,
+				translateText,
 				rawContentLanguage,
 			);
 
