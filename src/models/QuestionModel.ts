@@ -13,7 +13,8 @@ export interface QuestionAttributes {
 	bountyAmount: number;
 	status?: QuestionStatus;
 	type?: QuestionTypes;
-	basicInfo?: string;
+	currentMedication?: string;
+	ageSexEthnicity?: string;
 	pastIllnessHistory?: string;
 	others?: string;
 }
@@ -27,7 +28,8 @@ export class Question extends Model<QuestionAttributes> {
 	declare status: QuestionStatus;
 	declare type: QuestionTypes;
 	declare dataValues: QuestionAttributes;
-	declare basicInfo?: string;
+	declare currentMedication?: string;
+	declare ageSexEthnicity?: string;
 	declare pastIllnessHistory?: string;
 	declare others?: string;
 	declare createdAt?: Date;
@@ -76,7 +78,11 @@ Question.init(
 			allowNull: false,
 			defaultValue: QuestionTypes.GENERAL,
 		},
-		basicInfo: {
+		currentMedication: {
+			type: DataTypes.TEXT,
+			allowNull: false,
+		},
+		ageSexEthnicity: {
 			type: DataTypes.TEXT,
 			allowNull: false,
 		},

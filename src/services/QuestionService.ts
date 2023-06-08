@@ -53,7 +53,8 @@ class QuestionService {
 			const newQuestion = await QuestionRepository.create({
 				...question,
 				content: enContent.text,
-				basicInfo: question.basicInfo || '',
+				currentMedication: question.currentMedication || '',
+				ageSexEthnicity: question.ageSexEthnicity || '',
 				pastIllnessHistory: question.pastIllnessHistory || '',
 				others: question.others || '',
 				rawContentLanguage: enContent.detected_source_language, // snake case because deepl response

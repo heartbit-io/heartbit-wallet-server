@@ -86,7 +86,7 @@ const questionResponseData = {
 		enum: ['general', 'illness'],
 		example: 'general',
 	},
-	basicInfo: {
+	ageSexEthnicity: {
 		type: 'string',
 		example: '24 yr old, male, korean',
 	},
