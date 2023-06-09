@@ -50,7 +50,16 @@ class RepliesController {
 			const {questionId} = req.params;
 			const reply = await ReplyService.getReplyByQuestionId(Number(questionId));
 
-			return res.status(HttpCodes.OK).json(reply);
+			return res
+				.status(HttpCodes.OK)
+				.json(
+					new ResponseDto(
+						true,
+						HttpCodes.OK,
+						'Reply deleted successfully',
+						reply,
+					),
+				);
 		} catch (error) {
 			return res
 				.status(HttpCodes.INTERNAL_SERVER_ERROR)
