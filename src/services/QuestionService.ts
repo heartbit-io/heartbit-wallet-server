@@ -1,48 +1,38 @@
 import {Question, QuestionAttributes} from '../models/QuestionModel';
-
 import {CustomError} from '../util/CustomError';
 import DeeplService from './DeeplService';
 import {HttpCodes} from '../util/HttpCodes';
 import QuestionRepository from '../Repositories/QuestionRepository';
-import {QuestionStatus} from '../util/enums';
 import UserRepository from '../Repositories/UserRepository';
-
+import {User} from '../models/UserModel';
+import dbconnection from '../util/dbconnection';
+import TransactionsRepository from '../Repositories/TransactionsRepository';
+import {QuestionStatus, TxTypes} from '../util/enums';
 class QuestionService {
 	async create(
 		question: QuestionAttributes,
 		email: string | undefined,
 	): Promise<Question | CustomError> {
+		const dbTransaction = await dbconnection.transaction();
 		try {
 			if (!email)
 				throw new CustomError(HttpCodes.BAD_REQUEST, 'Email is required');
-
 			const user = await UserRepository.getUserDetailsByEmail(email);
-
 			if (!user) throw new CustomError(HttpCodes.NOT_FOUND, 'User not found');
 
-			const userOpenBounty = await QuestionRepository.sumUserOpenBountyAmount(
-				user.id,
-			);
-
-			const userOpenBountyTotal = userOpenBounty[0]
-				? userOpenBounty[0].dataValues.totalBounty
-				: 0;
-
-			const totalBounty: number =
-				Number(userOpenBountyTotal) + Number(question.bountyAmount);
+			const questionBounty = Number(question.bountyAmount);
 
 			const userBtcBalance = user.get('btcBalance') as number;
-
 			if (!userBtcBalance)
 				throw new CustomError(
 					HttpCodes.NOT_FOUND,
 					'Error getting user balance',
 				);
 
-			if (totalBounty > userBtcBalance) {
+			if (questionBounty > userBtcBalance) {
 				throw new CustomError(
 					HttpCodes.BAD_REQUEST,
-					'You do not have enough sats to post a new question',
+					'Insufficient balance to create question',
 				);
 			}
 
@@ -62,8 +52,26 @@ class QuestionService {
 				userId: user.id,
 			});
 
+			if (!newQuestion)
+				throw new CustomError(HttpCodes.BAD_REQUEST, 'Error creating question');
+			const fee = 100 + Math.floor(questionBounty * 0.02);
+			const totalAmountDeductible = questionBounty + fee;
+			const userNewBtcBalance = userBtcBalance - totalAmountDeductible;
+
+			await UserRepository.updateUserBtcBalance(userNewBtcBalance, user.id);
+
+			await TransactionsRepository.createTransaction({
+				amount: totalAmountDeductible,
+				fromUserPubkey: user.pubkey,
+				toUserPubkey: user.pubkey,
+				fee,
+				type: TxTypes.BOUNTY_PLEDGED,
+			});
+
+			dbTransaction.commit();
 			return newQuestion;
 		} catch (error: any) {
+			dbTransaction.rollback();
 			throw error.code && error.message
 				? error
 				: new CustomError(

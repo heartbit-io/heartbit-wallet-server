@@ -31,9 +31,10 @@ class QuestionRepository {
 		return await Question.findAll({
 			where: {userId, status: QuestionStatus.OPEN},
 			attributes: [
-				[Sequelize.fn('sum', Sequelize.col('bounty_amount')), 'total_bounty'],
+				[Sequelize.fn('sum', Sequelize.col('bounty_amount')), 'totalBounty'],
 			],
 			group: ['user_id'],
+			raw: true,
 		});
 	}
 
