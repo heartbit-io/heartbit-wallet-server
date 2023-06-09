@@ -34,7 +34,6 @@ export class Question extends Model<QuestionAttributes> {
 	declare others?: string;
 	declare createdAt?: Date;
 	declare updatedAt?: Date;
-	declare totalBounty: number;
 
 	static associate(models: any) {
 		// define association here

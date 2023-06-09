@@ -21,20 +21,21 @@ class QuestionService {
 			if (!user) throw new CustomError(HttpCodes.NOT_FOUND, 'User not found');
 
 			const questionBounty = Number(question.bountyAmount);
-			const {userBtcBalance, totalBounty} =
-				await this.calculateUserBountyAmount(user, questionBounty);
 
+			const userBtcBalance = user.get('btcBalance') as number;
 			if (!userBtcBalance)
 				throw new CustomError(
 					HttpCodes.NOT_FOUND,
 					'Error getting user balance',
 				);
-			if (totalBounty > userBtcBalance) {
+
+			if (questionBounty > userBtcBalance) {
 				throw new CustomError(
 					HttpCodes.BAD_REQUEST,
-					'You do not have enough sats to post a new question',
+					'Insufficient balance to create question',
 				);
 			}
+
 			const enContent = await DeeplService.getTextTranslatedIntoEnglish(
 				question.content,
 			);
@@ -78,18 +79,6 @@ class QuestionService {
 						'Internal Server Error',
 				  );
 		}
-	}
-
-	private async calculateUserBountyAmount(user: User, questionBounty: number) {
-		const userOpenBounty = await QuestionRepository.sumUserOpenBountyAmount(
-			user.id,
-		);
-		const userOpenBountyTotal = userOpenBounty[0]
-			? userOpenBounty[0].totalBounty
-			: 0;
-		const totalBounty: number = Number(userOpenBountyTotal) + questionBounty;
-		const userBtcBalance = user.get('btcBalance') as number;
-		return {userBtcBalance, totalBounty};
 	}
 
 	async deleteQuestion(

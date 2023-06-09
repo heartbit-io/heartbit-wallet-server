@@ -5,9 +5,7 @@ import {QuestionStatus} from '../util/enums';
 
 class QuestionRepository {
 	async create(question: QuestionAttributes) {
-		return await Question.create({
-			...question,
-		});
+		return await Question.create({...question});
 	}
 
 	async updateStatus(status: QuestionStatus, id: number) {
