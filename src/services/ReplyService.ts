@@ -135,8 +135,12 @@ class ReplyService {
 					'Chatgpt reply was not found',
 				);
 
+			let translateText = chatGptReply.jsonAnswer.answer;
+			if (question.type !== QuestionTypes.GENERAL) {
+				translateText = chatGptReply.jsonAnswer.guide;
+			}
 			const translatedReply = await DeeplService.getTextTranslatedIntoEnglish(
-				chatGptReply.jsonAnswer.triageGuide,
+				translateText,
 				rawContentLanguage,
 			);
 

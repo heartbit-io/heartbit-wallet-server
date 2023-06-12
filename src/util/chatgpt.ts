@@ -39,11 +39,14 @@ export function makePrompt(question: QuestionAttributes): string {
 	}
 }
 
-export function makeAnswerToJson(answer: string): JsonAnswerInterface {
+export function makeAnswerToJson(
+	questionType: QuestionTypes,
+	answer: string,
+): JsonAnswerInterface {
 	const jsonAnswer: JsonAnswerInterface = {
 		title: '',
 		answer: '',
-		triageGuide: '',
+		guide: '',
 		chiefComplaint: '',
 		medicalHistory: '',
 		currentMedication: '',
@@ -52,21 +55,26 @@ export function makeAnswerToJson(answer: string): JsonAnswerInterface {
 		doctorNote: '',
 	};
 
-	// regexes
 	const regexes = {
-		title: /Title:\s*(.*)/,
-		answer: /Answer:\s*(.*)/,
-		triageGuide: /Triage and guide:\s*([\s\S]*?)Chief complaint:/,
-		chiefComplaint: /Chief complaint:\s*([\s\S]*?)Medical history:/,
-		medicalHistory: /Medical history:\s*([\s\S]*?)Current medication:/,
-		currentMedication: /Current medication:\s*([\s\S]*)Assessment:/,
-		assessment: /Assessment:\s*([\s\S]*)Plan:/,
-		plan: /Plan:\s*([\s\S]*)Doctor's Note:/,
-		doctorNote: /Doctor's Note:\s*([\s\S]*)/,
+		title: /## Title\s*(.*)/,
+		answer: /## Answer\s*(.*)/,
+		guide: /## Guide\s*([\s\S]*?)## Chief complaint/,
+		chiefComplaint: /## Chief complaint\s*([\s\S]*?)## Medical history/,
+		medicalHistory: /## Medical history\s*([\s\S]*?)## Current medication/,
+		currentMedication: /## Current medication\s*([\s\S]*)## Assessment/,
+		assessment: /## Assessment\s*([\s\S]*)## Plan/,
+		plan: /## Plan\s*([\s\S]*)## Doctor's Note/,
+		doctorNote: /## Doctor's Note\s*([\s\S]*)/,
 	};
+
+	if (questionType === QuestionTypes.GENERAL) {
+		regexes.title = /Title:\s*(.*)/;
+		regexes.answer = /Answer:\s*(.*)/;
+	}
 
 	const toJson = (answer: string) => {
 		for (const [key, regex] of Object.entries(regexes)) {
+			regex;
 			const match = answer.match(regex);
 			if (match) jsonAnswer[key] = match[1].trim();
 		}

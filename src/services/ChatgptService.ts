@@ -3,6 +3,7 @@ import {makeAnswerToJson, makePrompt} from '../util/chatgpt';
 
 import {ChatgptReply} from '../models/ChatgptReplyModel';
 import {QuestionAttributes} from '../models/QuestionModel';
+import {QuestionTypes} from '../util/enums';
 import env from '../config/env';
 import logger from '../util/logger';
 
@@ -13,7 +14,8 @@ export interface AnswerInterface {
 
 export interface JsonAnswerInterface {
 	[title: string]: string;
-	triageGuide: string;
+	answer: string;
+	guide: string;
 	chiefComplaint: string;
 	medicalHistory: string;
 	currentMedication: string;
@@ -53,7 +55,10 @@ class ChatgptService {
 			});
 
 			const rawAnswer = completion.data.choices[0].message?.content || '';
-			const jsonAnswer: JsonAnswerInterface = makeAnswerToJson(rawAnswer);
+			const jsonAnswer: JsonAnswerInterface = makeAnswerToJson(
+				question.type || QuestionTypes.GENERAL,
+				rawAnswer,
+			);
 
 			return await ChatgptReply.create({
 				questionId,

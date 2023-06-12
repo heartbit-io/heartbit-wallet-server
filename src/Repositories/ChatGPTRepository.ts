@@ -14,7 +14,8 @@ export interface AnswerInterface {
 
 export interface JsonAnswerInterface {
 	[title: string]: string;
-	triageGuide: string;
+	answer: string;
+	guide: string;
 	chiefComplaint: string;
 	medicalHistory: string;
 	currentMedication: string;
@@ -41,7 +42,7 @@ class ChatGPTRepository {
 		model: string,
 		maxTokens: number,
 	): Promise<ChatgptReply | undefined> {
-		const prompt = makePrompt(question) || '';
+		const prompt = makePrompt(question);
 		const questionId = Number(question.id);
 
 		try {
@@ -54,7 +55,10 @@ class ChatGPTRepository {
 			});
 
 			const rawAnswer = completion.data.choices[0].message?.content || '';
-			const jsonAnswer: JsonAnswerInterface = makeAnswerToJson(rawAnswer);
+			const jsonAnswer: JsonAnswerInterface = makeAnswerToJson(
+				question.type || QuestionTypes.GENERAL,
+				rawAnswer,
+			);
 
 			return await ChatgptReply.create({
 				questionId,
@@ -77,7 +81,7 @@ class ChatGPTRepository {
 				jsonAnswer: JSON.parse(
 					JSON.stringify({
 						title: 'title',
-						triageGuide: 'treguide',
+						guide: 'treguide',
 						chiefComplaint: 'chiefComplaint',
 						medicalHistory: 'medicalHistory',
 						currentMedication: 'currentMedication',
