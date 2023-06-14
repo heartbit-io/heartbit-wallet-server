@@ -38,7 +38,6 @@ class RepliesValidator {
 				'assessment',
 				'plan',
 				'triage',
-				'title',
 			])
 				.isString()
 				.notEmpty()
