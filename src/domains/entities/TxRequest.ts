@@ -3,36 +3,28 @@ import {
 	Column,
 	PrimaryGeneratedColumn,
 	ManyToOne,
-	JoinColumn,
 	CreateDateColumn,
-	DeleteDateColumn,
 	UpdateDateColumn,
+	DeleteDateColumn,
 } from 'typeorm';
 import {User} from './User';
-import {TxTypes} from '../../util/enums';
 
-@Entity('btc_transactions')
-export class BtcTransaction {
+@Entity('tx_requests')
+export class TxRequest {
 	@PrimaryGeneratedColumn()
 	id: number;
 
 	@Column()
+	userId: number;
+
+	@Column({type: 'double'})
 	amount: number;
 
-	@Column({
-		type: 'enum',
-		enum: TxTypes,
-	})
-	type: TxTypes;
+	@Column()
+	secret: string;
 
 	@Column()
-	fee: number;
-
-	@Column()
-	fromUserPubkey: string;
-
-	@Column()
-	toUserPubkey: string;
+	status: string;
 
 	@CreateDateColumn({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
 	createdAt: Date;
@@ -43,15 +35,14 @@ export class BtcTransaction {
 	@DeleteDateColumn({type: 'timestamp', nullable: true})
 	deletedAt: Date;
 
-	@ManyToOne(() => User, user => user.btcTransactions)
+	@ManyToOne(() => User, user => user.txRequests)
 	user: User;
 }
 
-export interface BtcTransactionFields {
+export interface TxRequestInterface {
 	id?: number;
+	userId: number;
 	amount: number;
-	type: TxTypes;
-	fee: number;
-	fromUserPubkey: string;
-	toUserPubkey: string;
+	secret: string;
+	status?: string;
 }

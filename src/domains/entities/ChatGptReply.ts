@@ -4,6 +4,9 @@ import {
 	PrimaryGeneratedColumn,
 	OneToOne,
 	JoinColumn,
+	CreateDateColumn,
+	DeleteDateColumn,
+	UpdateDateColumn,
 } from 'typeorm';
 import {Question} from './Question';
 
@@ -30,13 +33,16 @@ export class ChatGptReply {
 	@Column({type: 'json'})
 	jsonAnswer: string;
 
-	@OneToOne(() => Question, {
-		createForeignKeyConstraints: false,
-	})
-	@JoinColumn({
-		name: 'question_id',
-		referencedColumnName: 'question_id',
-	})
+	@CreateDateColumn({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
+	createdAt: Date;
+
+	@UpdateDateColumn({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
+	updatedAt: Date;
+
+	@DeleteDateColumn({type: 'timestamp', nullable: true})
+	deletedAt: Date;
+
+	@OneToOne(() => Question, question => question.chatGptReply)
 	question: Question;
 }
 

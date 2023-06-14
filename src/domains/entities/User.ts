@@ -3,13 +3,15 @@ import {
 	Column,
 	PrimaryGeneratedColumn,
 	OneToMany,
-	JoinColumn,
 	UpdateDateColumn,
 	CreateDateColumn,
 	DeleteDateColumn,
 } from 'typeorm';
 import {UserRoles} from '../../util/enums';
 import {Question} from './Question';
+import {TxRequest} from './TxRequest';
+import {BtcTransaction} from './BtcTransaction';
+import {Reply} from './Reply';
 
 @Entity('users')
 export class User {
@@ -35,9 +37,6 @@ export class User {
 	@Column({nullable: true, unique: true})
 	airTableRecordId: string;
 
-	@OneToMany(() => Question, question => question.user)
-	questions: Question[];
-
 	@CreateDateColumn({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
 	createdAt: Date;
 
@@ -46,6 +45,18 @@ export class User {
 
 	@DeleteDateColumn({type: 'timestamp', nullable: true})
 	deletedAt: Date;
+
+	@OneToMany(() => Question, question => question.user)
+	questions: Question[];
+
+	@OneToMany(() => TxRequest, txRequest => txRequest.user)
+	txRequests: TxRequest[];
+
+	@OneToMany(() => BtcTransaction, btcTransaction => btcTransaction.user)
+	btcTransactions: BtcTransaction[];
+
+	@OneToMany(() => Reply, reply => reply.user)
+	replies: Reply[];
 }
 
 export interface UserFields {

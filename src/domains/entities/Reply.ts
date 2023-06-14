@@ -8,6 +8,8 @@ import {
 	DeleteDateColumn,
 } from 'typeorm';
 import {ReplyStatus} from '../../util/enums/replyStatus';
+import {User} from './User';
+import {Question} from './Question';
 
 @Entity('replies')
 export class Reply {
@@ -46,4 +48,34 @@ export class Reply {
 
 	@Column({type: 'int'})
 	questionId: number;
+
+	@CreateDateColumn({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
+	createdAt: Date;
+
+	@UpdateDateColumn({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
+	updatedAt: Date;
+
+	@DeleteDateColumn({type: 'timestamp', nullable: true})
+	deletedAt: Date;
+
+	@ManyToOne(() => User, user => user.replies)
+	user: User;
+
+	@ManyToOne(() => Question, question => question.replies)
+	question: Question;
+}
+
+export interface RepliesAttributes {
+	id?: number;
+	questionId: number;
+	userId: number;
+	title: string;
+	content: string;
+	status: ReplyStatus;
+	majorComplaint: string;
+	medicalHistory: string;
+	currentMedications: string;
+	assessment: string;
+	plan: string;
+	triage: string;
 }
