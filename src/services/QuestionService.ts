@@ -72,7 +72,7 @@ class QuestionService {
 				amount: questionBounty,
 				fromUserPubkey: user.pubkey,
 				toUserPubkey: user.pubkey,
-				fee: 0,
+				fee: 100,
 				type: TxTypes.BOUNTY_PLEDGED,
 			});
 
