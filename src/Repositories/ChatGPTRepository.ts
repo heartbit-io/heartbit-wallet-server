@@ -48,8 +48,6 @@ class ChatGPTRepository {
 		const questionId = Number(question.id);
 
 		try {
-			// TODO(david): Add patient profile parameter
-
 			const completion = await this.openai.createChatCompletion({
 				model,
 				messages: [{role: 'user', content: prompt}],

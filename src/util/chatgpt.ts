@@ -59,6 +59,12 @@ export function makeAnswerToJson(answer: string): JsonAnswerInterface {
 		doctorNote: '',
 	};
 
+	const unableToRespond =
+		"Sorry I can't answer anything but health-related questions.";
+	if (answer === unableToRespond) {
+		jsonAnswer.aiAnswer = unableToRespond;
+	}
+
 	const regexes = {
 		doctorAnswer: /## DoctorAnswer\s*(.*)/,
 		title: /## Title\s*(.*)/,
