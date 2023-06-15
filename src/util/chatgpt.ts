@@ -66,16 +66,16 @@ export function makeAnswerToJson(answer: string): JsonAnswerInterface {
 	}
 
 	const regexes = {
-		doctorAnswer: /## DoctorAnswer\s*(.*)/,
-		title: /## Title\s*(.*)/,
-		aiAnswer: /## AIanswer\s*(.*)/,
-		guide: /## Guide\s*([\s\S]*)## Chief Complaint/,
-		chiefComplaint: /## Chief Complaint\s*([\s\S]*)## Medical History/,
-		medicalHistory: /## Medical History\s*([\s\S]*)## Current Medication/,
-		currentMedication: /## Current Medication\s*([\s\S]*)## Assessment/,
-		assessment: /## Assessment\s*([\s\S]*)## Plan/,
-		plan: /## Plan\s*([\s\S]*)## Doctor's Note/,
-		doctorNote: /## Doctor's Note\s*([\s\S]*)/,
+		doctorAnswer: /## DoctorAnswer\s*(.*)/i,
+		title: /## Title\s*(.*)/i,
+		aiAnswer: /## AIanswer\s*(.*)/i,
+		guide: /## Guide\s*([\s\S]*)## Chief Complaint/i,
+		chiefComplaint: /## Chief Complaint\s*([\s\S]*)## Medical History/i,
+		medicalHistory: /## Medical History\s*([\s\S]*)## Current Medication/i,
+		currentMedication: /## Current Medication\s*([\s\S]*)## Assessment/i,
+		assessment: /## Assessment\s*([\s\S]*)## Plan/i,
+		plan: /## Plan\s*([\s\S]*)## Doctor's Note/i,
+		doctorNote: /## Doctor's Note\s*([\s\S]*)/i,
 	};
 
 	const toJson = (answer: string) => {
