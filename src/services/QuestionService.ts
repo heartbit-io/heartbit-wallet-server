@@ -64,17 +64,15 @@ class QuestionService {
 
 			if (!newQuestion)
 				throw new CustomError(HttpCodes.BAD_REQUEST, 'Error creating question');
-			const fee = 100 + Math.floor(questionBounty * 0.02);
-			const totalAmountDeductible = questionBounty + fee;
-			const userNewBtcBalance = userBtcBalance - totalAmountDeductible;
+			const userNewBtcBalance = userBtcBalance - questionBounty;
 
 			await UserRepository.updateUserBtcBalance(userNewBtcBalance, user.id);
 
 			await TransactionsRepository.createTransaction({
-				amount: totalAmountDeductible,
+				amount: questionBounty,
 				fromUserPubkey: user.pubkey,
 				toUserPubkey: user.pubkey,
-				fee,
+				fee: 0,
 				type: TxTypes.BOUNTY_PLEDGED,
 			});
 
