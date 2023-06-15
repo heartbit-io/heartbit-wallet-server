@@ -93,7 +93,7 @@ class QuestionsController {
 					new ResponseDto(
 						true,
 						HttpCodes.OK,
-						`Successfully retrieved all user questions according to: limit: ${limit}, offset: ${limit}, order: ${order}`,
+						`Successfully retrieved all user questions according to: limit: ${limit}, offset: ${offset}, order: ${order}`,
 						result,
 					),
 				);

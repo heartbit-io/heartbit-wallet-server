@@ -1,4 +1,5 @@
 import {Request, Response} from 'express';
+
 import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
 import ReplyService from '../services/ReplyService';
@@ -53,12 +54,7 @@ class RepliesController {
 			return res
 				.status(HttpCodes.OK)
 				.json(
-					new ResponseDto(
-						true,
-						HttpCodes.OK,
-						'Reply deleted successfully',
-						reply,
-					),
+					new ResponseDto(true, HttpCodes.OK, 'Reply get successfully', reply),
 				);
 		} catch (error) {
 			return res

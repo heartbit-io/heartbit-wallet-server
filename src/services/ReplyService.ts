@@ -109,6 +109,7 @@ class ReplyService {
 						HttpCodes.NOT_FOUND,
 						'Doctor detail was not found',
 					);
+
 				const replyType = ReplyTypes.DOCTOR;
 				const name =
 					doctorDetails.fields['First Name'] +
@@ -117,7 +118,7 @@ class ReplyService {
 				const classification = 'General physician'; // TODO(david): Get from user like user.classification
 
 				return {
-					...doctorReply,
+					...doctorReply.dataValues,
 					replyType,
 					name,
 					classification,
