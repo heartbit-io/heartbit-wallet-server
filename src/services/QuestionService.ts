@@ -79,6 +79,8 @@ class QuestionService {
 			});
 
 			dbTransaction.commit();
+
+			newQuestion.content = content;
 			return newQuestion;
 		} catch (error: any) {
 			dbTransaction.rollback();
