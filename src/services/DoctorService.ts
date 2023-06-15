@@ -146,6 +146,7 @@ class DoctorService {
 			const openQuestions =
 				await QuestionRepository.getOpenQuestionsOrderByBounty(limit, offset);
 
+			if (!openQuestions.length) return openQuestions;
 			// TODO(david): join the question and reply table
 			const aiReply = await ChatgptService.getChatGptReplyByQuestionId(
 				Number(openQuestions[0].id),
