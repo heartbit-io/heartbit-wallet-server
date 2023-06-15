@@ -4,7 +4,8 @@ import dbconnection from '../util/dbconnection';
 
 export interface JsonAnswerInterface {
 	[title: string]: string;
-	answer: string;
+	aiAnswer: string;
+	doctorAnswer: string;
 	guide: string;
 	chiefComplaint: string;
 	medicalHistory: string;

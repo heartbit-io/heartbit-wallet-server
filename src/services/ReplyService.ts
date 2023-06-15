@@ -47,8 +47,8 @@ class ReplyService {
 
 			const translateText =
 				question.type === QuestionTypes.GENERAL
-					? chatgptReply.jsonAnswer.answer
-					: chatgptReply.jsonAnswer.triageGuide;
+					? chatgptReply.jsonAnswer.aiAnswer
+					: chatgptReply.jsonAnswer.guide;
 
 			const translatedReply = await DeeplService.getTextTranslatedIntoEnglish(
 				translateText,

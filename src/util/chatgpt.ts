@@ -7,9 +7,14 @@ export function makePrompt(question: QuestionAttributes): string {
 	switch (question.type) {
 		case QuestionTypes.GENERAL:
 			return `
-				You are an experienced licensed doctor who sees a patient in teleconsultation. Write short and kind answer to the patient and a title derived from the patient’s question with the following conditions:
-				Category: 'Title', and 'Answer'
-				If you determine that the question is unrelated to any illness or health matter, you should ignore all of the above and write, "I can't answer anything but health-related questions" in ‘Answer’.
+				You are an experienced licensed doctor who sees a patient in teleconsultation. I will show you a patient's question. Please write a few paragraphs of a kind answer and label it with 'DoctorAnswer'.  All descriptions and answers should be in markdown format. Do not use bullet points.
+				Then,
+				- Derive a title from the question and label it with 'Title'. If 'Title' is empty, the Title should be <today's date>.
+				- Derive a short summary from 'DoctorAnswer' and label it with 'AIanswer'.
+				- For Title, DoctorAnswer, AIanswer, use Markdown's H2 tag format.
+				- 'AIanswer' and 'DoctorAnswer' should be written in the tone and manner in which you would speak to a patient.
+				- Please make sure to fill out the 'AIanswer' field.
+				If you determine that the question is unrelated to any illness or health matter, you should ignore all of the above and write, "Sorry I can't answer anything but health-related questions" in your response.
 
 				Now write answers to the following patient's question:
 				- Question: ${question.content}
@@ -18,8 +23,9 @@ export function makePrompt(question: QuestionAttributes): string {
 		default:
 			return `
 				You are an experienced licensed doctor who sees a patient in teleconsultation. I will show you a patient's case. Please organize the patient's description and write answers in a clinical record format with the following conditions:
-				- All descriptions and answers should be bullet-pointed and in markdown format.
+				- All descriptions and answers should be bullet-pointed and in markdown format. Do not use bullet points.
 				- Category: 'Title', 'Guide', 'Chief Complaint', 'Medical History', 'Current Medication', 'Assessment', and 'Plan'
+				- For Categories, use Markdown's H2 tag format.
 				- 'Title' should be derived from the 'Chief Complaint'. If 'Chief Complaint' is empty, the Title should be Question on <today's date>
 				- 'Guide' should include a short explanation of what simple symptomatic treatment can be done at home in the patient's case and what kind of condition it is best to visit the hospital.
 				- Guides should be written in the tone and manner in which you would speak to a patient.
@@ -39,13 +45,11 @@ export function makePrompt(question: QuestionAttributes): string {
 	}
 }
 
-export function makeAnswerToJson(
-	questionType: QuestionTypes,
-	answer: string,
-): JsonAnswerInterface {
+export function makeAnswerToJson(answer: string): JsonAnswerInterface {
 	const jsonAnswer: JsonAnswerInterface = {
 		title: '',
-		answer: '',
+		aiAnswer: '',
+		doctorAnswer: '',
 		guide: '',
 		chiefComplaint: '',
 		medicalHistory: '',
@@ -56,25 +60,20 @@ export function makeAnswerToJson(
 	};
 
 	const regexes = {
+		doctorAnswer: /## DoctorAnswer\s*(.*)/,
 		title: /## Title\s*(.*)/,
-		answer: /## Answer\s*(.*)/,
-		guide: /## Guide\s*([\s\S]*?)## Chief complaint/,
-		chiefComplaint: /## Chief complaint\s*([\s\S]*?)## Medical history/,
-		medicalHistory: /## Medical history\s*([\s\S]*?)## Current medication/,
-		currentMedication: /## Current medication\s*([\s\S]*)## Assessment/,
+		aiAnswer: /## AIanswer\s*(.*)/,
+		guide: /## Guide\s*([\s\S]*)## Chief Complaint/,
+		chiefComplaint: /## Chief Complaint\s*([\s\S]*)## Medical History/,
+		medicalHistory: /## Medical History\s*([\s\S]*)## Current Medication/,
+		currentMedication: /## Current Medication\s*([\s\S]*)## Assessment/,
 		assessment: /## Assessment\s*([\s\S]*)## Plan/,
 		plan: /## Plan\s*([\s\S]*)## Doctor's Note/,
 		doctorNote: /## Doctor's Note\s*([\s\S]*)/,
 	};
 
-	if (questionType === QuestionTypes.GENERAL) {
-		regexes.title = /Title:\s*(.*)/;
-		regexes.answer = /Answer:\s*(.*)/;
-	}
-
 	const toJson = (answer: string) => {
 		for (const [key, regex] of Object.entries(regexes)) {
-			regex;
 			const match = answer.match(regex);
 			if (match) jsonAnswer[key] = match[1].trim();
 		}

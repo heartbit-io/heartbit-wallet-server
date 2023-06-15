@@ -14,7 +14,8 @@ export interface AnswerInterface {
 
 export interface JsonAnswerInterface {
 	[title: string]: string;
-	answer: string;
+	aiAnswer: string;
+	doctorAnswer: string;
 	guide: string;
 	chiefComplaint: string;
 	medicalHistory: string;
@@ -23,6 +24,7 @@ export interface JsonAnswerInterface {
 	plan: string;
 	doctorNote: string;
 }
+
 class ChatgptService {
 	private openai: OpenAIApi;
 
@@ -55,10 +57,7 @@ class ChatgptService {
 			});
 
 			const rawAnswer = completion.data.choices[0].message?.content || '';
-			const jsonAnswer: JsonAnswerInterface = makeAnswerToJson(
-				question.type || QuestionTypes.GENERAL,
-				rawAnswer,
-			);
+			const jsonAnswer: JsonAnswerInterface = makeAnswerToJson(rawAnswer);
 
 			return await ChatgptReply.create({
 				questionId,
@@ -66,31 +65,18 @@ class ChatgptService {
 				maxTokens,
 				prompt,
 				rawAnswer,
-				jsonAnswer: JSON.parse(JSON.stringify(jsonAnswer)),
+				jsonAnswer: {
+					...jsonAnswer,
+					triageGuide:
+						question.type === QuestionTypes.GENERAL
+							? jsonAnswer.aiAnswer
+							: jsonAnswer.guide,
+				},
 			});
 		} catch (error) {
 			// TODO(david): Sentry alert in slack
 			logger.warn(error);
-			// XXX(david): temp logic for client developement
-			return await ChatgptReply.create({
-				questionId,
-				model,
-				maxTokens,
-				prompt,
-				rawAnswer: 'No response',
-				jsonAnswer: JSON.parse(
-					JSON.stringify({
-						title: 'title',
-						triageGuide: 'treguide',
-						chiefComplaint: 'chiefComplaint',
-						medicalHistory: 'medicalHistory',
-						currentMedication: 'currentMedication',
-						assessment: 'assessment',
-						plan: 'plan',
-						doctorNote: 'doctorNote',
-					}),
-				),
-			});
+			return;
 		}
 	}
 

@@ -9,7 +9,7 @@
   "type": "commonjs",
   "scripts": {
     "dev": "npx nodemon",
-    "build": "concurrently \"rimraf ./build\" \"npx tsc -w\"",
+    "build": "concurrently \"rimraf ./build\" \"npx tsc\"",
     "lint": "eslint . --ext .ts",
     "start": "node build/index.js",
     "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
