@@ -37,7 +37,7 @@ class AirtableService {
 	 */
 	async getAirtableDoctorInfo(airTableRecordId: string): Promise<any> {
 		try {
-			return await this.fetchData(airTableRecordId);
+			return this.fetchData(airTableRecordId);
 		} catch (error) {
 			// TODO(david): Sentry alert in slack
 			logger.warn(error);
