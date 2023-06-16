@@ -63,6 +63,7 @@ export class Reply {
 
 	@ManyToOne(() => Question, question => question.replies)
 	question: Question;
+	dataValues: any;
 }
 
 export interface RepliesAttributes {

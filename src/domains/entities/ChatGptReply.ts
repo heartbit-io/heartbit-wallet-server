@@ -3,12 +3,34 @@ import {
 	Column,
 	PrimaryGeneratedColumn,
 	OneToOne,
-	JoinColumn,
 	CreateDateColumn,
 	DeleteDateColumn,
 	UpdateDateColumn,
 } from 'typeorm';
 import {Question} from './Question';
+
+export interface JsonAnswerInterface {
+	[title: string]: string;
+	aiAnswer: string;
+	doctorAnswer: string;
+	guide: string;
+	chiefComplaint: string;
+	medicalHistory: string;
+	currentMedication: string;
+	assessment: string;
+	plan: string;
+	doctorNote: string;
+}
+
+export interface ChatgptRepliesAttributes {
+	id?: number;
+	questionId?: number;
+	model: string;
+	maxTokens: number;
+	prompt: string;
+	rawAnswer: string;
+	jsonAnswer: JsonAnswerInterface;
+}
 
 @Entity()
 export class ChatGptReply {
@@ -31,7 +53,7 @@ export class ChatGptReply {
 	rawAnswer: string;
 
 	@Column({type: 'json'})
-	jsonAnswer: string;
+	jsonAnswer: JSON;
 
 	@CreateDateColumn({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
 	createdAt: Date;
@@ -44,14 +66,4 @@ export class ChatGptReply {
 
 	@OneToOne(() => Question, question => question.chatGptReply)
 	question: Question;
-}
-
-export interface ChatGptReplyFields {
-	id?: number;
-	questionId: number;
-	model: string;
-	maxTokens: number;
-	prompt: string;
-	rawAnswer: string;
-	jsonAnswer: string;
 }

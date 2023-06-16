@@ -10,6 +10,8 @@ import ReplyRepository from '../Repositories/ReplyRepository';
 import {ReplyResponseInterface} from '../controllers/RepliesController';
 import {ReplyTypes} from '../util/enums';
 import UserRepository from '../Repositories/UserRepository';
+import {QuestionAttributes} from '../domains/entities/Question';
+import {ChatgptRepliesAttributes} from '../models/ChatgptReplyModel';
 
 class ReplyService {
 	async createChatGPTReply(reply: RepliesAttributes) {
@@ -32,12 +34,14 @@ class ReplyService {
 					'Chatgpt reply already exist',
 				);
 
+			const questionAttr = question.dataValues as QuestionAttributes;
+
 			// TODO(david): If bountyAmount is not 0, use gpt-4 model(currently gpt-4 is waitlist)
 			const model =
 				question.bountyAmount === 0 ? 'gpt-3.5-turbo' : 'gpt-3.5-turbo';
 			const maxTokens = 2048;
 			const chatgptReply = await ChatGPTRepository.create(
-				question,
+				questionAttr,
 				model,
 				maxTokens,
 			);
@@ -186,7 +190,7 @@ class ReplyService {
 			const reply = await ReplyRepository.getUserReply(replyId, userId);
 			if (!reply) throw new CustomError(HttpCodes.NOT_FOUND, 'Reply not found');
 
-			await ReplyRepository.deleteReply(reply);
+			await ReplyRepository.deleteReply(reply.id);
 
 			return true;
 		} catch (error: any) {

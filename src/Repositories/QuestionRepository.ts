@@ -1,15 +1,16 @@
-import {Op, Sequelize} from 'sequelize';
-import {Question, QuestionAttributes} from '../models/QuestionModel';
-
+import {QuestionDataSource} from '../domains/repo';
 import {QuestionStatus} from '../util/enums';
+import {QuestionAttributes, Question} from '../domains/entities/Question';
+import {In} from 'typeorm';
 
 class QuestionRepository {
 	async create(question: QuestionAttributes) {
-		return await Question.create({...question});
+		return await QuestionDataSource.save({...question});
 	}
 
 	async updateStatus(status: QuestionStatus, id: number) {
-		return await Question.update({status}, {where: {id}});
+		// return await Question.update({status}, {where: {id}});
+		return await QuestionDataSource.update(id, {status});
 	}
 
 	//get all user questions
@@ -17,35 +18,42 @@ class QuestionRepository {
 		userId: number,
 		limit: number | undefined,
 		offset: number | undefined,
-		order: string,
+		order: 'ASC' | 'DESC',
 	) {
-		return await Question.findAll({
+		return await QuestionDataSource.find({
 			where: {userId},
-			limit,
-			offset,
-			order: [['created_at', order]],
+			take: limit,
+			skip: offset,
+			order: {createdAt: order},
 		});
 	}
 
 	async sumUserOpenBountyAmount(userId: number) {
-		return await Question.findAll({
-			where: {userId, status: QuestionStatus.OPEN},
-			attributes: [
-				[Sequelize.fn('sum', Sequelize.col('bounty_amount')), 'totalBounty'],
-			],
-			group: ['user_id'],
-			raw: true,
-		});
+		// return await Question.findAll({
+		// 	where: {userId, status: QuestionStatus.OPEN},
+		// 	attributes: [
+		// 		[Sequelize.fn('sum', Sequelize.col('bounty_amount')), 'totalBounty'],
+		// 	],
+		// 	group: ['user_id'],
+		// 	raw: true,
+		// });
+
+		return await QuestionDataSource.createQueryBuilder('question')
+			.select('SUM(question.bounty_amount)', 'totalBounty')
+			.where('question.user_id = :userId', {userId})
+			.andWhere('question.status = :status', {status: QuestionStatus.OPEN})
+			.groupBy('question.user_id')
+			.getRawOne();
 	}
 
 	async getQuestion(id: number) {
-		return await Question.findOne({
+		return await QuestionDataSource.findOne({
 			where: {id},
 		});
 	}
 
 	async getUserOpenQuestion(id: number, userId: number) {
-		return await Question.findOne({
+		return await QuestionDataSource.findOne({
 			where: {
 				id,
 				userId,
@@ -54,58 +62,55 @@ class QuestionRepository {
 		});
 	}
 
-	async getUserQuestions(userId: number): Promise<Question[]> {
-		return await Question.findAll({where: {userId}});
+	async getUserQuestions(userId: number) {
+		return await QuestionDataSource.find({where: {userId}});
 	}
 
 	async getOpenQuestionsOrderByBounty(
 		limit?: number | undefined,
 		offset?: number | undefined,
 	) {
-		return await Question.findAll({
+		return await QuestionDataSource.find({
 			where: {status: QuestionStatus.OPEN},
-			limit,
-			offset,
-			order: [
-				['bounty_amount', 'DESC'],
-				['created_at', 'ASC'],
-			],
+			take: limit,
+			skip: offset,
+			order: {
+				bountyAmount: 'DESC',
+				createdAt: 'ASC',
+			},
 		});
 	}
 
 	async getUserQuestionsByStatus(userId: number, status: QuestionStatus) {
-		return await Question.findAll({
+		return await QuestionDataSource.find({
 			where: {userId, status},
 		});
 	}
 
 	async getDoctorQuestion(id: number) {
-		return await Question.findOne({
+		return await QuestionDataSource.findOne({
 			where: {
 				id,
 			},
 		});
 	}
 
-	async getDoctorAnswerdQuestionsByQuestionIds(
-		limit: number | undefined,
-		offset: number | undefined,
-		questionIds: Array<number>,
-	) {
-		return await Question.findAll({
-			where: {id: {[Op.in]: questionIds}},
-			limit,
-			offset,
-			order: [['created_at', 'DESC']],
+	async getDoctorAnswerdQuestionsByQuestionIds(questionIds: Array<number>) {
+		return await QuestionDataSource.findBy({
+			id: In(questionIds),
 		});
 	}
 
-	async deleteQuestion(question: Question) {
-		return await question.destroy();
+	async deleteQuestion(questionId: number) {
+		// return await QuestionDataSource.softDelete(question);
+		return await QuestionDataSource.createQueryBuilder()
+			.softDelete()
+			.where('id = :id', {id: questionId})
+			.execute();
 	}
 
 	async countUserQuestions(userId: number): Promise<number> {
-		return await Question.count({where: {userId}});
+		return await QuestionDataSource.count({where: {userId}});
 	}
 }
 

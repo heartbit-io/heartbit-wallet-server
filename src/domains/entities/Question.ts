@@ -76,6 +76,8 @@ export class Question {
 
 	@OneToMany(() => Reply, reply => reply.user)
 	replies: Reply[];
+
+	dataValues: any;
 }
 
 export interface QuestionAttributes {

@@ -1,20 +1,14 @@
-import {Question, QuestionAttributes} from '../models/QuestionModel';
-import {QuestionStatus, TxTypes} from '../util/enums';
-
+import {QuestionAttributes} from '../models/QuestionModel';
 import {CustomError} from '../util/CustomError';
 import DeeplService from './DeeplService';
 import {HttpCodes} from '../util/HttpCodes';
 import QuestionRepository from '../Repositories/QuestionRepository';
-import TransactionsRepository from '../Repositories/TransactionsRepository';
-import {User} from '../models/UserModel';
 import UserRepository from '../Repositories/UserRepository';
 import dbconnection from '../util/dbconnection';
-
+import TransactionsRepository from '../Repositories/BtcTransactionsRepository';
+import {QuestionStatus, TxTypes} from '../util/enums';
 class QuestionService {
-	async create(
-		question: QuestionAttributes,
-		email: string | undefined,
-	): Promise<Question | CustomError> {
+	async create(question: QuestionAttributes, email: string | undefined) {
 		const {
 			content,
 			bountyAmount,
@@ -23,6 +17,7 @@ class QuestionService {
 			pastIllnessHistory,
 			others,
 		} = question;
+
 		const dbTransaction = await dbconnection.transaction();
 		try {
 			if (!email)
@@ -115,7 +110,7 @@ class QuestionService {
 					'Only users who posted a question can delete the question',
 				);
 
-			await QuestionRepository.deleteQuestion(question);
+			await QuestionRepository.deleteQuestion(question.id);
 
 			return true;
 		} catch (error: any) {
@@ -131,7 +126,7 @@ class QuestionService {
 	async getUserQuestionsByStatus(
 		email: string | undefined,
 		status: QuestionStatus,
-	): Promise<Question[] | CustomError> {
+	) {
 		try {
 			if (!email)
 				throw new CustomError(HttpCodes.UNAUTHORIZED, 'Email required');
@@ -165,7 +160,7 @@ class QuestionService {
 		email: string | undefined,
 		limit: number,
 		offset: number,
-		order: string,
+		order: 'ASC' | 'DESC' = 'DESC',
 	) {
 		try {
 			if (!email)
@@ -242,7 +237,7 @@ class QuestionService {
 	async getOpenQuestionsOrderByBounty(
 		limit?: number | undefined,
 		offset?: number | undefined,
-	): Promise<Question[] | CustomError> {
+	) {
 		try {
 			return await QuestionRepository.getOpenQuestionsOrderByBounty(
 				limit,

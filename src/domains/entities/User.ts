@@ -15,6 +15,9 @@ import {Reply} from './Reply';
 
 @Entity('users')
 export class User {
+	get(arg0: string): number {
+		throw new Error('Method not implemented.');
+	}
 	@PrimaryGeneratedColumn()
 	id: number;
 
@@ -57,6 +60,12 @@ export class User {
 
 	@OneToMany(() => Reply, reply => reply.user)
 	replies: Reply[];
+
+	dataValues: any;
+
+	isDoctor() {
+		return this.role === UserRoles.DOCTOR;
+	}
 }
 
 export interface UserFields {

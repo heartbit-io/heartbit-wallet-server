@@ -107,7 +107,7 @@ class UserService {
 				);
 
 			const user = await UserRepository.getUserDetailsByEmail(email);
-
+			console.log(user);
 			if (!user) throw new CustomError(HttpCodes.NOT_FOUND, 'User not found');
 
 			const response = user.dataValues;

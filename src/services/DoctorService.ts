@@ -1,15 +1,13 @@
 import {QuestionStatus, TxTypes} from '../util/enums';
-
 import ChatGPTRepository from '../Repositories/ChatGPTRepository';
 import ChatgptService from '../services/ChatgptService';
 import {CustomError} from '../util/CustomError';
 import EventEmitter from 'events';
 import {HttpCodes} from '../util/HttpCodes';
-import {Question} from '../models/QuestionModel';
 import QuestionRepository from '../Repositories/QuestionRepository';
 import {RepliesAttributes} from '../models/ReplyModel';
 import ReplyRepository from '../Repositories/ReplyRepository';
-import TransactionsRepository from '../Repositories/TransactionsRepository';
+import TransactionsRepository from '../Repositories/BtcTransactionsRepository';
 import UserRepository from '../Repositories/UserRepository';
 import {UserRoles} from '../util/enums/userRoles';
 import admin from '../config/firebase-config';
@@ -56,22 +54,6 @@ class DoctorService {
 
 			// If the bounty is 0, no bounty is calculated.
 			if (question.bountyAmount) {
-				// XXX, TODO(david) start a database transaction
-				/**
- 				* debiting user is done when a user posts a question
-				const userBalance = user.btcBalance - question.bountyAmount;
-				const userDebit = UserRepository.updateUserBtcBalance(
-					userBalance,
-					user.id,
-				);
-
-				if (!userDebit)
-					throw new CustomError(
-						HttpCodes.UNPROCESSED_CONTENT,
-						'error debiting user account',
-					);
- 				*/
-
 				// 100 is default sats
 				const calulatedFee =
 					100 + Math.floor((question.bountyAmount - 100) * 0.02);
@@ -205,7 +187,7 @@ class DoctorService {
 
 			const aiJsonReply = aiReply.jsonAnswer;
 
-			return {...question.dataValues, ...aiJsonReply};
+			return {...question.dataValues, aiJsonReply};
 		} catch (error: any) {
 			throw error.code && error.message
 				? error
@@ -220,7 +202,7 @@ class DoctorService {
 		email: string | undefined,
 		limit: number,
 		offset: number | undefined,
-	): Promise<Question[] | CustomError> {
+	) {
 		try {
 			if (!email)
 				throw new CustomError(
@@ -244,8 +226,6 @@ class DoctorService {
 			);
 			const questions =
 				await QuestionRepository.getDoctorAnswerdQuestionsByQuestionIds(
-					limit,
-					offset,
 					questionIds,
 				);
 
