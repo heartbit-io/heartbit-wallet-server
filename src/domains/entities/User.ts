@@ -9,7 +9,6 @@ import {
 } from 'typeorm';
 import {UserRoles} from '../../util/enums';
 import {Question} from './Question';
-import {TxRequest} from './TxRequest';
 import {BtcTransaction} from './BtcTransaction';
 import {Reply} from './Reply';
 
@@ -51,9 +50,6 @@ export class User {
 
 	@OneToMany(() => Question, question => question.user)
 	questions: Question[];
-
-	@OneToMany(() => TxRequest, txRequest => txRequest.user)
-	txRequests: TxRequest[];
 
 	@OneToMany(() => BtcTransaction, btcTransaction => btcTransaction.user)
 	btcTransactions: BtcTransaction[];

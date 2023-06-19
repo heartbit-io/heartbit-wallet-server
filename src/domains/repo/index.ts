@@ -6,7 +6,6 @@ import {Reply} from '../entities/Reply';
 import {BtcTransaction} from '../entities/BtcTransaction';
 import {ChatGptReply} from '../entities/ChatGptReply';
 import {Question} from '../entities/Question';
-import {TxRequest} from '../entities/TxRequest';
 
 const dataSource = new DataSource({
 	type: env.DB_DRIVER as 'postgres',
@@ -17,7 +16,7 @@ const dataSource = new DataSource({
 	logging: true,
 	synchronize: env.NODE_ENV === 'production' ? false : true,
 	namingStrategy: new SnakeNamingStrategy(),
-	entities: [User, Reply, BtcTransaction, ChatGptReply, Question, TxRequest],
+	entities: [User, Reply, BtcTransaction, ChatGptReply, Question],
 });
 
 export const userDataSource = dataSource.getRepository(User);
@@ -26,6 +25,5 @@ export const BtcTransactionDataSource =
 	dataSource.getRepository(BtcTransaction);
 export const ChatGPTDataSource = dataSource.getRepository(ChatGptReply);
 export const QuestionDataSource = dataSource.getRepository(Question);
-export const TxRequestDataSource = dataSource.getRepository(TxRequest);
 
 export default dataSource;
