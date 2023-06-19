@@ -16,6 +16,7 @@ export interface RepliesAttributes {
 	assessment: string;
 	plan: string;
 	triage: string;
+	doctorNote: string;
 }
 
 export class Reply extends Model<RepliesAttributes> {
@@ -32,6 +33,7 @@ export class Reply extends Model<RepliesAttributes> {
 	declare assessment: string;
 	declare plan: string;
 	declare triage: string;
+	declare doctorNote: string;
 	declare createdAt: Date;
 	declare updatedAt: Date;
 
@@ -83,6 +85,9 @@ Reply.init(
 			type: DataTypes.ENUM(...Object.values(ReplyStatus)),
 			allowNull: false,
 			defaultValue: ReplyStatus.DRAFT,
+		},
+		doctorNote: {
+			type: DataTypes.TEXT,
 		},
 		userId: {
 			type: DataTypes.INTEGER,

@@ -29,7 +29,7 @@ export const env = {
 	FB_APP_ID: process.env.FB_APP_ID as string,
 	FB_MEASUREMENT_ID: process.env.FB_MEASUREMENT_ID as string,
 	AIRTABLE_API_KEY: process.env.AIRTABLE_API_KEY as string,
-	AIRTABLE_URL: process.env.AIRTABLE_API_KEY as string,
+	AIRTABLE_URL: process.env.AIRTABLE_URL as string,
 	COINPAPRIKA_URL: process.env.COINPAPRIKA_URL as string,
 	DEEPL_API_KEY: process.env.DEEPL_API_KEY as string,
 	SENTRY_DSN: process.env.SENTRY_DSN as string,

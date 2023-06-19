@@ -1,18 +1,28 @@
 import {Question, QuestionAttributes} from '../models/QuestionModel';
+import {QuestionStatus, TxTypes} from '../util/enums';
+
 import {CustomError} from '../util/CustomError';
 import DeeplService from './DeeplService';
 import {HttpCodes} from '../util/HttpCodes';
 import QuestionRepository from '../Repositories/QuestionRepository';
-import UserRepository from '../Repositories/UserRepository';
-import {User} from '../models/UserModel';
-import dbconnection from '../util/dbconnection';
 import TransactionsRepository from '../Repositories/TransactionsRepository';
-import {QuestionStatus, TxTypes} from '../util/enums';
+import {User} from '../models/UserModel';
+import UserRepository from '../Repositories/UserRepository';
+import dbconnection from '../util/dbconnection';
+
 class QuestionService {
 	async create(
 		question: QuestionAttributes,
 		email: string | undefined,
 	): Promise<Question | CustomError> {
+		const {
+			content,
+			bountyAmount,
+			currentMedication,
+			ageSexEthnicity,
+			pastIllnessHistory,
+			others,
+		} = question;
 		const dbTransaction = await dbconnection.transaction();
 		try {
 			if (!email)
@@ -20,7 +30,7 @@ class QuestionService {
 			const user = await UserRepository.getUserDetailsByEmail(email);
 			if (!user) throw new CustomError(HttpCodes.NOT_FOUND, 'User not found');
 
-			const questionBounty = Number(question.bountyAmount);
+			const questionBounty = Number(bountyAmount);
 
 			const userBtcBalance = user.get('btcBalance') as number;
 			if (!userBtcBalance)
@@ -37,38 +47,38 @@ class QuestionService {
 			}
 
 			const enContent = await DeeplService.getTextTranslatedIntoEnglish(
-				question.content,
+				content,
 			);
 
 			const newQuestion = await QuestionRepository.create({
 				...question,
 				content: enContent.text,
-				currentMedication: question.currentMedication || '',
-				ageSexEthnicity: question.ageSexEthnicity || '',
-				pastIllnessHistory: question.pastIllnessHistory || '',
-				others: question.others || '',
+				currentMedication: currentMedication || '',
+				ageSexEthnicity: ageSexEthnicity || '',
+				pastIllnessHistory: pastIllnessHistory || '',
+				others: others || '',
 				rawContentLanguage: enContent.detected_source_language, // snake case because deepl response
-				rawContent: question.content,
+				rawContent: content,
 				userId: user.id,
 			});
 
 			if (!newQuestion)
 				throw new CustomError(HttpCodes.BAD_REQUEST, 'Error creating question');
-			const fee = 100 + Math.floor(questionBounty * 0.02);
-			const totalAmountDeductible = questionBounty + fee;
-			const userNewBtcBalance = userBtcBalance - totalAmountDeductible;
+			const userNewBtcBalance = userBtcBalance - questionBounty;
 
 			await UserRepository.updateUserBtcBalance(userNewBtcBalance, user.id);
 
 			await TransactionsRepository.createTransaction({
-				amount: totalAmountDeductible,
+				amount: questionBounty,
 				fromUserPubkey: user.pubkey,
 				toUserPubkey: user.pubkey,
-				fee,
+				fee: 100,
 				type: TxTypes.BOUNTY_PLEDGED,
 			});
 
 			dbTransaction.commit();
+
+			newQuestion.content = content;
 			return newQuestion;
 		} catch (error: any) {
 			dbTransaction.rollback();

@@ -3,6 +3,7 @@ import {makeAnswerToJson, makePrompt} from '../util/chatgpt';
 
 import {ChatgptReply} from '../models/ChatgptReplyModel';
 import {QuestionAttributes} from '../models/QuestionModel';
+import {QuestionTypes} from '../util/enums';
 import env from '../config/env';
 import logger from '../util/logger';
 
@@ -13,7 +14,9 @@ export interface AnswerInterface {
 
 export interface JsonAnswerInterface {
 	[title: string]: string;
-	triageGuide: string;
+	aiAnswer: string;
+	doctorAnswer: string;
+	guide: string;
 	chiefComplaint: string;
 	medicalHistory: string;
 	currentMedication: string;
@@ -21,6 +24,7 @@ export interface JsonAnswerInterface {
 	plan: string;
 	doctorNote: string;
 }
+
 class ChatgptService {
 	private openai: OpenAIApi;
 
@@ -61,31 +65,18 @@ class ChatgptService {
 				maxTokens,
 				prompt,
 				rawAnswer,
-				jsonAnswer: JSON.parse(JSON.stringify(jsonAnswer)),
+				jsonAnswer: {
+					...jsonAnswer,
+					triageGuide:
+						question.type === QuestionTypes.GENERAL
+							? jsonAnswer.aiAnswer
+							: jsonAnswer.guide,
+				},
 			});
 		} catch (error) {
 			// TODO(david): Sentry alert in slack
 			logger.warn(error);
-			// XXX(david): temp logic for client developement
-			return await ChatgptReply.create({
-				questionId,
-				model,
-				maxTokens,
-				prompt,
-				rawAnswer: 'No response',
-				jsonAnswer: JSON.parse(
-					JSON.stringify({
-						title: 'title',
-						triageGuide: 'treguide',
-						chiefComplaint: 'chiefComplaint',
-						medicalHistory: 'medicalHistory',
-						currentMedication: 'currentMedication',
-						assessment: 'assessment',
-						plan: 'plan',
-						doctorNote: 'doctorNote',
-					}),
-				),
-			});
+			return;
 		}
 	}
 

@@ -47,8 +47,8 @@ class ReplyService {
 
 			const translateText =
 				question.type === QuestionTypes.GENERAL
-					? chatgptReply.jsonAnswer.answer
-					: chatgptReply.jsonAnswer.triageGuide;
+					? chatgptReply.jsonAnswer.aiAnswer
+					: chatgptReply.jsonAnswer.guide;
 
 			const translatedReply = await DeeplService.getTextTranslatedIntoEnglish(
 				translateText,
@@ -109,6 +109,7 @@ class ReplyService {
 						HttpCodes.NOT_FOUND,
 						'Doctor detail was not found',
 					);
+
 				const replyType = ReplyTypes.DOCTOR;
 				const name =
 					doctorDetails.fields['First Name'] +
@@ -116,12 +117,25 @@ class ReplyService {
 					doctorDetails.fields['Last Name'];
 				const classification = 'General physician'; // TODO(david): Get from user like user.classification
 
+				// FIXME(david): Currently multiple transaltion is not supported
+				const title = await DeeplService.getTextTranslatedIntoEnglish(
+					doctorReply.dataValues.title,
+					rawContentLanguage,
+				);
+
+				const doctorNote = await DeeplService.getTextTranslatedIntoEnglish(
+					doctorReply.dataValues.doctorNote,
+					rawContentLanguage,
+				);
+
 				return {
-					...doctorReply,
+					...doctorReply.dataValues,
 					replyType,
 					name,
 					classification,
 					reply: doctorReply.content,
+					doctorNote: doctorNote.text,
+					title: title.text,
 				};
 			}
 
@@ -135,8 +149,12 @@ class ReplyService {
 					'Chatgpt reply was not found',
 				);
 
+			let translateText = chatGptReply.jsonAnswer.answer;
+			if (question.type !== QuestionTypes.GENERAL) {
+				translateText = chatGptReply.jsonAnswer.guide;
+			}
 			const translatedReply = await DeeplService.getTextTranslatedIntoEnglish(
-				chatGptReply.jsonAnswer.triageGuide,
+				translateText,
 				rawContentLanguage,
 			);
 

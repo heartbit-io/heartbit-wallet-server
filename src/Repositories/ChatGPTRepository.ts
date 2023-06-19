@@ -14,7 +14,9 @@ export interface AnswerInterface {
 
 export interface JsonAnswerInterface {
 	[title: string]: string;
-	triageGuide: string;
+	aiAnswer: string;
+	doctorAnswer: string;
+	guide: string;
 	chiefComplaint: string;
 	medicalHistory: string;
 	currentMedication: string;
@@ -22,6 +24,7 @@ export interface JsonAnswerInterface {
 	plan: string;
 	doctorNote: string;
 }
+
 class ChatGPTRepository {
 	private openai: OpenAIApi;
 
@@ -41,12 +44,10 @@ class ChatGPTRepository {
 		model: string,
 		maxTokens: number,
 	): Promise<ChatgptReply | undefined> {
-		const prompt = makePrompt(question) || '';
+		const prompt = makePrompt(question);
 		const questionId = Number(question.id);
 
 		try {
-			// TODO(david): Add patient profile parameter
-
 			const completion = await this.openai.createChatCompletion({
 				model,
 				messages: [{role: 'user', content: prompt}],
@@ -62,31 +63,18 @@ class ChatGPTRepository {
 				maxTokens,
 				prompt,
 				rawAnswer,
-				jsonAnswer: JSON.parse(JSON.stringify(jsonAnswer)),
+				jsonAnswer: {
+					...jsonAnswer,
+					triageGuide:
+						question.type === QuestionTypes.GENERAL
+							? jsonAnswer.aiAnswer
+							: jsonAnswer.guide,
+				},
 			});
 		} catch (error) {
 			// TODO(david): Sentry alert in slack
 			logger.warn(error);
-			// XXX(david): temp logic for client developement
-			return await ChatgptReply.create({
-				questionId,
-				model,
-				maxTokens,
-				prompt,
-				rawAnswer: 'No response',
-				jsonAnswer: JSON.parse(
-					JSON.stringify({
-						title: 'title',
-						triageGuide: 'treguide',
-						chiefComplaint: 'chiefComplaint',
-						medicalHistory: 'medicalHistory',
-						currentMedication: 'currentMedication',
-						assessment: 'assessment',
-						plan: 'plan',
-						doctorNote: 'doctorNote',
-					}),
-				),
-			});
+			return;
 		}
 	}
 

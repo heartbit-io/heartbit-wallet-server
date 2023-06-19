@@ -12,6 +12,10 @@ const replyBodyData = {
 		type: 'number',
 		example: 51,
 	},
+	title: {
+		type: 'string',
+		example: 'Headache',
+	},
 	plan: {
 		type: 'string',
 		example: 'daily',
