@@ -10,6 +10,20 @@ const getUserTransactions = {
 			required: true,
 			type: 'string',
 		},
+		{
+			name: 'limit',
+			in: 'query',
+			description: 'transactions limit query parameter',
+			required: false,
+			type: 'number',
+		},
+		{
+			name: 'offset',
+			in: 'query',
+			description: 'transactions offset query parameter',
+			required: false,
+			type: 'number',
+		},
 	],
 	responses: {
 		'200': {
