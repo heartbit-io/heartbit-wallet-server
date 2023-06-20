@@ -13,12 +13,13 @@
     "lint": "eslint . --ext .ts",
     "start": "node build/index.js",
     "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
-    "db:migrate": "npx sequelize-cli db:migrate",
+    "db:migrate": "npm run typeorm migration:run -- -d ./src/domains/repo/index.ts",
     "undo:migration": "npx sequelize-cli db:migrate:undo:all",
     "db:seed": "npx sequelize-cli db:seed:all",
     "db:migrate-seed": "npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all",
     "test": "export NODE_ENV=test && mocha -r ts-node/register test/**/*.test.ts",
-    "db:test:migrate": "npx sequelize-cli db:migrate --env test"
+    "db:test:migrate": "npx sequelize-cli db:migrate --env test",
+    "typeorm": "npx typeorm-ts-node-commonjs"
   },
   "keywords": [],
   "author": "",

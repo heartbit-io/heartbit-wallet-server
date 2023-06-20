@@ -32,7 +32,7 @@ export interface ChatgptRepliesAttributes {
 	jsonAnswer: JsonAnswerInterface;
 }
 
-@Entity()
+@Entity('chatgpt_replies')
 export class ChatGptReply {
 	@PrimaryGeneratedColumn()
 	id: number;

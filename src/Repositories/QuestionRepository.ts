@@ -102,7 +102,6 @@ class QuestionRepository {
 	}
 
 	async deleteQuestion(questionId: number) {
-		// return await QuestionDataSource.softDelete(question);
 		return await QuestionDataSource.createQueryBuilder()
 			.softDelete()
 			.where('id = :id', {id: questionId})

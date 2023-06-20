@@ -51,9 +51,6 @@ export class User {
 	@OneToMany(() => Question, question => question.user)
 	questions: Question[];
 
-	@OneToMany(() => BtcTransaction, btcTransaction => btcTransaction.user)
-	btcTransactions: BtcTransaction[];
-
 	@OneToMany(() => Reply, reply => reply.user)
 	replies: Reply[];
 

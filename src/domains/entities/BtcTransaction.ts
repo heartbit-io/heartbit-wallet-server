@@ -43,8 +43,23 @@ export class BtcTransaction {
 	@DeleteDateColumn({type: 'timestamp', nullable: true})
 	deletedAt: Date;
 
-	@ManyToOne(() => User, user => user.btcTransactions)
-	user: User;
+	@ManyToOne(() => User, {
+		createForeignKeyConstraints: false,
+	})
+	@JoinColumn({
+		name: 'from_user_pubkey',
+		referencedColumnName: 'pubkey',
+	})
+	FromUser: User;
+
+	@ManyToOne(() => User, {
+		createForeignKeyConstraints: false,
+	})
+	@JoinColumn({
+		name: 'to_user_pubkey',
+		referencedColumnName: 'pubkey',
+	})
+	ToUser: User;
 }
 
 export interface BtcTransactionFields {
