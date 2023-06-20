@@ -1,40 +1,52 @@
-import TransactionsRepository from '../Repositories/TransactionsRepository';
 import {getAuth, signInWithEmailAndPassword} from 'firebase/auth';
-import UserRepository from '../Repositories/UserRepository';
-import {UserAttributes} from '../models/UserModel';
+
 import {CustomError} from '../util/CustomError';
 import {HttpCodes} from '../util/HttpCodes';
-import dbconnection from '../util/dbconnection';
+import TransactionsRepository from '../Repositories/TransactionsRepository';
 import {TxTypes} from '../util/enums';
+import {UserAttributes} from '../models/UserModel';
+import UserRepository from '../Repositories/UserRepository';
+import dbconnection from '../util/dbconnection';
 import {firebase} from '../config/firebase-config';
 
 class UserService {
 	async createUser(user: UserAttributes) {
+		const emailToLowerCase = user.email.toLowerCase();
+		const pubkeyToLowerCase = user.pubkey.toLowerCase();
+		const isExsist = await UserRepository.getUserDetailsByEmail(
+			emailToLowerCase,
+		);
+
 		const dbTransaction = await dbconnection.transaction();
 
 		try {
-			const createdUser = await UserRepository.createUser(
-				{
-					...user,
-					pubkey: user.pubkey.toLowerCase(),
-					email: user.email.toLowerCase(),
-				},
-				dbTransaction,
-			);
+			if (isExsist) {
+				// Pass in the logic to create the user if it exists.
+				// Because we have only 1 process to sign up and sign in.
+				return;
+			} else {
+				const createdUser = await UserRepository.createUser(
+					{
+						...user,
+						pubkey: pubkeyToLowerCase,
+						email: emailToLowerCase,
+					},
+					dbTransaction,
+				);
+				await TransactionsRepository.createTransaction(
+					{
+						amount: 1000, // SIGN_UP_BONUS
+						toUserPubkey: pubkeyToLowerCase,
+						fromUserPubkey: pubkeyToLowerCase, // Initial transcation
+						type: TxTypes.SIGN_UP_BONUS,
+						fee: 0,
+					},
+					dbTransaction,
+				);
 
-			await TransactionsRepository.createTransaction(
-				{
-					amount: 1000, // SIGN_UP_BONUS
-					toUserPubkey: user.pubkey,
-					fromUserPubkey: user.pubkey, // Initial transcation
-					type: TxTypes.SIGN_UP_BONUS,
-					fee: 0,
-				},
-				dbTransaction,
-			);
-
-			await dbTransaction.commit();
-			return createdUser;
+				await dbTransaction.commit();
+				return createdUser;
+			}
 		} catch (error: any) {
 			await dbTransaction.rollback();
 			throw error.code && error.message
