@@ -1,6 +1,7 @@
-import {TransactionAttributes, Transaction} from '../models/TransactionModel';
+import {Transaction, TransactionAttributes} from '../models/TransactionModel';
 
 import {Op} from 'sequelize';
+import {TxTypes} from '../util/enums';
 
 class TransactionService {
 	async createTransaction(
@@ -24,9 +25,22 @@ class TransactionService {
 		limit: number,
 		offset: number,
 	): Promise<Transaction[]> {
-		return await Transaction.findAll({
+		return Transaction.findAll({
 			where: {
-				[Op.or]: [{fromUserPubkey: userPubkey}, {toUserPubkey: userPubkey}],
+				[Op.or]: [
+					{
+						[Op.and]: [
+							{fromUserPubkey: userPubkey},
+							{toUserPubkey: userPubkey},
+						],
+					},
+					{
+						[Op.and]: [
+							{type: TxTypes.BOUNTY_EARNED}, // Bounty earnings should only be visible to the recipient.
+							{toUserPubkey: userPubkey},
+						],
+					},
+				],
 			},
 			limit,
 			offset,
