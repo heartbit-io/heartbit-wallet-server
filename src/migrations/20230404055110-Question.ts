@@ -41,11 +41,13 @@ export class Question20230404055110 implements MigrationInterface {
 						name: 'status',
 						type: 'enum',
 						enum: [...Object.values(QuestionStatus)],
+						default: "'Open'",
 					},
 					{
 						name: 'type',
 						type: 'enum',
 						enum: [...Object.values(QuestionTypes)],
+						default: "'general'",
 					},
 					{
 						name: 'current_medication',

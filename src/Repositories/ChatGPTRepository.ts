@@ -1,8 +1,7 @@
 import {Configuration, OpenAIApi} from 'openai';
 import {makeAnswerToJson, makePrompt} from '../util/chatgpt';
-
+import {QuestionAttributes} from '../domains/entities/Question';
 import {ChatgptReply} from '../models/ChatgptReplyModel';
-import {QuestionAttributes} from '../models/QuestionModel';
 import {QuestionTypes} from '../util/enums';
 import env from '../config/env';
 import logger from '../util/logger';

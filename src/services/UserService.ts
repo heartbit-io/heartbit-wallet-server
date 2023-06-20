@@ -1,13 +1,12 @@
 import {getAuth, signInWithEmailAndPassword} from 'firebase/auth';
-
 import {CustomError} from '../util/CustomError';
 import {HttpCodes} from '../util/HttpCodes';
 import TransactionsRepository from '../Repositories/TransactionsRepository';
 import {TxTypes} from '../util/enums';
-import {UserAttributes} from '../models/UserModel';
 import UserRepository from '../Repositories/UserRepository';
 import dbconnection from '../util/dbconnection';
 import {firebase} from '../config/firebase-config';
+import {UserAttributes} from '../domains/entities/User';
 
 class UserService {
 	async createUser(user: UserAttributes) {

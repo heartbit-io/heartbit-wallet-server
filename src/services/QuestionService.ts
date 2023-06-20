@@ -1,4 +1,4 @@
-import {QuestionAttributes} from '../models/QuestionModel';
+import {QuestionAttributes} from '../domains/entities/Question';
 import {CustomError} from '../util/CustomError';
 import DeeplService from './DeeplService';
 import {HttpCodes} from '../util/HttpCodes';

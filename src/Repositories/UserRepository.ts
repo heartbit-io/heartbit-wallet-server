@@ -1,5 +1,5 @@
 import {userDataSource} from '../domains/repo';
-import {User, UserFields} from '../domains/entities/User';
+import {User, UserAttributes} from '../domains/entities/User';
 
 class UserRepository {
 	async getUserDetailsById(id: number) {
@@ -14,7 +14,7 @@ class UserRepository {
 		return await userDataSource.findOne({where: {pubkey}});
 	}
 
-	async createUser(user: UserFields, dbTransaction?: any) {
+	async createUser(user: UserAttributes, dbTransaction?: any) {
 		return await userDataSource.save({...user}, {transaction: dbTransaction});
 	}
 

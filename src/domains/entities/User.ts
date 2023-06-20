@@ -9,7 +9,6 @@ import {
 } from 'typeorm';
 import {UserRoles} from '../../util/enums';
 import {Question} from './Question';
-import {BtcTransaction} from './BtcTransaction';
 import {Reply} from './Reply';
 
 @Entity('users')
@@ -61,7 +60,7 @@ export class User {
 	}
 }
 
-export interface UserFields {
+export interface UserAttributes {
 	id?: number;
 	pubkey: string;
 	email: string;

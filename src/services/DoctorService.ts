@@ -5,12 +5,12 @@ import {CustomError} from '../util/CustomError';
 import EventEmitter from 'events';
 import {HttpCodes} from '../util/HttpCodes';
 import QuestionRepository from '../Repositories/QuestionRepository';
-import {RepliesAttributes} from '../models/ReplyModel';
 import ReplyRepository from '../Repositories/ReplyRepository';
 import TransactionsRepository from '../Repositories/BtcTransactionsRepository';
 import UserRepository from '../Repositories/UserRepository';
 import {UserRoles} from '../util/enums/userRoles';
 import admin from '../config/firebase-config';
+import {RepliesAttributes} from '../domains/entities/Reply';
 
 const eventEmitter = new EventEmitter();
 

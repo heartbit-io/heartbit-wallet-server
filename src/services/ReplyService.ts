@@ -5,13 +5,13 @@ import DeeplService from '../services/DeeplService';
 import {HttpCodes} from '../util/HttpCodes';
 import QuestionRepository from '../Repositories/QuestionRepository';
 import {QuestionTypes} from '../util/enums';
-import {RepliesAttributes} from '../models/ReplyModel';
 import ReplyRepository from '../Repositories/ReplyRepository';
 import {ReplyResponseInterface} from '../controllers/RepliesController';
 import {ReplyTypes} from '../util/enums';
 import UserRepository from '../Repositories/UserRepository';
 import {QuestionAttributes} from '../domains/entities/Question';
 import {ChatgptRepliesAttributes} from '../models/ChatgptReplyModel';
+import {RepliesAttributes} from '../domains/entities/Reply';
 
 class ReplyService {
 	async createChatGPTReply(reply: RepliesAttributes) {
