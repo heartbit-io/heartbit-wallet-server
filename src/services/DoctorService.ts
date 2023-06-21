@@ -1,6 +1,4 @@
 import {QuestionStatus, TxTypes} from '../util/enums';
-import ChatGPTRepository from '../Repositories/ChatGPTRepository';
-import ChatgptService from '../services/ChatgptService';
 import {CustomError} from '../util/CustomError';
 import EventEmitter from 'events';
 import {HttpCodes} from '../util/HttpCodes';
@@ -11,6 +9,8 @@ import UserRepository from '../Repositories/UserRepository';
 import {UserRoles} from '../util/enums/userRoles';
 import admin from '../config/firebase-config';
 import {RepliesAttributes} from '../domains/entities/Reply';
+import {JsonAnswerInterface} from '../domains/entities/ChatGptReply';
+import ChatgptService from './ChatgptService';
 
 const eventEmitter = new EventEmitter();
 
@@ -137,7 +137,7 @@ class DoctorService {
 			if (!aiReply)
 				throw new CustomError(HttpCodes.NOT_FOUND, 'AI Reply not found');
 
-			const aiJsonReply = aiReply.jsonAnswer;
+			const aiJsonReply: JsonAnswerInterface = aiReply.jsonAnswer;
 
 			return {
 				...openQuestions[0].dataValues,
@@ -178,7 +178,7 @@ class DoctorService {
 				throw new CustomError(HttpCodes.NOT_FOUND, 'Question not found');
 
 			// TODO(david): join the question and reply table
-			const aiReply = await ChatGPTRepository.getChatGptReplyByQuestionId(
+			const aiReply = await ChatgptService.getChatGptReplyByQuestionId(
 				Number(questionId),
 			);
 

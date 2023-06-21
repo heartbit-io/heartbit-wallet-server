@@ -1,5 +1,4 @@
 import AirtableService from './AirtableService';
-import ChatGPTRepository from '../Repositories/ChatGPTRepository';
 import {CustomError} from '../util/CustomError';
 import DeeplService from '../services/DeeplService';
 import {HttpCodes} from '../util/HttpCodes';
@@ -10,8 +9,8 @@ import {ReplyResponseInterface} from '../controllers/RepliesController';
 import {ReplyTypes} from '../util/enums';
 import UserRepository from '../Repositories/UserRepository';
 import {QuestionAttributes} from '../domains/entities/Question';
-import {ChatgptRepliesAttributes} from '../models/ChatgptReplyModel';
 import {RepliesAttributes} from '../domains/entities/Reply';
+import ChatgptService from './ChatgptService';
 
 class ReplyService {
 	async createChatGPTReply(reply: RepliesAttributes) {
@@ -25,8 +24,9 @@ class ReplyService {
 
 			const rawContentLanguage: any = question.dataValues.rawContentLanguage;
 
-			const replyForChatGpt =
-				await ChatGPTRepository.getChatGptReplyByQuestionId(Number(questionId));
+			const replyForChatGpt = await ChatgptService.getChatGptReplyByQuestionId(
+				Number(questionId),
+			);
 
 			if (replyForChatGpt)
 				throw new CustomError(
@@ -40,7 +40,7 @@ class ReplyService {
 			const model =
 				question.bountyAmount === 0 ? 'gpt-3.5-turbo' : 'gpt-3.5-turbo';
 			const maxTokens = 2048;
-			const chatgptReply = await ChatGPTRepository.create(
+			const chatgptReply = await ChatgptService.create(
 				questionAttr,
 				model,
 				maxTokens,
@@ -143,7 +143,7 @@ class ReplyService {
 				};
 			}
 
-			const chatGptReply = await ChatGPTRepository.getChatGptReplyByQuestionId(
+			const chatGptReply = await ChatgptService.getChatGptReplyByQuestionId(
 				Number(questionId),
 			);
 

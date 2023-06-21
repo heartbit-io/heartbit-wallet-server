@@ -1,10 +1,11 @@
 import {Configuration, OpenAIApi} from 'openai';
 import {makeAnswerToJson, makePrompt} from '../util/chatgpt';
 import {QuestionAttributes} from '../domains/entities/Question';
-import {ChatgptReply} from '../models/ChatgptReplyModel';
 import {QuestionTypes} from '../util/enums';
 import env from '../config/env';
 import logger from '../util/logger';
+import {ChatGptReply} from '../domains/entities/ChatGptReply';
+import {ChatGPTDataSource} from '../domains/repo';
 
 export interface AnswerInterface {
 	role: string;
@@ -42,7 +43,7 @@ class ChatgptService {
 		question: QuestionAttributes,
 		model: string,
 		maxTokens: number,
-	): Promise<ChatgptReply | undefined> {
+	): Promise<ChatGptReply | undefined> {
 		const prompt = makePrompt(question);
 		const questionId = Number(question.id);
 
@@ -58,7 +59,7 @@ class ChatgptService {
 			const rawAnswer = completion.data.choices[0].message?.content || '';
 			const jsonAnswer: JsonAnswerInterface = makeAnswerToJson(rawAnswer);
 
-			return await ChatgptReply.create({
+			return await ChatGPTDataSource.save({
 				questionId,
 				model,
 				maxTokens,
@@ -83,13 +84,10 @@ class ChatgptService {
 	 * @description - Get ChatGPT Completion for prompt
 	 * @param questionId - Question ID
 	 */
-	async getChatGptReplyByQuestionId(
-		questionId: number,
-	): Promise<ChatgptReply | undefined> {
+	async getChatGptReplyByQuestionId(questionId: number) {
 		try {
-			const chatGptReply = await ChatgptReply.findOne({
+			const chatGptReply = await ChatGPTDataSource.findOne({
 				where: {questionId},
-				attributes: ['model', 'jsonAnswer', 'createdAt'],
 			});
 
 			if (!chatGptReply) return;

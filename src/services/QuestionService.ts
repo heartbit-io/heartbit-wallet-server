@@ -4,7 +4,6 @@ import DeeplService from './DeeplService';
 import {HttpCodes} from '../util/HttpCodes';
 import QuestionRepository from '../Repositories/QuestionRepository';
 import UserRepository from '../Repositories/UserRepository';
-import dbconnection from '../util/dbconnection';
 import TransactionsRepository from '../Repositories/BtcTransactionsRepository';
 import {QuestionStatus, TxTypes} from '../util/enums';
 class QuestionService {
@@ -17,8 +16,8 @@ class QuestionService {
 			pastIllnessHistory,
 			others,
 		} = question;
-
-		const dbTransaction = await dbconnection.transaction();
+		// todo[tvpeter]: add transaction
+		// const dbTransaction = await dbconnection.transaction();
 		try {
 			if (!email)
 				throw new CustomError(HttpCodes.BAD_REQUEST, 'Email is required');
@@ -70,13 +69,11 @@ class QuestionService {
 				fee: 100,
 				type: TxTypes.BOUNTY_PLEDGED,
 			});
-
-			dbTransaction.commit();
-
 			newQuestion.content = content;
+
 			return newQuestion;
 		} catch (error: any) {
-			dbTransaction.rollback();
+			// dbTransaction.rollback();
 			throw error.code && error.message
 				? error
 				: new CustomError(

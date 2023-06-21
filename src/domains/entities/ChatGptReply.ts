@@ -52,8 +52,8 @@ export class ChatGptReply {
 	@Column({type: 'text'})
 	rawAnswer: string;
 
-	@Column({type: 'json'})
-	jsonAnswer: JSON;
+	@Column('json', {nullable: false, default: {}})
+	jsonAnswer: JsonAnswerInterface;
 
 	@CreateDateColumn({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
 	createdAt: Date;

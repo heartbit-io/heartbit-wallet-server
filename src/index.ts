@@ -3,7 +3,7 @@ import * as Sentry from '@sentry/node';
 import express, {Application} from 'express';
 
 import cors from 'cors';
-import dbconnection from './util/dbconnection';
+import dataSource from './domains/repo';
 import env from './config/env';
 import helmet from 'helmet';
 import {log} from 'console';
@@ -62,7 +62,7 @@ app.use('/api/v1', routes);
 
 app.listen(PORT, async () => {
 	try {
-		await dbconnection.authenticate();
+		await dataSource.initialize();
 		log('connected to database');
 		log(`Listening on port ${PORT}`);
 	} catch (error) {

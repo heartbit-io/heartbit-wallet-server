@@ -29,15 +29,6 @@ class QuestionRepository {
 	}
 
 	async sumUserOpenBountyAmount(userId: number) {
-		// return await Question.findAll({
-		// 	where: {userId, status: QuestionStatus.OPEN},
-		// 	attributes: [
-		// 		[Sequelize.fn('sum', Sequelize.col('bounty_amount')), 'totalBounty'],
-		// 	],
-		// 	group: ['user_id'],
-		// 	raw: true,
-		// });
-
 		return await QuestionDataSource.createQueryBuilder('question')
 			.select('SUM(question.bounty_amount)', 'totalBounty')
 			.where('question.user_id = :userId', {userId})
