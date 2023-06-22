@@ -123,17 +123,17 @@ class ReplyService {
 
 				// FIXME(david): Currently multiple transaltion is not supported
 				const title = await DeeplService.getTextTranslatedIntoEnglish(
-					doctorReply.dataValues.title,
+					doctorReply.title,
 					rawContentLanguage,
 				);
 
 				const doctorNote = await DeeplService.getTextTranslatedIntoEnglish(
-					doctorReply.dataValues.doctorNote,
+					doctorReply.doctorNote,
 					rawContentLanguage,
 				);
 
 				return {
-					...doctorReply.dataValues,
+					...doctorReply,
 					replyType,
 					name,
 					classification,

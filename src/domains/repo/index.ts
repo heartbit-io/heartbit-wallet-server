@@ -17,7 +17,7 @@ const dataSource = new DataSource({
 	synchronize: env.NODE_ENV === 'production' ? false : true,
 	namingStrategy: new SnakeNamingStrategy(),
 	entities: [User, Reply, BtcTransaction, ChatGptReply, Question],
-	migrations: ['src/migrations/*.ts'],
+	// migrations: ['src/migrations/*.ts'],
 });
 
 export const userDataSource = dataSource.getRepository(User);

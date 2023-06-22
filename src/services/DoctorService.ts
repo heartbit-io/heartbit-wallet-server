@@ -140,7 +140,7 @@ class DoctorService {
 			const aiJsonReply: JsonAnswerInterface = aiReply.jsonAnswer;
 
 			return {
-				...openQuestions[0].dataValues,
+				...openQuestions[0],
 				title: aiJsonReply.title,
 				chiefComplaint: aiJsonReply.chiefComplaint,
 			};
@@ -187,7 +187,7 @@ class DoctorService {
 
 			const aiJsonReply = aiReply.jsonAnswer;
 
-			return {...question.dataValues, aiJsonReply};
+			return {...question, aiJsonReply};
 		} catch (error: any) {
 			throw error.code && error.message
 				? error
@@ -273,7 +273,7 @@ class DoctorService {
 			if (!question)
 				throw new CustomError(HttpCodes.NOT_FOUND, 'Question not found');
 
-			return {...question.dataValues, ...doctorReply.dataValues};
+			return {...question, ...doctorReply};
 		} catch (error: any) {
 			throw error.code && error.message
 				? error

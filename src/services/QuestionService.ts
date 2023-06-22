@@ -182,12 +182,14 @@ class QuestionService {
 				order,
 			);
 			const hasMore = userQuestions > limit + offset ? true : false;
+
 			const formatedQuestions = questions.map(question => {
 				return {
-					...question.dataValues,
-					content: question.dataValues.rawContent,
+					...question,
+					content: question.rawContent,
 				};
 			});
+
 			return {questions: formatedQuestions, hasMore};
 		} catch (error: any) {
 			throw error.code && error.message
@@ -218,7 +220,7 @@ class QuestionService {
 					'Only users who posted a question can view the question',
 				);
 
-			const response = question.dataValues;
+			const response = question;
 			response.content = response.rawContent;
 
 			return response;

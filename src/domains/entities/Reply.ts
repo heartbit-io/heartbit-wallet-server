@@ -44,6 +44,9 @@ export class Reply {
 	medicalHistory: string;
 
 	@Column({type: 'text'})
+	doctorNote: string;
+
+	@Column({type: 'text'})
 	triage: string;
 
 	@Column({type: 'int'})
