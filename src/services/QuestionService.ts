@@ -26,7 +26,8 @@ class QuestionService {
 
 			const questionBounty = Number(bountyAmount);
 
-			const userBtcBalance = user.get('btcBalance') as number;
+			const userBtcBalance = user.btcBalance;
+
 			if (!userBtcBalance)
 				throw new CustomError(
 					HttpCodes.NOT_FOUND,
