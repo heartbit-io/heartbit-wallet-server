@@ -54,7 +54,12 @@ class RepliesController {
 			return res
 				.status(HttpCodes.OK)
 				.json(
-					new ResponseDto(true, HttpCodes.OK, 'Reply get successfully', reply),
+					new ResponseDto(
+						true,
+						HttpCodes.OK,
+						'Reply retreived successfully',
+						reply,
+					),
 				);
 		} catch (error) {
 			return res

@@ -1,32 +1,38 @@
-import {UserAttributes, User} from '../models/UserModel';
+import {userDataSource} from '../domains/repo';
+import {User, UserAttributes} from '../domains/entities/User';
 
 class UserRepository {
-	async getUserDetailsById(id: number): Promise<User | null> {
-		return await User.findOne({where: {id}});
+	async getUserDetailsById(id: number) {
+		return await userDataSource.findOne({where: {id}});
 	}
 
-	async getUserDetailsByEmail(email: string): Promise<User | null> {
-		return await User.findOne({where: {email}});
+	async getUserDetailsByEmail(email: string) {
+		return await userDataSource.findOne({where: {email}});
 	}
 
-	async getUserDetailsByPubkey(pubkey: string): Promise<User | null> {
-		return await User.findOne({where: {pubkey}});
+	async getUserDetailsByPubkey(pubkey: string) {
+		return await userDataSource.findOne({where: {pubkey}});
 	}
 
 	async createUser(user: UserAttributes, dbTransaction?: any) {
-		return await User.create({...user}, {transaction: dbTransaction});
+		return await userDataSource.save({...user}, {transaction: dbTransaction});
 	}
 
-	async getUserBalance(id: number): Promise<User | null> {
-		return await User.findOne({
+	async getUserBalance(id: number) {
+		return await userDataSource.findOne({
 			where: {id},
-			attributes: ['btcBalance'],
-			plain: true,
+			select: {btcBalance: true},
 		});
 	}
 
 	async updateUserBtcBalance(btcBalance: number, id: number) {
-		return await User.update({btcBalance}, {where: {id}});
+		// return await User.update({btcBalance}, {where: {id}});
+		return await userDataSource
+			.createQueryBuilder()
+			.update(User)
+			.set({btcBalance})
+			.where('id = :id', {id})
+			.execute();
 	}
 }
 

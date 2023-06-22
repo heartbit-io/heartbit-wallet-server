@@ -78,7 +78,7 @@ class QuestionsController {
 		try {
 			const limit = req.query.limit ? Number(req.query.limit) : 20;
 			const offset = req.query.offset ? Number(req.query.offset) : 0;
-			const order = (req.query.order as string | undefined) || 'DESC';
+			const order = req.query.order as 'ASC' | 'DESC' | undefined;
 
 			const result = await QuestionService.getAll(
 				req.email,

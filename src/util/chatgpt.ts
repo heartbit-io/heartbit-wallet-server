@@ -1,5 +1,6 @@
-import {JsonAnswerInterface} from '../models/ChatgptReplyModel';
-import {QuestionAttributes} from '../models/QuestionModel';
+import {JsonAnswerInterface} from '../domains/entities/ChatGptReply';
+// import {QuestionAttributes} from '../models/QuestionModel';
+import {QuestionAttributes, Question} from '../domains/entities/Question';
 import {QuestionTypes} from '../util/enums/questionTypes';
 
 // TODO(david): Consider the patient's profile

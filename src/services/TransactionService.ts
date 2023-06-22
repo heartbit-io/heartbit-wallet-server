@@ -1,6 +1,6 @@
 import {CustomError} from '../util/CustomError';
 import {HttpCodes} from '../util/HttpCodes';
-import TransactionsRepository from '../Repositories/TransactionsRepository';
+import TransactionsRepository from '../Repositories/BtcTransactionsRepository';
 
 class TransactionService {
 	txTypeMap = {

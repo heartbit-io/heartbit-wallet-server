@@ -1,54 +1,43 @@
+import TransactionsRepository from '../Repositories/BtcTransactionsRepository';
 import {getAuth, signInWithEmailAndPassword} from 'firebase/auth';
-
+import UserRepository from '../Repositories/UserRepository';
+import {UserAttributes} from '../domains/entities/User';
 import {CustomError} from '../util/CustomError';
 import {HttpCodes} from '../util/HttpCodes';
-import TransactionsRepository from '../Repositories/TransactionsRepository';
+// import dbconnection from '../util/dbconnection';
 import {TxTypes} from '../util/enums';
-import {UserAttributes} from '../models/UserModel';
-import UserRepository from '../Repositories/UserRepository';
-import dbconnection from '../util/dbconnection';
 import {firebase} from '../config/firebase-config';
 
 class UserService {
 	async createUser(user: UserAttributes) {
-		const emailToLowerCase = user.email.toLowerCase();
-		const pubkeyToLowerCase = user.pubkey.toLowerCase();
-		const isExsist = await UserRepository.getUserDetailsByEmail(
-			emailToLowerCase,
-		);
-
-		const dbTransaction = await dbconnection.transaction();
+		// todo[tvpeter]: add transaction
+		// const dbTransaction = await dbconnection.transaction();
 
 		try {
-			if (isExsist) {
-				// Pass in the logic to create the user if it exists.
-				// Because we have only 1 process to sign up and sign in.
-				return;
-			} else {
-				const createdUser = await UserRepository.createUser(
-					{
-						...user,
-						pubkey: pubkeyToLowerCase,
-						email: emailToLowerCase,
-					},
-					dbTransaction,
-				);
-				await TransactionsRepository.createTransaction(
-					{
-						amount: 1000, // SIGN_UP_BONUS
-						toUserPubkey: pubkeyToLowerCase,
-						fromUserPubkey: pubkeyToLowerCase, // Initial transcation
-						type: TxTypes.SIGN_UP_BONUS,
-						fee: 0,
-					},
-					dbTransaction,
-				);
+			const createdUser = await UserRepository.createUser(
+				{
+					...user,
+					pubkey: user.pubkey.toLowerCase(),
+					email: user.email.toLowerCase(),
+				},
+				// dbTransaction,
+			);
 
-				await dbTransaction.commit();
-				return createdUser;
-			}
+			await TransactionsRepository.createTransaction(
+				{
+					amount: 1000, // SIGN_UP_BONUS
+					toUserPubkey: user.pubkey,
+					fromUserPubkey: user.pubkey, // Initial transcation
+					type: TxTypes.SIGN_UP_BONUS,
+					fee: 0,
+				},
+				// dbTransaction,
+			);
+
+			// await dbTransaction.commit();
+			return createdUser;
 		} catch (error: any) {
-			await dbTransaction.rollback();
+			// await dbTransaction.rollback();
 			throw error.code && error.message
 				? error
 				: new CustomError(
@@ -107,7 +96,7 @@ class UserService {
 				);
 
 			const user = await UserRepository.getUserDetailsByEmail(email);
-
+			console.log(user);
 			if (!user) throw new CustomError(HttpCodes.NOT_FOUND, 'User not found');
 
 			const response = user.dataValues;
