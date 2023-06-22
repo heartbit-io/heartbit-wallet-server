@@ -679,8 +679,8 @@ const createQuestionBody = {
 			example: 10000,
 		},
 		type: {
-			type: 'number',
-			example: 10000,
+			type: 'string',
+			example: '(required) general',
 		},
 		currentMedication: {
 			type: 'string',

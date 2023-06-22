@@ -1,16 +1,16 @@
 import AirtableService from './AirtableService';
+import ChatgptService from './ChatgptService';
 import {CustomError} from '../util/CustomError';
 import DeeplService from '../services/DeeplService';
 import {HttpCodes} from '../util/HttpCodes';
+import {QuestionAttributes} from '../domains/entities/Question';
 import QuestionRepository from '../Repositories/QuestionRepository';
 import {QuestionTypes} from '../util/enums';
+import {RepliesAttributes} from '../domains/entities/Reply';
 import ReplyRepository from '../Repositories/ReplyRepository';
 import {ReplyResponseInterface} from '../controllers/RepliesController';
 import {ReplyTypes} from '../util/enums';
 import UserRepository from '../Repositories/UserRepository';
-import {QuestionAttributes} from '../domains/entities/Question';
-import {RepliesAttributes} from '../domains/entities/Reply';
-import ChatgptService from './ChatgptService';
 
 class ReplyService {
 	async createChatGPTReply(reply: RepliesAttributes) {
@@ -22,7 +22,7 @@ class ReplyService {
 			if (!question)
 				throw new CustomError(HttpCodes.NOT_FOUND, 'Question not found');
 
-			const rawContentLanguage: any = question.dataValues.rawContentLanguage;
+			const rawContentLanguage: any = question.rawContentLanguage;
 
 			const replyForChatGpt = await ChatgptService.getChatGptReplyByQuestionId(
 				Number(questionId),
@@ -34,7 +34,7 @@ class ReplyService {
 					'Chatgpt reply already exist',
 				);
 
-			const questionAttr = question.dataValues as QuestionAttributes;
+			const questionAttr = question as QuestionAttributes;
 
 			// TODO(david): If bountyAmount is not 0, use gpt-4 model(currently gpt-4 is waitlist)
 			const model =
@@ -90,7 +90,7 @@ class ReplyService {
 			if (!question)
 				throw new CustomError(HttpCodes.NOT_FOUND, 'Question not found');
 
-			const rawContentLanguage: any = question.dataValues.rawContentLanguage;
+			const rawContentLanguage: any = question.rawContentLanguage;
 
 			const doctorReply = await ReplyRepository.getReplyByQuestionId(
 				questionId,
@@ -153,7 +153,7 @@ class ReplyService {
 					'Chatgpt reply was not found',
 				);
 
-			let translateText = chatGptReply.jsonAnswer.answer;
+			let translateText = chatGptReply.jsonAnswer.aiAnswer;
 			if (question.type !== QuestionTypes.GENERAL) {
 				translateText = chatGptReply.jsonAnswer.guide;
 			}
