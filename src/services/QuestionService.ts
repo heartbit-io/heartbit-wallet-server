@@ -67,7 +67,7 @@ class QuestionService {
 				amount: questionBounty,
 				fromUserPubkey: user.pubkey,
 				toUserPubkey: user.pubkey,
-				fee: 100,
+				fee: 0,
 				type: TxTypes.BOUNTY_PLEDGED,
 			});
 			await querryRunner.commitTransaction();

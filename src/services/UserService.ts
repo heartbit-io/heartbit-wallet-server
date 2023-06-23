@@ -26,7 +26,7 @@ class UserService {
 				toUserPubkey: user.pubkey,
 				fromUserPubkey: user.pubkey, // Initial transcation
 				type: TxTypes.SIGN_UP_BONUS,
-				fee: 0.009,
+				fee: 0,
 			});
 			await querryRunner.commitTransaction();
 			return createdUser;
