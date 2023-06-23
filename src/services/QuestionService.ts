@@ -6,6 +6,7 @@ import QuestionRepository from '../Repositories/QuestionRepository';
 import UserRepository from '../Repositories/UserRepository';
 import TransactionsRepository from '../Repositories/BtcTransactionsRepository';
 import {QuestionStatus, TxTypes} from '../util/enums';
+import dataSource from '../domains/repo';
 class QuestionService {
 	async create(question: QuestionAttributes, email: string | undefined) {
 		const {
@@ -16,8 +17,9 @@ class QuestionService {
 			pastIllnessHistory,
 			others,
 		} = question;
-		// todo[tvpeter]: add transaction
-		// const dbTransaction = await dbconnection.transaction();
+		const querryRunner = dataSource.createQueryRunner();
+		querryRunner.connect();
+		querryRunner.startTransaction();
 		try {
 			if (!email)
 				throw new CustomError(HttpCodes.BAD_REQUEST, 'Email is required');
@@ -33,7 +35,6 @@ class QuestionService {
 					HttpCodes.NOT_FOUND,
 					'Error getting user balance',
 				);
-
 			if (questionBounty > userBtcBalance) {
 				throw new CustomError(
 					HttpCodes.BAD_REQUEST,
@@ -44,7 +45,6 @@ class QuestionService {
 			const enContent = await DeeplService.getTextTranslatedIntoEnglish(
 				content,
 			);
-
 			const newQuestion = await QuestionRepository.create({
 				...question,
 				content: enContent.text,
@@ -70,11 +70,12 @@ class QuestionService {
 				fee: 100,
 				type: TxTypes.BOUNTY_PLEDGED,
 			});
+			await querryRunner.commitTransaction();
 			newQuestion.content = content;
 
 			return newQuestion;
 		} catch (error: any) {
-			// dbTransaction.rollback();
+			await querryRunner.rollbackTransaction();
 			throw error.code && error.message
 				? error
 				: new CustomError(
