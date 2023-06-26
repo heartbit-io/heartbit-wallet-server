@@ -19,7 +19,7 @@ class QuestionService {
 		} = question;
 		const querryRunner = dataSource.createQueryRunner();
 		querryRunner.connect();
-		querryRunner.startTransaction();
+		querryRunner.startTransaction('REPEATABLE READ');
 		try {
 			if (!email)
 				throw new CustomError(HttpCodes.BAD_REQUEST, 'Email is required');
@@ -82,6 +82,8 @@ class QuestionService {
 						HttpCodes.INTERNAL_SERVER_ERROR,
 						'Internal Server Error',
 				  );
+		} finally {
+			await querryRunner.release();
 		}
 	}
 

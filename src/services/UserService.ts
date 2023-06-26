@@ -12,7 +12,7 @@ class UserService {
 	async createUser(user: UserAttributes) {
 		const querryRunner = dataSource.createQueryRunner();
 		await querryRunner.connect();
-		await querryRunner.startTransaction();
+		await querryRunner.startTransaction('REPEATABLE READ');
 
 		try {
 			const createdUser = await UserRepository.createUser({
@@ -38,6 +38,8 @@ class UserService {
 						HttpCodes.INTERNAL_SERVER_ERROR,
 						'Internal Server Error',
 				  );
+		} finally {
+			await querryRunner.release();
 		}
 	}
 
