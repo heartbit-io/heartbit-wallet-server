@@ -1,25 +1,91 @@
 import {Request, Response} from 'express';
+
+import BtcTransactionsRepository from '../Repositories/BtcTransactionsRepository';
 import {DecodedRequest} from '../middleware/Auth';
 import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
-import UserService from '../services/UserService';
 import ResponseDto from '../dto/ResponseDTO';
+import {TxTypes} from '../util/enums';
+import UserRepository from '../Repositories/UserRepository';
+import UserService from '../services/UserService';
 
 class UsersController {
 	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {
-		try {
-			const user = await UserService.createUser(req.body);
+		const user = req.body;
+		const emailToLowerCase = user.email.toLowerCase();
+		const pubkeyToLowerCase = user.pubkey.toLowerCase();
+		const isExsist = await UserRepository.getUserDetailsByEmail(
+			emailToLowerCase,
+		);
 
-			return res
-				.status(HttpCodes.CREATED)
-				.json(
-					new ResponseDto(
-						true,
-						HttpCodes.CREATED,
-						'User created successfully',
-						user,
-					),
+		// TODO(david): add transaction
+		// const dbTransaction = await dbconnection.transaction();
+
+		try {
+			const createdUser = await UserRepository.createUser(
+				{
+					...user,
+					pubkey: user.pubkey.toLowerCase(),
+					email: user.email.toLowerCase(),
+				},
+				// dbTransaction,
+			);
+
+			await BtcTransactionsRepository.createTransaction(
+				{
+					amount: 1000, // SIGN_UP_BONUS
+					toUserPubkey: user.pubkey,
+					fromUserPubkey: user.pubkey, // Initial transcation
+					type: TxTypes.SIGN_UP_BONUS,
+					fee: 0,
+				},
+				// dbTransaction,
+			);
+			if (isExsist) {
+				// Pass in the logic to create the user if it exists.
+				// Because we have only 1 process to sign up and sign in.
+				return res
+					.status(HttpCodes.OK)
+					.json(
+						new ResponseDto(
+							true,
+							HttpCodes.OK,
+							'User logged in successfully',
+							null,
+						),
+					);
+			} else {
+				const createdUser = await UserRepository.createUser(
+					{
+						...user,
+						pubkey: pubkeyToLowerCase,
+						email: emailToLowerCase,
+					},
+					// dbTransaction,
 				);
+				await BtcTransactionsRepository.createTransaction(
+					{
+						amount: 1000, // SIGN_UP_BONUS
+						toUserPubkey: pubkeyToLowerCase,
+						fromUserPubkey: pubkeyToLowerCase, // Initial transcation
+						type: TxTypes.SIGN_UP_BONUS,
+						fee: 0,
+					},
+					// dbTransaction,
+				);
+
+				// await dbTransaction.commit();
+				return res
+					.status(HttpCodes.OK)
+					.json(
+						new ResponseDto(
+							true,
+							HttpCodes.OK,
+							'User sign up in successfully',
+							createdUser,
+						),
+					);
+			}
 		} catch (error: any) {
 			return res
 				.status(error.code ? error.code : HttpCodes.INTERNAL_SERVER_ERROR)
