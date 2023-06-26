@@ -1,49 +1,45 @@
-import TransactionsRepository from '../Repositories/BtcTransactionsRepository';
 import {getAuth, signInWithEmailAndPassword} from 'firebase/auth';
 import UserRepository from '../Repositories/UserRepository';
 import {UserAttributes} from '../domains/entities/User';
 import {CustomError} from '../util/CustomError';
 import {HttpCodes} from '../util/HttpCodes';
-// import dbconnection from '../util/dbconnection';
 import {TxTypes} from '../util/enums';
 import {firebase} from '../config/firebase-config';
+import dataSource from '../domains/repo';
+import BtcTransactionsRepository from '../Repositories/BtcTransactionsRepository';
 
 class UserService {
 	async createUser(user: UserAttributes) {
-		// todo[tvpeter]: add transaction
-		// const dbTransaction = await dbconnection.transaction();
+		const querryRunner = dataSource.createQueryRunner();
+		await querryRunner.connect();
+		await querryRunner.startTransaction('REPEATABLE READ');
 
 		try {
-			const createdUser = await UserRepository.createUser(
-				{
-					...user,
-					pubkey: user.pubkey.toLowerCase(),
-					email: user.email.toLowerCase(),
-				},
-				// dbTransaction,
-			);
+			const createdUser = await UserRepository.createUser({
+				...user,
+				pubkey: user.pubkey.toLowerCase(),
+				email: user.email.toLowerCase(),
+			});
 
-			await TransactionsRepository.createTransaction(
-				{
-					amount: 1000, // SIGN_UP_BONUS
-					toUserPubkey: user.pubkey,
-					fromUserPubkey: user.pubkey, // Initial transcation
-					type: TxTypes.SIGN_UP_BONUS,
-					fee: 0,
-				},
-				// dbTransaction,
-			);
-
-			// await dbTransaction.commit();
+			await BtcTransactionsRepository.createTransaction({
+				amount: 1000, // SIGN_UP_BONUS
+				toUserPubkey: user.pubkey,
+				fromUserPubkey: user.pubkey, // Initial transcation
+				type: TxTypes.SIGN_UP_BONUS,
+				fee: 0,
+			});
+			await querryRunner.commitTransaction();
 			return createdUser;
 		} catch (error: any) {
-			// await dbTransaction.rollback();
+			await querryRunner.rollbackTransaction();
 			throw error.code && error.message
 				? error
 				: new CustomError(
 						HttpCodes.INTERNAL_SERVER_ERROR,
 						'Internal Server Error',
 				  );
+		} finally {
+			await querryRunner.release();
 		}
 	}
 

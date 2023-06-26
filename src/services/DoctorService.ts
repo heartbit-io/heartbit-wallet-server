@@ -55,11 +55,10 @@ class DoctorService {
 			// If the bounty is 0, no bounty is calculated.
 			if (question.bountyAmount) {
 				// 100 is default sats
-				const calulatedFee =
-					100 + Math.floor((question.bountyAmount - 100) * 0.02);
+				// const calulatedFee =
+				// 	100 + Math.floor((question.bountyAmount - 100) * 0.02);
 
-				const doctorBalance =
-					doctor.btcBalance + question.bountyAmount - calulatedFee;
+				const doctorBalance = doctor.btcBalance + question.bountyAmount;
 				const creditDoctor = await UserRepository.updateUserBtcBalance(
 					doctorBalance,
 					doctor.id,
@@ -73,10 +72,10 @@ class DoctorService {
 
 				// create a transaction
 				await TransactionsRepository.createTransaction({
-					amount: question.bountyAmount - calulatedFee,
+					amount: question.bountyAmount,
 					toUserPubkey: doctor.pubkey,
 					fromUserPubkey: user.pubkey,
-					fee: calulatedFee,
+					fee: 0,
 					type: TxTypes.BOUNTY_EARNED,
 				});
 			}
