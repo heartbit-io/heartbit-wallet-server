@@ -2,7 +2,7 @@ import UserRepository from '../Repositories/UserRepository';
 import admin from '../config/firebase-config';
 
 class FcmService {
-	async sendNotification(userId: string, title: string, message: string) {
+	async sendNotification(userId: number, title: string, message: string) {
 		try {
 			const userFcmToken = await UserRepository.getUserFcmToken(userId);
 			if (!userFcmToken) return;

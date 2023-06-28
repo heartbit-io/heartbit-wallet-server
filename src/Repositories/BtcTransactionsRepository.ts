@@ -1,5 +1,6 @@
 import {BtcTransactionDataSource} from '../domains/repo';
 import {BtcTransactionFields} from '../domains/entities/BtcTransaction';
+import {TxTypes} from '../util/enums';
 
 class BtcTransactionRepository {
 	async createTransaction(
@@ -18,18 +19,31 @@ class BtcTransactionRepository {
 		);
 	}
 
+	private getTransactionBaseQuery(userPubkey: string) {
+		return BtcTransactionDataSource.createQueryBuilder('btds')
+			.where(
+				'(btds.fromUserPubkey = :userPubkey OR btds.toUserPubkey = :userPubkey)',
+				{userPubkey},
+			)
+			.andWhere(
+				'(btds.fromUserPubkey = :userPubkey AND btds.toUserPubkey = :userPubkey)',
+			)
+			.andWhere('btds.amount != 0')
+			.orWhere('(btds.type = :type AND btds.toUserPubkey = :userPubkey)', {
+				type: TxTypes.BOUNTY_EARNED,
+				userPubkey,
+			});
+	}
+
 	async getUserTransactions(userPubkey: string, limit: number, offset: number) {
-		return await BtcTransactionDataSource.find({
-			where: [{fromUserPubkey: userPubkey}, {toUserPubkey: userPubkey}],
-			take: limit,
-			skip: offset,
-		});
+		return this.getTransactionBaseQuery(userPubkey)
+			.limit(limit)
+			.offset(offset)
+			.getRawMany();
 	}
 
 	async getUserTransactionsCount(userPubkey: string): Promise<number> {
-		return await BtcTransactionDataSource.count({
-			where: [{fromUserPubkey: userPubkey}, {toUserPubkey: userPubkey}],
-		});
+		return this.getTransactionBaseQuery(userPubkey).getCount();
 	}
 }
 
