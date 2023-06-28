@@ -57,7 +57,7 @@ const apiDocumentation = {
 			url: 'https://www.apache.org/licenses/LICENSE-2.0.html',
 		},
 	},
-	security: [{bearerAuth: []}],
+	security: [{bearerAuth: [], apiKey: []}],
 	servers: [
 		{
 			url: `http://localhost:${env.PORT}/${apiVersion}`,
@@ -155,6 +155,11 @@ const apiDocumentation = {
 				description: 'Bearer Token',
 				scheme: 'bearer',
 				bearerFormat: 'JWT',
+			},
+			apiKey: {
+				type: 'apiKey',
+				in: 'header',
+				name: 'apikey', // XXX: not camelCase becouse of http header naming convention
 			},
 		},
 		responses: {
