@@ -1,18 +1,25 @@
 import {getAuth, signInWithEmailAndPassword} from 'firebase/auth';
-import UserRepository from '../Repositories/UserRepository';
-import {UserAttributes} from '../domains/entities/User';
+
+import BtcTransactionsRepository from '../Repositories/BtcTransactionsRepository';
 import {CustomError} from '../util/CustomError';
 import {HttpCodes} from '../util/HttpCodes';
 import {TxTypes} from '../util/enums';
-import {UserAttributes} from '../models/UserModel';
+import {UserAttributes} from '../domains/entities/User';
 import UserRepository from '../Repositories/UserRepository';
-import dbconnection from '../util/dbconnection';
-import {firebase} from '../config/firebase-config';
 import dataSource from '../domains/repo';
-import BtcTransactionsRepository from '../Repositories/BtcTransactionsRepository';
+import {firebase} from '../config/firebase-config';
 
 class UserService {
 	async createUser(user: UserAttributes) {
+		const emailToLowerCase = user.email.toLowerCase();
+		const pubkeyToLowerCase = user.pubkey.toLowerCase();
+		const isExsist = await UserRepository.getUserDetailsByEmail(
+			emailToLowerCase,
+		);
+		// XXX(david): Pass in the logic to create the user if it exists.
+		// Because we have only 1 process to sign up and sign in.
+		if (isExsist) return isExsist;
+
 		const querryRunner = dataSource.createQueryRunner();
 		await querryRunner.connect();
 		await querryRunner.startTransaction('REPEATABLE READ');
@@ -20,14 +27,14 @@ class UserService {
 		try {
 			const createdUser = await UserRepository.createUser({
 				...user,
-				pubkey: user.pubkey.toLowerCase(),
-				email: user.email.toLowerCase(),
+				pubkey: pubkeyToLowerCase,
+				email: emailToLowerCase,
 			});
 
 			await BtcTransactionsRepository.createTransaction({
 				amount: 1000, // SIGN_UP_BONUS
-				toUserPubkey: user.pubkey,
-				fromUserPubkey: user.pubkey, // Initial transcation
+				toUserPubkey: pubkeyToLowerCase,
+				fromUserPubkey: pubkeyToLowerCase, // Initial transcation
 				type: TxTypes.SIGN_UP_BONUS,
 				fee: 0,
 			});

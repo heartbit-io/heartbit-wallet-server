@@ -36,11 +36,10 @@ class UserRepository {
 			.execute();
 	}
 
-	async getUserFcmToken(id: string): Promise<User | null> {
+	async getUserFcmToken(id: number): Promise<User | null> {
 		return await userDataSource.findOne({
 			where: {id},
-			attributes: ['fcmToken'],
-			plain: true,
+			select: {fcmToken: true},
 		});
 	}
 }
