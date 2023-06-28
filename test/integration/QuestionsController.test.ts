@@ -1,29 +1,42 @@
-import {Question, QuestionAttributes} from '../src/models/QuestionModel';
-import {User, UserAttributes} from '../src/models/UserModel';
+import {
+	Question,
+	QuestionAttributes,
+} from '../../src/domains/entities/Question';
+import {User, UserAttributes} from '../../src/domains/entities/User';
 
-import {HttpCodes} from '../src/util/HttpCodes';
-import {QuestionStatus} from '../src/util/enums';
-import app from '../src/index';
+import {HttpCodes} from '../../src/util/HttpCodes';
+import {QuestionStatus} from '../../src/util/enums';
+import app from '../../src/index';
 import {expect} from 'chai';
 import {faker} from '@faker-js/faker';
 import {agent as request} from 'supertest';
+import {newUser} from './UsersController.test';
 
 const base_url = '/api/v1';
 
+export const newQuestion = () => {
+	return {
+		userId: faker.number.int({min: 1, max: 50}),
+		content: faker.lorem.sentences(),
+		rawContentLanguage: faker.helpers.arrayElement([
+			'en',
+			'fr',
+			'es',
+			'de',
+			'it',
+		]),
+		bountyAmount: Number(faker.finance.amount()),
+		rawContent: faker.lorem.sentences(),
+		user_email: faker.internet.email(),
+	};
+};
+
 describe('Questions endpoints', () => {
 	afterEach(async () => {
-		await User.destroy({where: {}, truncate: true});
-		await Question.destroy({where: {}, truncate: true});
+		// await User.destroy({where: {}, truncate: true});
+		// await Question.destroy({where: {}, truncate: true});
 	});
 
-	const newUser = () => {
-		return {
-			pubkey: faker.finance.bitcoinAddress() + new Date().getTime().toString(),
-			email: faker.internet.email(),
-			role: faker.helpers.arrayElement(['user', 'admin', 'doctor']),
-			btc_balance: Number(faker.finance.amount()),
-		};
-	};
 	const createUser = async (user: UserAttributes) => {
 		const result = await request(app)
 			.post(base_url + '/users')
@@ -50,13 +63,6 @@ describe('Questions endpoints', () => {
 		};
 	};
 
-	const newQuestion = () => {
-		return {
-			content: faker.lorem.sentences(),
-			bounty_amount: Number(faker.finance.amount()),
-			user_email: faker.internet.email(),
-		};
-	};
 	const createQuestion = async (question: QuestionAttributes) => {
 		return await request(app)
 			.post(base_url + '/questions')
@@ -75,7 +81,7 @@ describe('Questions endpoints', () => {
 			const question_request = {
 				...question,
 				user_email: user.email,
-				bounty_amount: user.btc_balance / 2,
+				bounty_amount: user.btcBalance / 2,
 			};
 
 			const response = await createQuestion(question_request);
@@ -108,7 +114,7 @@ describe('Questions endpoints', () => {
 			const question_request = {
 				...question,
 				user_email: user.email,
-				bounty_amount: user.btc_balance + 2,
+				bounty_amount: user.btcBalance + 2,
 			};
 			const response = await createQuestion(question_request);
 			expect(response.status).to.equal(HttpCodes.BAD_REQUEST);
@@ -125,7 +131,7 @@ describe('Questions endpoints', () => {
 			const question_request = {
 				...question,
 				user_email: null,
-				bounty_amount: user.btc_balance / 2,
+				bounty_amount: user.btcBalance / 2,
 			};
 			const response = await request(app)
 				.post(base_url + '/questions')
@@ -145,7 +151,7 @@ describe('Questions endpoints', () => {
 			const question = newQuestion();
 			const user_email = user.email;
 			const content = null;
-			const bounty_amount = user.btc_balance / 2;
+			const bounty_amount = user.btcBalance / 2;
 			const response = await request(app)
 				.post(base_url + '/questions')
 				.send({
@@ -192,7 +198,7 @@ describe('Questions endpoints', () => {
 			const question_request = {
 				...question,
 				user_email: user.email,
-				bounty_amount: user.btc_balance / 2,
+				bounty_amount: user.btcBalance / 2,
 			};
 			await createQuestion(question_request);
 
@@ -216,7 +222,7 @@ describe('Questions endpoints', () => {
 				...question,
 				user_email: user.email,
 				status: QuestionStatus.OPEN,
-				bounty_amount: user.btc_balance / 2,
+				bounty_amount: user.btcBalance / 2,
 			};
 
 			await createQuestion(question_body);
@@ -242,7 +248,7 @@ describe('Questions endpoints', () => {
 				...question,
 				user_email: user.email,
 				status: QuestionStatus.OPEN,
-				bounty_amount: user.btc_balance / 2,
+				bounty_amount: user.btcBalance / 2,
 			};
 			const create_question = await createQuestion(question_body);
 
@@ -273,7 +279,7 @@ describe('Questions endpoints', () => {
 				...question,
 				user_email: user.email,
 				status: QuestionStatus.OPEN,
-				bounty_amount: user.btc_balance / 2,
+				bounty_amount: user.btcBalance / 2,
 			};
 
 			const create_question = await createQuestion(question_body);

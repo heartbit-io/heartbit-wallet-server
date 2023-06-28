@@ -13,11 +13,11 @@ const dataSource = new DataSource({
 	username: env.DB_USER,
 	password: env.DB_PASSWORD,
 	database: env.NODE_ENV === 'production' ? env.DB_NAME : env.TEST_DB_NAME,
-	logging: true,
+	logging: false,
 	synchronize: env.NODE_ENV === 'production' ? false : true,
 	namingStrategy: new SnakeNamingStrategy(),
 	entities: [User, Reply, BtcTransaction, ChatGptReply, Question],
-	// migrations: ['src/migrations/*.ts'],
+	migrations: ['src/migrations/*.ts'],
 });
 
 export const userDataSource = dataSource.getRepository(User);
