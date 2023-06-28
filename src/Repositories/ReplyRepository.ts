@@ -1,9 +1,9 @@
-import {ReplyDataSource} from '../domains/repo';
 import {RepliesAttributes} from '../domains/entities/Reply';
+import {ReplyDataSource} from '../domains/repo';
 
 class ReplyRepository {
 	async createReply(reply: RepliesAttributes) {
-		return ReplyDataSource.create({
+		return ReplyDataSource.save({
 			...reply,
 		});
 	}

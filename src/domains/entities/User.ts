@@ -1,15 +1,16 @@
 import {
-	Entity,
 	Column,
-	PrimaryGeneratedColumn,
-	OneToMany,
-	UpdateDateColumn,
 	CreateDateColumn,
 	DeleteDateColumn,
+	Entity,
+	OneToMany,
+	PrimaryGeneratedColumn,
+	UpdateDateColumn,
 } from 'typeorm';
-import {UserRoles} from '../../util/enums';
+
 import {Question} from './Question';
 import {Reply} from './Reply';
+import {UserRoles} from '../../util/enums';
 
 @Entity('users')
 export class User {
@@ -37,6 +38,9 @@ export class User {
 
 	@Column({nullable: true, unique: true})
 	airTableRecordId: string;
+
+	@Column({nullable: true, unique: true})
+	fcmToken: string;
 
 	@CreateDateColumn({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
 	createdAt: Date;
