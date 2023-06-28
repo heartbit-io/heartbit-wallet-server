@@ -1,16 +1,17 @@
-import {QuestionStatus, TxTypes} from '../util/enums';
+import {QuestionStatus, QuestionTypes, TxTypes} from '../util/enums';
+
+import ChatgptService from './ChatgptService';
 import {CustomError} from '../util/CustomError';
 import EventEmitter from 'events';
 import {HttpCodes} from '../util/HttpCodes';
+import {JsonAnswerInterface} from '../domains/entities/ChatGptReply';
 import QuestionRepository from '../Repositories/QuestionRepository';
+import {RepliesAttributes} from '../domains/entities/Reply';
 import ReplyRepository from '../Repositories/ReplyRepository';
 import TransactionsRepository from '../Repositories/BtcTransactionsRepository';
 import UserRepository from '../Repositories/UserRepository';
 import {UserRoles} from '../util/enums/userRoles';
 import admin from '../config/firebase-config';
-import {RepliesAttributes} from '../domains/entities/Reply';
-import {JsonAnswerInterface} from '../domains/entities/ChatGptReply';
-import ChatgptService from './ChatgptService';
 
 const eventEmitter = new EventEmitter();
 
@@ -185,6 +186,10 @@ class DoctorService {
 				throw new CustomError(HttpCodes.NOT_FOUND, 'AI reply not found');
 
 			const aiJsonReply = aiReply.jsonAnswer;
+
+			if (question.type === QuestionTypes.GENERAL) {
+				aiJsonReply.doctorNote = aiJsonReply.doctorAnswer;
+			}
 
 			return {...question, aiJsonReply};
 		} catch (error: any) {

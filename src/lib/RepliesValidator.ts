@@ -1,4 +1,5 @@
 import {body, param} from 'express-validator';
+
 import QuestionRepository from '../Repositories/QuestionRepository';
 import ReplyRepository from '../Repositories/ReplyRepository';
 import UserRepository from '../Repositories/UserRepository';
@@ -30,15 +31,7 @@ class RepliesValidator {
 						throw new Error('Question does not exist');
 					}
 				}),
-			body([
-				'content',
-				'majorComplaint',
-				'medicalHistory',
-				'currentMedications',
-				'assessment',
-				'plan',
-				'triage',
-			])
+			body(['doctorNote'])
 				.isString()
 				.notEmpty()
 				.rtrim()
