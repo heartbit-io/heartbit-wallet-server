@@ -1,5 +1,6 @@
-import {userDataSource} from '../domains/repo';
 import {User, UserAttributes} from '../domains/entities/User';
+
+import {userDataSource} from '../domains/repo';
 
 class UserRepository {
 	async getUserDetailsById(id: number) {
@@ -33,6 +34,14 @@ class UserRepository {
 			.set({btcBalance})
 			.where('id = :id', {id})
 			.execute();
+	}
+
+	async getUserFcmToken(id: string): Promise<User | null> {
+		return await userDataSource.findOne({
+			where: {id},
+			attributes: ['fcmToken'],
+			plain: true,
+		});
 	}
 }
 
