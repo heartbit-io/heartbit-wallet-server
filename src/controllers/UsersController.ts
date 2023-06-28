@@ -22,28 +22,11 @@ class UsersController {
 		// const dbTransaction = await dbconnection.transaction();
 
 		try {
-			const createdUser = await UserRepository.createUser(
-				{
-					...user,
-					pubkey: user.pubkey.toLowerCase(),
-					email: user.email.toLowerCase(),
-				},
-				// dbTransaction,
-			);
-
-			await BtcTransactionsRepository.createTransaction(
-				{
-					amount: 1000, // SIGN_UP_BONUS
-					toUserPubkey: user.pubkey,
-					fromUserPubkey: user.pubkey, // Initial transcation
-					type: TxTypes.SIGN_UP_BONUS,
-					fee: 0,
-				},
-				// dbTransaction,
-			);
 			if (isExsist) {
+				// XXX(david): refactoring
 				// Pass in the logic to create the user if it exists.
 				// Because we have only 1 process to sign up and sign in.
+
 				return res
 					.status(HttpCodes.OK)
 					.json(
