@@ -159,7 +159,7 @@ const apiDocumentation = {
 			apiKey: {
 				type: 'apiKey',
 				in: 'header',
-				name: 'api_key',
+				name: 'apikey', // XXX: not camelCase becouse of http header naming convention
 			},
 		},
 		responses: {
