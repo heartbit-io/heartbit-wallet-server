@@ -1,14 +1,15 @@
 import Auth from '../middleware/Auth';
 import {Router} from 'express';
 import UsersController from '../controllers/UsersController';
-import Validation from '../middleware/Validation';
 import UsersValidator from '../lib/UsersValidator';
+import Validation from '../middleware/Validation';
 
 const router = Router();
 
 router.get('/login', UsersController.login);
 router.post(
 	'/',
+	Auth.verifyApiKey,
 	UsersValidator.userCreate(),
 	Validation.validate,
 	UsersController.create,

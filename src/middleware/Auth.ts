@@ -8,11 +8,12 @@ import admin from '../config/firebase-config';
 
 export interface DecodedRequest extends Request {
 	email?: string;
+	api_key?: string;
 }
 
 class Auth {
-	verifyApiKey(req: Request, res: Response, next: NextFunction) {
-		const isVerified = req?.headers?.apiKey === process.env.API_KEY;
+	verifyApiKey(req: DecodedRequest, res: Response, next: NextFunction) {
+		const isVerified = req?.headers?.api_key === process.env.API_KEY;
 		if (isVerified) return next();
 
 		Sentry.captureMessage(`[${HttpCodes.UNAUTHORIZED}] Unauthorized - API Key`);
