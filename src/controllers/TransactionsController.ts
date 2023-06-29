@@ -10,7 +10,7 @@ class TransactionsController {
 			const offset = req.query.offset ? Number(req.query.offset) : 0;
 
 			const {pubkey} = req.params;
-			const transactions = await TransactionService.getUserTransactions(
+			const {transactions} = await TransactionService.getUserTransactions(
 				pubkey.toLocaleLowerCase(),
 				limit,
 				offset,

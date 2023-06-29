@@ -39,7 +39,7 @@ class BtcTransactionRepository {
 		return this.getTransactionBaseQuery(userPubkey)
 			.limit(limit)
 			.offset(offset)
-			.getRawMany();
+			.getMany();
 	}
 
 	async getUserTransactionsCount(userPubkey: string): Promise<number> {
