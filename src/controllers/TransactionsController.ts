@@ -1,4 +1,5 @@
 import {Request, Response} from 'express';
+
 import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
 import TransactionService from '../services/TransactionService';
@@ -10,7 +11,7 @@ class TransactionsController {
 			const offset = req.query.offset ? Number(req.query.offset) : 0;
 
 			const {pubkey} = req.params;
-			const {transactions} = await TransactionService.getUserTransactions(
+			const transactions = await TransactionService.getUserTransactions(
 				pubkey.toLocaleLowerCase(),
 				limit,
 				offset,
