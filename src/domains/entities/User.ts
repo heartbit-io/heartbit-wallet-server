@@ -62,6 +62,29 @@ export class User {
 	isDoctor() {
 		return this.role === UserRoles.DOCTOR;
 	}
+
+	isUser() {
+		return this.role === UserRoles.USER;
+	}
+
+	isAdmin() {
+		return this.role === UserRoles.ADMIN;
+	}
+
+	userExists() {
+		return this.id !== undefined;
+	}
+
+	getUserDetails() {
+		return {
+			id: this.id,
+			pubkey: this.pubkey,
+			email: this.email,
+			role: this.role,
+			btcBalance: this.btcBalance,
+			airTableRecordId: this.airTableRecordId,
+		};
+	}
 }
 
 export interface UserAttributes {

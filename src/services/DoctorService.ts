@@ -54,7 +54,7 @@ class DoctorService {
 				);
 
 			// If the bounty is 0, no bounty is calculated.
-			if (question.bountyAmount) {
+			if (question.bountyAmount && question.bountyAmount > 0) {
 				// 100 is default sats
 				// const calulatedFee =
 				// 	100 + Math.floor((question.bountyAmount - 100) * 0.02);

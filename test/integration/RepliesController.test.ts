@@ -16,12 +16,6 @@ import {ReplyStatus} from '../../src/util/enums';
 const base_url = '/api/v1';
 
 describe('Replies endpoints', () => {
-	afterEach(async () => {
-		// await User.destroy({where: {}, truncate: true});
-		// await Question.destroy({where: {}, truncate: true});
-		// await Reply.destroy({where: {}, truncate: true});
-	});
-
 	const createUser = async (user: UserAttributes) => {
 		const result = await request(app)
 			.post(base_url + '/users')

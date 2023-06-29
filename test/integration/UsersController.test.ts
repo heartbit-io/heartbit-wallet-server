@@ -4,7 +4,7 @@ import {agent as request} from 'supertest';
 import {HttpCodes} from '../../src/util/HttpCodes';
 import {faker} from '@faker-js/faker';
 import {User, UserAttributes} from '../../src/domains/entities/User';
-import { UserRoles } from '../../src/util/enums';
+import {UserRoles} from '../../src/util/enums';
 import dataSource from '../../src/domains/repo';
 
 const base_url = '/api/v1';
@@ -13,7 +13,11 @@ export const newUser = () => {
 	return {
 		pubkey: faker.finance.bitcoinAddress() + new Date().getTime().toString(),
 		email: faker.internet.email(),
-		role: faker.helpers.arrayElement(Object.values(UserRoles)),
+		role: faker.helpers.arrayElement([
+			UserRoles.ADMIN,
+			UserRoles.USER,
+			UserRoles.DOCTOR,
+		]),
 		btcBalance: Number(faker.finance.amount()),
 		air_table_record_id: faker.number.int(),
 	};
