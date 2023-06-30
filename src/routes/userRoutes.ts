@@ -6,7 +6,6 @@ import Validation from '../middleware/Validation';
 
 const router = Router();
 
-router.get('/login', UsersController.login);
 router.post(
 	'/',
 	Auth.verifyApiKey,
