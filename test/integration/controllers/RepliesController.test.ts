@@ -1,17 +1,17 @@
 import {agent as request} from 'supertest';
 import {expect} from 'chai';
 import {faker} from '@faker-js/faker';
-import {HttpCodes} from '../../src/util/HttpCodes';
-import app from '../../src/index';
-import {User, UserAttributes} from '../../src/domains/entities/User';
+import {HttpCodes} from '../../../src/util/HttpCodes';
+import app from '../../../src/index';
+import {User, UserAttributes} from '../../../src/domains/entities/User';
 import {
 	Question,
 	QuestionAttributes,
-} from '../../src/domains/entities/Question';
-import {RepliesAttributes} from '../../src/domains/entities/Reply';
+} from '../../../src/domains/entities/Question';
+import {RepliesAttributes} from '../../../src/domains/entities/Reply';
 import {newQuestion} from './QuestionsController.test';
 import {newUser} from './UsersController.test';
-import {ReplyStatus} from '../../src/util/enums';
+import {ReplyStatus} from '../../../src/util/enums';
 
 const base_url = '/api/v1';
 

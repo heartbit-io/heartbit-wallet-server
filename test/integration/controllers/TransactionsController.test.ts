@@ -1,15 +1,15 @@
-import {HttpCodes} from '../../src/util/HttpCodes';
+import {HttpCodes} from '../../../src/util/HttpCodes';
 import {
 	QuestionAttributes,
 	Question,
-} from '../../src/domains/entities/Question';
-import {RepliesAttributes} from '../../src/domains/entities/Reply';
+} from '../../../src/domains/entities/Question';
+import {RepliesAttributes} from '../../../src/domains/entities/Reply';
 import {
 	BtcTransaction,
 	BtcTransactionFields,
-} from '../../src/domains/entities/BtcTransaction';
-import {User, UserAttributes} from '../../src/domains/entities/User';
-import app from '../../src/index';
+} from '../../../src/domains/entities/BtcTransaction';
+import {User, UserAttributes} from '../../../src/domains/entities/User';
+import app from '../../../src/index';
 import {expect} from 'chai';
 import {faker} from '@faker-js/faker';
 import {agent as request} from 'supertest';

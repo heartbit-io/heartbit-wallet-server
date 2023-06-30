@@ -1,12 +1,12 @@
 import {
 	Question,
 	QuestionAttributes,
-} from '../../src/domains/entities/Question';
-import {User, UserAttributes} from '../../src/domains/entities/User';
+} from '../../../src/domains/entities/Question';
+import {User, UserAttributes} from '../../../src/domains/entities/User';
 
-import {HttpCodes} from '../../src/util/HttpCodes';
-import {QuestionStatus} from '../../src/util/enums';
-import app from '../../src/index';
+import {HttpCodes} from '../../../src/util/HttpCodes';
+import {QuestionStatus} from '../../../src/util/enums';
+import app from '../../../src/index';
 import {expect} from 'chai';
 import {faker} from '@faker-js/faker';
 import {agent as request} from 'supertest';
