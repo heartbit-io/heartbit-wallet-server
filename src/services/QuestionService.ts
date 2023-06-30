@@ -1,11 +1,12 @@
-import {QuestionAttributes} from '../domains/entities/Question';
+import {QuestionStatus, TxTypes} from '../util/enums';
+
 import {CustomError} from '../util/CustomError';
 import DeeplService from './DeeplService';
 import {HttpCodes} from '../util/HttpCodes';
+import {QuestionAttributes} from '../domains/entities/Question';
 import QuestionRepository from '../Repositories/QuestionRepository';
-import UserRepository from '../Repositories/UserRepository';
 import TransactionsRepository from '../Repositories/BtcTransactionsRepository';
-import {QuestionStatus, TxTypes} from '../util/enums';
+import UserRepository from '../Repositories/UserRepository';
 import dataSource from '../domains/repo';
 class QuestionService {
 	async create(question: QuestionAttributes, email: string | undefined) {
@@ -30,11 +31,6 @@ class QuestionService {
 
 			const userBtcBalance = user.btcBalance;
 
-			if (!userBtcBalance)
-				throw new CustomError(
-					HttpCodes.NOT_FOUND,
-					'Error getting user balance',
-				);
 			if (questionBounty > userBtcBalance) {
 				throw new CustomError(
 					HttpCodes.BAD_REQUEST,
