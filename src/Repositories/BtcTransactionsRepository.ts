@@ -19,9 +19,6 @@ class BtcTransactionRepository {
 				'(btds.fromUserPubkey = :userPubkey OR btds.toUserPubkey = :userPubkey)',
 				{userPubkey},
 			)
-			.andWhere(
-				'(btds.fromUserPubkey = :userPubkey AND btds.toUserPubkey = :userPubkey)',
-			)
 			.andWhere('btds.amount != 0')
 			.orWhere('(btds.type = :type AND btds.toUserPubkey = :userPubkey)', {
 				type: TxTypes.BOUNTY_EARNED,
