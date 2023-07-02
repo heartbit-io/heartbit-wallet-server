@@ -14,12 +14,12 @@ export class BtcTransaction1687254870696 implements MigrationInterface {
 					},
 					{
 						name: 'amount',
-						type: 'double precision',
+						type: 'numeric',
 						isNullable: false,
 					},
 					{
 						name: 'fee',
-						type: 'double precision',
+						type: 'numeric',
 						isNullable: false,
 					},
 					{

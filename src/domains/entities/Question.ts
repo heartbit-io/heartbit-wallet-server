@@ -31,7 +31,7 @@ export class Question {
 	@Column()
 	userId: number;
 
-	@Column({type: 'double precision', default: 0})
+	@Column({type: 'numeric', default: 0})
 	bountyAmount: number;
 
 	@Column({

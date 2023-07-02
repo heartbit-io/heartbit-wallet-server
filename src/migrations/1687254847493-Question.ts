@@ -33,7 +33,7 @@ export class Question1687254847493 implements MigrationInterface {
 					},
 					{
 						name: 'bounty_amount',
-						type: 'double precision',
+						type: 'numeric',
 						default: 0,
 					},
 					{
