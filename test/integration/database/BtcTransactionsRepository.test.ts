@@ -7,7 +7,7 @@ import {TxTypes} from '../../../src/util/enums';
 import dataSource from '../../../src/domains/repo';
 import {afterEach, after} from 'mocha';
 
-describe('BtcTransactions queries', () => {
+describe('BtcTransactions Repository queries', () => {
 	afterEach(async () => {
 		await BtcTransactionDataSource.delete({});
 	});
@@ -27,10 +27,7 @@ describe('BtcTransactions queries', () => {
 	};
 
 	const createBtcTransaction = async (btcTransaction: BtcTransaction) => {
-		const result = await BtcTransactionsRepository.createTransaction(
-			btcTransaction,
-		);
-		return result;
+		return await BtcTransactionsRepository.createTransaction(btcTransaction);
 	};
 
 	it('should create a btc transaction', async () => {

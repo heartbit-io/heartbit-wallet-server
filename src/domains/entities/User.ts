@@ -33,7 +33,7 @@ export class User {
 	})
 	role: UserRoles;
 
-	@Column()
+	@Column({type: 'numeric', default: 0})
 	btcBalance: number;
 
 	@Column({nullable: true, unique: true})
