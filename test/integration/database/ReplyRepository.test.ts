@@ -1,5 +1,5 @@
 import {faker} from '@faker-js/faker';
-import {expect, use} from 'chai';
+import {expect} from 'chai';
 import dataSource, {
 	QuestionDataSource,
 	ReplyDataSource,
@@ -126,7 +126,7 @@ describe('Replies Repository queries', () => {
 		reply.questionId = createdQuestion.id;
 		await createReply(reply);
 
-		const replyByUserId = await ReplyRepository.getUserReplies(doctor.id);
+		const replyByUserId = await ReplyRepository.getDoctorReplies(doctor.id);
 		expect(replyByUserId).to.be.an('array');
 		expect(replyByUserId[0]).to.have.property('id');
 		expect(replyByUserId[0])
