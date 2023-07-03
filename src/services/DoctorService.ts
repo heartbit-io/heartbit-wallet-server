@@ -3,6 +3,7 @@ import {QuestionStatus, QuestionTypes, TxTypes} from '../util/enums';
 import ChatgptService from './ChatgptService';
 import {CustomError} from '../util/CustomError';
 import EventEmitter from 'events';
+import FcmService from '../services/FcmService';
 import {HttpCodes} from '../util/HttpCodes';
 import {JsonAnswerInterface} from '../domains/entities/ChatGptReply';
 import QuestionRepository from '../Repositories/QuestionRepository';
@@ -91,8 +92,13 @@ class DoctorService {
 				QuestionStatus.CLOSED,
 				Number(question.id),
 			);
-
 			// XXX, TODO(david): end a database transaction
+
+			await FcmService.sendNotification(
+				question.userId,
+				'HeartBit',
+				"A human doctor's answer has arrived",
+			);
 
 			return reply;
 		} catch (error: any) {
