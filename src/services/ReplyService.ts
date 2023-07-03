@@ -2,6 +2,7 @@ import AirtableService from './AirtableService';
 import ChatgptService from './ChatgptService';
 import {CustomError} from '../util/CustomError';
 import DeeplService from '../services/DeeplService';
+import FcmService from '../services/FcmService';
 import {HttpCodes} from '../util/HttpCodes';
 import {QuestionAttributes} from '../domains/entities/Question';
 import QuestionRepository from '../Repositories/QuestionRepository';
@@ -57,6 +58,12 @@ class ReplyService {
 			const translatedReply = await DeeplService.getTextTranslatedIntoEnglish(
 				translateText,
 				rawContentLanguage,
+			);
+
+			await FcmService.sendNotification(
+				question.userId,
+				'HeartBit',
+				"GPT-3.5's advice has arrived",
 			);
 
 			// set response
