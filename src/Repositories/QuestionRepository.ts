@@ -9,7 +9,6 @@ class QuestionRepository {
 	}
 
 	async updateStatus(status: QuestionStatus, id: number) {
-		// return await Question.update({status}, {where: {id}});
 		return await QuestionDataSource.update(id, {status});
 	}
 
