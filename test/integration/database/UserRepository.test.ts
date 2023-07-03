@@ -2,33 +2,39 @@ import {faker} from '@faker-js/faker';
 import {expect} from 'chai';
 import dataSource, {userDataSource} from '../../../src/domains/repo';
 import UserRepository from '../../../src/Repositories/UserRepository';
-import {afterEach, after} from 'mocha';
+import {afterEach, after, before} from 'mocha';
+import {UserRoles} from '../../../src/util/enums';
+
+export const newUser = () => {
+	return {
+		id: faker.number.int({min: 1, max: 50}),
+		email: faker.internet.email(),
+		pubkey: faker.string.alphanumeric(32),
+		btcBalance: Number(faker.finance.amount()),
+		role: faker.helpers.arrayElement(Object.values(UserRoles)),
+		fcmToken: faker.string.alphanumeric(32),
+		createdAt: faker.date.past(),
+		updatedAt: faker.date.past(),
+		deletedAt: null,
+	};
+};
+
+export const createUser = async (user: any) => {
+	return await UserRepository.createUser(user);
+};
 
 describe('User Repository queries', () => {
+	before(async () => {
+		await dataSource.initialize();
+	});
+	after(async () => {
+		dataSource.destroy();
+	});
 	afterEach(async () => {
 		await userDataSource.delete({});
 	});
 
-	const newUser = () => {
-		return {
-			id: faker.number.int({min: 1, max: 50}),
-			email: faker.internet.email(),
-			pubkey: faker.string.alphanumeric(32),
-			btcBalance: Number(faker.finance.amount()),
-			fcmToken: faker.string.alphanumeric(32),
-			createdAt: faker.date.past(),
-			updatedAt: faker.date.past(),
-			deletedAt: null,
-		};
-	};
-
-	const createUser = async (user: any) => {
-		return await UserRepository.createUser(user);
-	};
-
 	it('should create a user', async () => {
-		await dataSource.initialize();
-
 		const user = newUser();
 		const result = await createUser(user);
 		expect(result).to.be.an('object');
@@ -113,9 +119,5 @@ describe('User Repository queries', () => {
 		const result = await createUser(user);
 		const userFcmToken = await UserRepository.getUserFcmToken(result.id);
 		expect(userFcmToken?.fcmToken).to.equal(result.fcmToken);
-	});
-
-	after(async () => {
-		dataSource.destroy();
 	});
 });

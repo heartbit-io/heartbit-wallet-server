@@ -47,7 +47,6 @@ class ReplyRepository {
 	}
 
 	async deleteReply(replyId: number) {
-		// return await ReplyDataSource.softDelete(reply);
 		return await ReplyDataSource.createQueryBuilder()
 			.softDelete()
 			.where('id = :id', {id: replyId})

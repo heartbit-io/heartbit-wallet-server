@@ -5,34 +5,38 @@ import {BtcTransactionDataSource} from '../../../src/domains/repo';
 import {BtcTransaction} from '../../../src/domains/entities/BtcTransaction';
 import {TxTypes} from '../../../src/util/enums';
 import dataSource from '../../../src/domains/repo';
-import {afterEach, after} from 'mocha';
+import {afterEach, after, before} from 'mocha';
+
+export const newBtcTransaction = () => {
+	return {
+		id: faker.number.int({min: 1, max: 50}),
+		amount: Number(faker.finance.amount()),
+		fromUserPubkey: faker.string.alphanumeric(32),
+		toUserPubkey: faker.string.alphanumeric(32),
+		fee: Number(faker.finance.amount()),
+		type: faker.helpers.arrayElement(Object.values(TxTypes)),
+		createdAt: faker.date.past(),
+		updatedAt: faker.date.past(),
+		deletedAt: null,
+	};
+};
+
+export const createBtcTransaction = async (btcTransaction: BtcTransaction) => {
+	return await BtcTransactionsRepository.createTransaction(btcTransaction);
+};
 
 describe('BtcTransactions Repository queries', () => {
+	before(async () => {
+		await dataSource.initialize();
+	});
+	after(async () => {
+		dataSource.destroy();
+	});
 	afterEach(async () => {
 		await BtcTransactionDataSource.delete({});
 	});
 
-	const newBtcTransaction = () => {
-		return {
-			id: faker.number.int({min: 1, max: 50}),
-			amount: Number(faker.finance.amount()),
-			fromUserPubkey: faker.string.alphanumeric(32),
-			toUserPubkey: faker.string.alphanumeric(32),
-			fee: Number(faker.finance.amount()),
-			type: faker.helpers.arrayElement(Object.values(TxTypes)),
-			createdAt: faker.date.past(),
-			updatedAt: faker.date.past(),
-			deletedAt: null,
-		};
-	};
-
-	const createBtcTransaction = async (btcTransaction: BtcTransaction) => {
-		return await BtcTransactionsRepository.createTransaction(btcTransaction);
-	};
-
 	it('should create a btc transaction', async () => {
-		await dataSource.initialize();
-
 		const btcTransaction = newBtcTransaction();
 		const result = await createBtcTransaction(btcTransaction);
 		expect(result).to.be.an('object');
@@ -93,9 +97,5 @@ describe('BtcTransactions Repository queries', () => {
 			);
 		expect(userTransactionsCount).to.be.an('number');
 		expect(userTransactionsCount).to.equal(2);
-	});
-
-	after(async () => {
-		dataSource.destroy();
 	});
 });

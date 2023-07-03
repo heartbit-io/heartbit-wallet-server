@@ -82,4 +82,5 @@ export interface RepliesAttributes {
 	assessment: string;
 	plan: string;
 	triage: string;
+	doctorNote: string;
 }
