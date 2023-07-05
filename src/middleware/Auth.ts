@@ -1,10 +1,9 @@
 import * as Sentry from '@sentry/node';
-
 import {NextFunction, Request, Response} from 'express';
-
 import {HttpCodes} from '../util/HttpCodes';
 import ResponseDto from '../dto/ResponseDTO';
 import admin from '../config/firebase-config';
+import {env} from '../config/env';
 
 export interface DecodedRequest extends Request {
 	email?: string;
@@ -13,7 +12,7 @@ export interface DecodedRequest extends Request {
 
 class Auth {
 	verifyApiKey(req: DecodedRequest, res: Response, next: NextFunction) {
-		const isVerified = req?.headers?.apikey === process.env.API_KEY;
+		const isVerified = req?.headers?.apikey === env.API_KEY;
 		if (isVerified) return next();
 
 		Sentry.captureMessage(`[${HttpCodes.UNAUTHORIZED}] Unauthorized - API Key`);

@@ -31,21 +31,22 @@ export class Question {
 	@Column()
 	userId: number;
 
-	@Column({type: 'double precision', default: 0})
+	@Column({type: 'numeric', default: 0})
 	bountyAmount: number;
 
 	@Column({
 		type: 'enum',
-		enum: [...Object.values(QuestionStatus)],
+		enum: QuestionStatus,
 		default: QuestionStatus.OPEN,
 	})
-	status: string;
+	status: QuestionStatus;
 
 	@Column({
 		type: 'enum',
-		enum: [...Object.values(QuestionTypes)],
+		enum: QuestionTypes,
+		default: QuestionTypes.GENERAL,
 	})
-	type: string;
+	type: QuestionTypes;
 
 	@Column({type: 'text'})
 	currentMedication: string;

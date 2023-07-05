@@ -14,10 +14,6 @@ class ReplyRepository {
 		});
 	}
 
-	async getUserReplies(userId: number) {
-		return await ReplyDataSource.find({where: {userId}});
-	}
-
 	async getQuestionReplies(questionId: number) {
 		return await ReplyDataSource.find({where: {questionId}});
 	}
@@ -35,9 +31,7 @@ class ReplyRepository {
 	}
 
 	async getDoctorReplies(userId: number) {
-		return await ReplyDataSource.find({
-			where: {userId},
-		});
+		return await ReplyDataSource.find({where: {userId}});
 	}
 
 	async getDoctorReply(questionId: number, userId: number) {
@@ -47,7 +41,6 @@ class ReplyRepository {
 	}
 
 	async deleteReply(replyId: number) {
-		// return await ReplyDataSource.softDelete(reply);
 		return await ReplyDataSource.createQueryBuilder()
 			.softDelete()
 			.where('id = :id', {id: replyId})

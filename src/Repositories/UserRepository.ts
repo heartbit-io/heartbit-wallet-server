@@ -1,6 +1,6 @@
 import {User, UserAttributes} from '../domains/entities/User';
 
-import {userDataSource} from '../domains/repo';
+import dataSource, {userDataSource} from '../domains/repo';
 
 class UserRepository {
 	async getUserDetailsById(id: number) {
@@ -27,8 +27,7 @@ class UserRepository {
 	}
 
 	async updateUserBtcBalance(btcBalance: number, id: number) {
-		// return await User.update({btcBalance}, {where: {id}});
-		return await userDataSource
+		return await dataSource
 			.createQueryBuilder()
 			.update(User)
 			.set({btcBalance})

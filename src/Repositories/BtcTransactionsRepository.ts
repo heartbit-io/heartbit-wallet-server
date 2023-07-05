@@ -3,20 +3,14 @@ import {BtcTransactionFields} from '../domains/entities/BtcTransaction';
 import {TxTypes} from '../util/enums';
 
 class BtcTransactionRepository {
-	async createTransaction(
-		transaction: BtcTransactionFields,
-		dbTransaction?: any,
-	) {
-		return await BtcTransactionDataSource.save(
-			{
-				amount: transaction.amount,
-				fromUserPubkey: transaction.fromUserPubkey,
-				toUserPubkey: transaction.toUserPubkey,
-				fee: transaction.fee,
-				type: transaction.type,
-			},
-			{transaction: dbTransaction},
-		);
+	async createTransaction(transaction: BtcTransactionFields) {
+		return await BtcTransactionDataSource.save({
+			amount: transaction.amount,
+			fromUserPubkey: transaction.fromUserPubkey,
+			toUserPubkey: transaction.toUserPubkey,
+			fee: transaction.fee,
+			type: transaction.type,
+		});
 	}
 
 	private getTransactionBaseQuery(userPubkey: string) {
@@ -24,9 +18,6 @@ class BtcTransactionRepository {
 			.where(
 				'(btds.fromUserPubkey = :userPubkey OR btds.toUserPubkey = :userPubkey)',
 				{userPubkey},
-			)
-			.andWhere(
-				'(btds.fromUserPubkey = :userPubkey AND btds.toUserPubkey = :userPubkey)',
 			)
 			.andWhere('btds.amount != 0')
 			.orWhere('(btds.type = :type AND btds.toUserPubkey = :userPubkey)', {

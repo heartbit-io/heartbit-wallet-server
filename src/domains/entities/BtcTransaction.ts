@@ -16,7 +16,7 @@ export class BtcTransaction {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@Column()
+	@Column({type: 'numeric'})
 	amount: number;
 
 	@Column({
@@ -25,7 +25,7 @@ export class BtcTransaction {
 	})
 	type: TxTypes;
 
-	@Column()
+	@Column({type: 'numeric'})
 	fee: number;
 
 	@Column()
@@ -41,25 +41,7 @@ export class BtcTransaction {
 	updatedAt: Date;
 
 	@DeleteDateColumn({type: 'timestamp', nullable: true})
-	deletedAt: Date;
-
-	@ManyToOne(() => User, {
-		createForeignKeyConstraints: false,
-	})
-	@JoinColumn({
-		name: 'from_user_pubkey',
-		referencedColumnName: 'pubkey',
-	})
-	FromUser: User;
-
-	@ManyToOne(() => User, {
-		createForeignKeyConstraints: false,
-	})
-	@JoinColumn({
-		name: 'to_user_pubkey',
-		referencedColumnName: 'pubkey',
-	})
-	ToUser: User;
+	deletedAt: Date | null;
 }
 
 export interface BtcTransactionFields {

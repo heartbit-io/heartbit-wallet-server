@@ -37,7 +37,7 @@ export class User1687254835212 implements MigrationInterface {
 					},
 					{
 						name: 'btcBalance',
-						type: 'double precision',
+						type: 'numeric',
 						default: 0,
 					},
 					{

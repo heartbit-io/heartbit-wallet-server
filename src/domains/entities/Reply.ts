@@ -25,8 +25,8 @@ export class Reply {
 	@Column({type: 'text'})
 	content: string;
 
-	@Column({type: 'enum', enum: [...Object.values(ReplyStatus)]})
-	status: string;
+	@Column({type: 'enum', enum: ReplyStatus, default: ReplyStatus.DONE})
+	status: ReplyStatus;
 
 	@Column({type: 'text', nullable: true})
 	majorComplaint: string;
@@ -82,4 +82,5 @@ export interface RepliesAttributes {
 	assessment: string;
 	plan: string;
 	triage: string;
+	doctorNote: string;
 }

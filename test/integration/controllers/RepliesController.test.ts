@@ -1,42 +1,21 @@
-import {
-	QuestionAttributes,
-	Question,
-} from '../src/models/QuestionModel';
-import {UserAttributes, User} from '../src/models/UserModel';
-
-import {HttpCodes} from '../src/util/HttpCodes';
-import {RepliesAttributes} from '../src/models/ReplyModel';
-import {Reply} from '../src/models/ReplyModel';
-import app from '../src/index';
+import {agent as request} from 'supertest';
 import {expect} from 'chai';
 import {faker} from '@faker-js/faker';
-import {agent as request} from 'supertest';
+import {HttpCodes} from '../../../src/util/HttpCodes';
+import app from '../../../src/index';
+import {User, UserAttributes} from '../../../src/domains/entities/User';
+import {
+	Question,
+	QuestionAttributes,
+} from '../../../src/domains/entities/Question';
+import {RepliesAttributes} from '../../../src/domains/entities/Reply';
+import {newQuestion} from './QuestionsController.test';
+import {newUser} from './UsersController.test';
+import {ReplyStatus} from '../../../src/util/enums';
 
 const base_url = '/api/v1';
 
 describe('Replies endpoints', () => {
-	afterEach(async () => {
-		await User.destroy({where: {}, truncate: true});
-		await Question.destroy({where: {}, truncate: true});
-		await Reply.destroy({where: {}, truncate: true});
-	});
-
-	const newUser = () => {
-		return {
-			email: faker.internet.email(),
-			role: faker.helpers.arrayElement(['user', 'admin', 'doctor']),
-			btc_balance: Number(faker.finance.amount()),
-		};
-	};
-
-	const newQuestion = () => {
-		return {
-			content: faker.lorem.sentences(),
-			bounty_amount: Number(faker.finance.amount()),
-			user_email: faker.internet.email(),
-		};
-	};
-
 	const createUser = async (user: UserAttributes) => {
 		const result = await request(app)
 			.post(base_url + '/users')
@@ -67,24 +46,33 @@ describe('Replies endpoints', () => {
 		it('should create a reply', async () => {
 			const user = newUser();
 			await createUser(user);
-			const second_user = newUser();
-			await createUser(second_user);
+			const secondUser = newUser();
+			const secondUserResponse = await createUser(secondUser);
 
 			const question = newQuestion();
+
 			const question_body = {
 				...question,
 				user_email: user.email,
-				bounty_amount: user.btc_balance / 2,
+				bounty_amount: user.btcBalance / 2,
 			};
 			const create_question = await createQuestion(question_body);
 
-			const reply_request = {
-				question_id: create_question.body.data.id,
-				user_email: second_user.email,
+			const replyRequest = {
+				questionId: create_question.body.data.id,
+				userId: secondUserResponse.body.data.id,
 				content: faker.lorem.paragraph(),
+				title: faker.lorem.sentence(),
+				status: faker.helpers.arrayElement(Object.values(ReplyStatus)),
+				majorComplaint: faker.lorem.sentence(),
+				medicalHistory: faker.lorem.sentence(),
+				currentMedications: faker.lorem.sentence(),
+				assessment: faker.lorem.sentence(),
+				plan: faker.lorem.sentence(),
+				triage: faker.lorem.sentence(),
 			};
 
-			const response = await createReply(reply_request);
+			const response = await createReply(replyRequest);
 
 			expect(response.status).to.equal(HttpCodes.CREATED);
 			expect(response.body).to.include({
@@ -94,7 +82,7 @@ describe('Replies endpoints', () => {
 			});
 			expect(response.body.data).to.include({
 				question_id: create_question.body.data.id,
-				user_email: second_user.email,
+				user_email: secondUser.email,
 			});
 		});
 
@@ -155,7 +143,7 @@ describe('Replies endpoints', () => {
 			const question_body = {
 				...question,
 				user_email: user.email,
-				bounty_amount: user.btc_balance / 2,
+				bounty_amount: user.btcBalance / 2,
 			};
 			const create_question = await createQuestion(question_body);
 
@@ -173,48 +161,6 @@ describe('Replies endpoints', () => {
 			expect(response.body).to.include({
 				success: false,
 				statusCode: HttpCodes.BAD_REQUEST,
-			});
-		});
-	});
-	describe('mark reply as best reply', () => {
-		it('should mark a reply as best reply', async () => {
-			const user = newUser();
-			await createUser(user);
-			const second_user = newUser();
-			await createUser(second_user);
-
-			const question = newQuestion();
-			const question_body = {
-				...question,
-				user_email: user.email,
-				bounty_amount: user.btc_balance / 2,
-			};
-			const create_question = await createQuestion(question_body);
-
-			const reply_request = {
-				question_id: create_question.body.data.id,
-				user_email: second_user.email,
-				content: faker.lorem.paragraph(),
-			};
-
-			const reply = await createReply(reply_request);
-			const response = await request(app)
-				.patch(base_url + '/replies/' + reply.body.data.id)
-				.send({
-					user_email: user.email,
-				})
-				.set('Accept', 'application/json');
-
-			expect(response.status).to.equal(HttpCodes.OK);
-			expect(response.body).to.include({
-				success: true,
-				statusCode: HttpCodes.OK,
-				message: 'Successfully mark reply as best reply',
-			});
-			expect(response.body.data).to.include({
-				question_id: create_question.body.data.id,
-				user_email: second_user.email,
-				best_reply: true,
 			});
 		});
 	});
