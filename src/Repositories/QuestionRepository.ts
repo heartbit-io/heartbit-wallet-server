@@ -12,7 +12,6 @@ class QuestionRepository {
 		return await QuestionDataSource.update(id, {status});
 	}
 
-	//get all user questions
 	async getAll(
 		userId: number,
 		limit: number | undefined,
