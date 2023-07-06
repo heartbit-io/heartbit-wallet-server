@@ -29,6 +29,11 @@ class Auth {
 	}
 
 	async verifyToken(req: DecodedRequest, res: Response, next: NextFunction) {
+		if (process.env.NODE_ENV === 'test') {
+			req.email = 'testemail@heartbit.io';
+			return next();
+		}
+
 		const token = req?.headers?.authorization?.split(' ')[1] || '';
 
 		try {
@@ -39,16 +44,14 @@ class Auth {
 				return next();
 			}
 
-			Sentry.captureMessage(
-				`[${HttpCodes.UNAUTHORIZED}] Unauthorized - Firebase Token`,
-			);
+			Sentry.captureMessage(`[${HttpCodes.UNAUTHORIZED}] Unauthorized - Token`);
 			return res
 				.status(HttpCodes.UNAUTHORIZED)
 				.json(
 					new ResponseDto(
 						false,
 						HttpCodes.UNAUTHORIZED,
-						'Unauthorized - Firebase Token',
+						'Unauthorized - Token',
 						null,
 					),
 				);

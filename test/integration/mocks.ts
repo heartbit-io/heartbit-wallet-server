@@ -18,8 +18,8 @@ import ReplyRepository from '../../src/Repositories/ReplyRepository';
 export const newUser = () => {
 	return {
 		id: faker.number.int({min: 1, max: 50}),
-		email: faker.internet.email(),
-		pubkey: faker.string.alphanumeric(32),
+		email: faker.internet.email().toLocaleLowerCase(),
+		pubkey: faker.string.alphanumeric(32).toLocaleLowerCase(),
 		btcBalance: Number(faker.finance.amount()),
 		role: faker.helpers.arrayElement(Object.values(UserRoles)),
 		fcmToken: faker.string.alphanumeric(32),
