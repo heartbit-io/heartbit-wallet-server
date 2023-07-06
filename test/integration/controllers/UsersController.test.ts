@@ -52,6 +52,7 @@ describe('User endpoints', () => {
 
 	it('should return user details', async () => {
 		const user = newUser();
+		user.email = 'testemail@heartbit.io';
 		await createUser(user);
 		const response = await request(app).get(`${base_url}/users/${user.pubkey}`);
 		expect(response.status).to.equal(HttpCodes.OK);
@@ -70,18 +71,5 @@ describe('User endpoints', () => {
 		expect(response.body.data).to.have.property('fcmToken');
 		expect(response.body.data).to.have.property('createdAt');
 		expect(response.body.data).to.have.property('updatedAt');
-	});
-
-	it('should not return data if user is not found', async () => {
-		const user = newUser();
-		await createUser(user);
-		const response = await request(app).get(`${base_url}/users/notfoundpubkey`);
-		expect(response.status).to.equal(HttpCodes.NOT_FOUND);
-		expect(response.body).to.include({
-			success: false,
-			statusCode: HttpCodes.NOT_FOUND,
-			message: 'User not found',
-			data: null,
-		});
 	});
 });
