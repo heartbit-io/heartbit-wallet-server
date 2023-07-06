@@ -89,7 +89,7 @@ export const newReply = () => {
 		assessment: faker.lorem.sentence(),
 		plan: faker.lorem.sentence(),
 		triage: faker.lorem.sentence(),
-		doctorNote: faker.lorem.sentence(),
+		doctorNote: faker.lorem.paragraph(),
 		createdAt: faker.date.past(),
 		updatedAt: faker.date.past(),
 		deletedAt: null,
