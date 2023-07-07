@@ -30,6 +30,7 @@ class BtcTransactionRepository {
 		return this.getTransactionBaseQuery(userPubkey)
 			.limit(limit)
 			.offset(offset)
+			.orderBy('btds.createdAt', 'DESC')
 			.getMany();
 	}
 

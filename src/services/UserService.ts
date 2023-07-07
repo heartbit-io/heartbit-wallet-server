@@ -1,4 +1,3 @@
-import {getAuth, signInWithEmailAndPassword} from 'firebase/auth';
 import BtcTransactionsRepository from '../Repositories/BtcTransactionsRepository';
 import {CustomError} from '../util/CustomError';
 import {HttpCodes} from '../util/HttpCodes';
