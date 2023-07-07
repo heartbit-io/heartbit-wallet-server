@@ -65,6 +65,15 @@ export class User1687254835212 implements MigrationInterface {
 			}),
 			true,
 		);
+		// add promotionBtcBalance column
+		await queryRunner.addColumn(
+			'users',
+			new TableColumn({
+				name: 'promotionBtcBalance',
+				type: 'numeric',
+				default: 0,
+			}),
+		);
 	}
 
 	public async down(queryRunner: QueryRunner): Promise<void> {

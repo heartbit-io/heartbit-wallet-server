@@ -8,6 +8,7 @@ import QuestionRepository from '../Repositories/QuestionRepository';
 import TransactionsRepository from '../Repositories/BtcTransactionsRepository';
 import UserRepository from '../Repositories/UserRepository';
 import dataSource from '../domains/repo';
+import {User} from '../domains/entities/User';
 class QuestionService {
 	async create(question: QuestionAttributes, email: string | undefined) {
 		const {
@@ -29,7 +30,7 @@ class QuestionService {
 
 			const questionBounty = Number(bountyAmount);
 
-			const userBtcBalance = user.btcBalance;
+			const userBtcBalance = user.userBalance();
 
 			if (questionBounty > userBtcBalance) {
 				throw new CustomError(
@@ -60,17 +61,8 @@ class QuestionService {
 
 			if (!newQuestion)
 				throw new CustomError(HttpCodes.BAD_REQUEST, 'Error creating question');
-			const userNewBtcBalance = userBtcBalance - questionBounty;
 
-			await UserRepository.updateUserBtcBalance(userNewBtcBalance, user.id);
-
-			await TransactionsRepository.createTransaction({
-				amount: questionBounty,
-				fromUserPubkey: user.pubkey,
-				toUserPubkey: user.pubkey,
-				fee: 0,
-				type: TxTypes.BOUNTY_PLEDGED,
-			});
+			await this.updateUserBalance(user, questionBounty);
 			await querryRunner.commitTransaction();
 			newQuestion.content = content;
 
@@ -85,6 +77,58 @@ class QuestionService {
 				  );
 		} finally {
 			await querryRunner.release();
+		}
+	}
+
+	private async updateUserBalance(user: User, questionBounty: number) {
+		if (user.promotionBtcBalance >= questionBounty) {
+			const userNewPromotionBtcBalance =
+				user.promotionBtcBalance - questionBounty;
+			await UserRepository.updateUserPromotionBtcBalance(
+				userNewPromotionBtcBalance,
+				user.id,
+			);
+			await TransactionsRepository.createTransaction({
+				amount: questionBounty,
+				fromUserPubkey: user.pubkey,
+				toUserPubkey: user.pubkey,
+				fee: 0,
+				type: TxTypes.BOUNTY_PLEDGED,
+			});
+		} else if (
+			user.promotionBtcBalance < questionBounty &&
+			user.promotionBtcBalance > 0
+		) {
+			const userNewPromotionBtcBalance = 0;
+			await UserRepository.updateUserPromotionBtcBalance(
+				userNewPromotionBtcBalance,
+				user.id,
+			);
+			const remainingBounty = questionBounty - user.promotionBtcBalance;
+
+			const userNewBtcBalance = user.btcBalance - remainingBounty;
+
+			await UserRepository.updateUserBtcBalance(userNewBtcBalance, user.id);
+
+			await TransactionsRepository.createTransaction({
+				amount: questionBounty,
+				fromUserPubkey: user.pubkey,
+				toUserPubkey: user.pubkey,
+				fee: 0,
+				type: TxTypes.BOUNTY_PLEDGED,
+			});
+		} else {
+			const userNewBtcBalance = user.btcBalance - questionBounty;
+
+			await UserRepository.updateUserBtcBalance(userNewBtcBalance, user.id);
+
+			await TransactionsRepository.createTransaction({
+				amount: questionBounty,
+				fromUserPubkey: user.pubkey,
+				toUserPubkey: user.pubkey,
+				fee: 0,
+				type: TxTypes.BOUNTY_PLEDGED,
+			});
 		}
 	}
 

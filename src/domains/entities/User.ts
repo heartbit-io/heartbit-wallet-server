@@ -42,6 +42,9 @@ export class User {
 	@Column({nullable: true, unique: true})
 	fcmToken: string;
 
+	@Column({type: 'numeric', default: 0})
+	promotionBtcBalance: number;
+
 	@CreateDateColumn({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
 	createdAt: Date;
 
@@ -84,6 +87,10 @@ export class User {
 			btcBalance: this.btcBalance,
 			airTableRecordId: this.airTableRecordId,
 		};
+	}
+
+	userBalance() {
+		return this.btcBalance + this.promotionBtcBalance;
 	}
 }
 

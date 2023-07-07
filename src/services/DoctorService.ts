@@ -13,6 +13,8 @@ import TransactionsRepository from '../Repositories/BtcTransactionsRepository';
 import UserRepository from '../Repositories/UserRepository';
 import {UserRoles} from '../util/enums/userRoles';
 import admin from '../config/firebase-config';
+import {Question} from '../domains/entities/Question';
+import {User} from '../domains/entities/User';
 
 const eventEmitter = new EventEmitter();
 
@@ -60,11 +62,7 @@ class DoctorService {
 				// const calulatedFee =
 				// 	100 + Math.floor((question.bountyAmount - 100) * 0.02);
 
-				const doctorBalance = doctor.btcBalance + question.bountyAmount;
-				const creditDoctor = await UserRepository.updateUserBtcBalance(
-					doctorBalance,
-					doctor.id,
-				);
+				const creditDoctor = await this.updateDoctorBalance(doctor, question);
 
 				if (!creditDoctor)
 					throw new CustomError(
@@ -109,6 +107,15 @@ class DoctorService {
 						'Internal Server Error',
 				  );
 		}
+	}
+
+	private async updateDoctorBalance(doctor: User, question: Question) {
+		const doctorBalance = doctor.btcBalance + question.bountyAmount;
+		const creditDoctor = await UserRepository.updateUserBtcBalance(
+			doctorBalance,
+			doctor.id,
+		);
+		return creditDoctor;
 	}
 
 	async getQuestions(

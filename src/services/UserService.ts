@@ -37,7 +37,7 @@ class UserService {
 				fee: 0,
 			});
 			await querryRunner.commitTransaction();
-			return createdUser;
+			return {...createdUser, btcBalance: createdUser.userBalance()};
 		} catch (error: any) {
 			await querryRunner.rollbackTransaction();
 			throw error.code && error.message
@@ -62,9 +62,7 @@ class UserService {
 			const user = await UserRepository.getUserDetailsByEmail(email);
 			if (!user) throw new CustomError(HttpCodes.NOT_FOUND, 'User not found');
 
-			const response = user;
-
-			return response;
+			return {...user, btcBalance: user.userBalance()};
 		} catch (error: any) {
 			throw error.code && error.message
 				? error

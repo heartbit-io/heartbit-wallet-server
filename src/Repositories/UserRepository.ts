@@ -41,6 +41,22 @@ class UserRepository {
 			select: {fcmToken: true},
 		});
 	}
+
+	async getUserTotalBalance(id: number): Promise<User | null> {
+		return await userDataSource.findOne({
+			where: {id},
+			select: {btcBalance: true, promotionBtcBalance: true},
+		});
+	}
+
+	async updateUserPromotionBtcBalance(promotionBtcBalance: number, id: number) {
+		return await dataSource
+			.createQueryBuilder()
+			.update(User)
+			.set({promotionBtcBalance})
+			.where('id = :id', {id})
+			.execute();
+	}
 }
 
 export default new UserRepository();

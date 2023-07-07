@@ -13,6 +13,7 @@ module.exports = {
 			email: faker.internet.email(),
 			pubkey: faker.finance.bitcoinAddress() + new Date().getTime().toString(),
 			air_table_record_id: index,
+			promotionBtcBalance: faker.finance.amount(),
 			created_at: new Date(),
 			updated_at: new Date(),
 			deleted_at: null,
