@@ -3,7 +3,7 @@ import BtcTransactionsRepository from '../Repositories/BtcTransactionsRepository
 import {CustomError} from '../util/CustomError';
 import {HttpCodes} from '../util/HttpCodes';
 import {TxTypes} from '../util/enums';
-import {User, UserAttributes} from '../domains/entities/User';
+import {UserAttributes} from '../domains/entities/User';
 import UserRepository from '../Repositories/UserRepository';
 import dataSource from '../domains/repo';
 
@@ -37,7 +37,11 @@ class UserService {
 				fee: 0,
 			});
 			await querryRunner.commitTransaction();
-			return {...createdUser, btcBalance: createdUser.userBalance()};
+			return {
+				...createdUser,
+				btcBalance: createdUser.userBalance(),
+				withdrawableBtcBalance: createdUser.btcBalance,
+			};
 		} catch (error: any) {
 			await querryRunner.rollbackTransaction();
 			throw error.code && error.message
@@ -62,7 +66,11 @@ class UserService {
 			const user = await UserRepository.getUserDetailsByEmail(email);
 			if (!user) throw new CustomError(HttpCodes.NOT_FOUND, 'User not found');
 
-			return {...user, btcBalance: user.userBalance()};
+			return {
+				...user,
+				btcBalance: user.userBalance(),
+				withdrawableBtcBalance: user.btcBalance,
+			};
 		} catch (error: any) {
 			throw error.code && error.message
 				? error
