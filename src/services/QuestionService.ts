@@ -38,9 +38,14 @@ class QuestionService {
 				);
 			}
 
-			const enContent = await DeeplService.getTextTranslatedIntoEnglish(
-				content,
-			);
+			const enContent =
+				process.env.NODE_ENV === 'test'
+					? {
+							text: content,
+							detected_source_language: 'EN',
+					  }
+					: await DeeplService.getTextTranslatedIntoEnglish(content);
+
 			const newQuestion = await QuestionRepository.create({
 				...question,
 				content: enContent.text,
@@ -170,9 +175,6 @@ class QuestionService {
 			const userId: number = user.id;
 
 			const userQuestions = await QuestionRepository.countUserQuestions(userId);
-
-			if (!userQuestions)
-				throw new CustomError(HttpCodes.NOT_FOUND, 'User has no questions');
 
 			const questions = await QuestionRepository.getAll(
 				userId,

@@ -1,36 +1,12 @@
-import {faker} from '@faker-js/faker';
 import {expect} from 'chai';
-import {QuestionDataSource, userDataSource} from '../../../src/domains/repo';
-import QuestionRepository from '../../../src/Repositories/QuestionRepository';
-import dataSource from '../../../src/domains/repo';
 import {afterEach, after, before} from 'mocha';
-import {QuestionAttributes} from '../../../src/domains/entities/Question';
-import {QuestionStatus, QuestionTypes} from '../../../src/util/enums';
-import {newUser, createUser} from './UserRepository.test';
-
-export const newQuestion = () => {
-	return {
-		totalBounty: faker.number.int({min: 1000, max: 10000}),
-		content: faker.lorem.sentence(),
-		rawContentLanguage: faker.lorem.word(),
-		rawContent: faker.lorem.sentence(),
-		userId: faker.number.int({min: 1, max: 50}),
-		bountyAmount: faker.number.int({min: 1000, max: 10000}),
-		status: faker.helpers.arrayElement(Object.values(QuestionStatus)),
-		type: faker.helpers.arrayElement(Object.values(QuestionTypes)),
-		currentMedication: faker.lorem.sentence(),
-		ageSexEthnicity: faker.lorem.sentence(),
-		pastIllnessHistory: faker.lorem.sentence(),
-		others: faker.lorem.sentence(),
-		createdAt: faker.date.past(),
-		updatedAt: faker.date.past(),
-		deletedAt: null,
-	};
-};
-
-export const createQuestion = async (question: QuestionAttributes) => {
-	return await QuestionRepository.create(question);
-};
+import dataSource, {
+	QuestionDataSource,
+	userDataSource,
+} from '../../../src/domains/repo';
+import QuestionRepository from '../../../src/Repositories/QuestionRepository';
+import {QuestionStatus} from '../../../src/util/enums';
+import {newQuestion, createQuestion, createUser, newUser} from '../mocks';
 
 describe('Question Repository queries', () => {
 	before(async () => {

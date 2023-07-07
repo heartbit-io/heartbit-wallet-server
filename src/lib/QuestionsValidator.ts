@@ -24,7 +24,7 @@ class QuestionsValidator {
 			param('questionId')
 				.notEmpty()
 				.isNumeric()
-				.withMessage('supply question Id to delete'),
+				.withMessage('supply question Id'),
 		];
 	}
 	getAllQuestions() {

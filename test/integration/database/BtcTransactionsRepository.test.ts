@@ -1,29 +1,8 @@
-import {faker} from '@faker-js/faker';
 import {expect} from 'chai';
-import BtcTransactionsRepository from '../../../src/Repositories/BtcTransactionsRepository';
-import {BtcTransactionDataSource} from '../../../src/domains/repo';
-import {BtcTransaction} from '../../../src/domains/entities/BtcTransaction';
-import {TxTypes} from '../../../src/util/enums';
-import dataSource from '../../../src/domains/repo';
 import {afterEach, after, before} from 'mocha';
-
-export const newBtcTransaction = () => {
-	return {
-		id: faker.number.int({min: 1, max: 50}),
-		amount: Number(faker.finance.amount()),
-		fromUserPubkey: faker.string.alphanumeric(32),
-		toUserPubkey: faker.string.alphanumeric(32),
-		fee: Number(faker.finance.amount()),
-		type: faker.helpers.arrayElement(Object.values(TxTypes)),
-		createdAt: faker.date.past(),
-		updatedAt: faker.date.past(),
-		deletedAt: null,
-	};
-};
-
-export const createBtcTransaction = async (btcTransaction: BtcTransaction) => {
-	return await BtcTransactionsRepository.createTransaction(btcTransaction);
-};
+import BtcTransactionsRepository from '../../../src/Repositories/BtcTransactionsRepository';
+import dataSource, {BtcTransactionDataSource} from '../../../src/domains/repo';
+import {createBtcTransaction, newBtcTransaction} from '../mocks';
 
 describe('BtcTransactions Repository queries', () => {
 	before(async () => {

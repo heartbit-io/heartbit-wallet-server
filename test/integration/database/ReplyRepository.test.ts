@@ -1,16 +1,20 @@
-import {faker} from '@faker-js/faker';
 import {expect} from 'chai';
+import {afterEach, after, before} from 'mocha';
 import dataSource, {
 	QuestionDataSource,
 	ReplyDataSource,
 	userDataSource,
 } from '../../../src/domains/repo';
-import {afterEach, after, before} from 'mocha';
 import ReplyRepository from '../../../src/Repositories/ReplyRepository';
-import {ReplyStatus, UserRoles} from '../../../src/util/enums';
-import {RepliesAttributes} from '../../../src/domains/entities/Reply';
-import {newUser, createUser} from './UserRepository.test';
-import {newQuestion, createQuestion} from './QuestionRepository.test';
+import {UserRoles} from '../../../src/util/enums';
+import {
+	newQuestion,
+	createQuestion,
+	newUser,
+	createUser,
+	newReply,
+	createReply,
+} from '../mocks';
 
 describe('Replies Repository queries', () => {
 	before(async () => {
@@ -25,31 +29,6 @@ describe('Replies Repository queries', () => {
 	after(async () => {
 		await dataSource.destroy();
 	});
-
-	const newReply = () => {
-		return {
-			id: faker.number.int({min: 1, max: 50}),
-			questionId: faker.number.int({min: 1, max: 50}),
-			userId: faker.number.int({min: 1, max: 50}),
-			title: faker.lorem.sentence(),
-			content: faker.lorem.paragraph(),
-			status: faker.helpers.arrayElement(Object.values(ReplyStatus)),
-			majorComplaint: faker.lorem.sentence(),
-			medicalHistory: faker.lorem.sentence(),
-			currentMedications: faker.lorem.sentence(),
-			assessment: faker.lorem.sentence(),
-			plan: faker.lorem.sentence(),
-			triage: faker.lorem.sentence(),
-			doctorNote: faker.lorem.sentence(),
-			createdAt: faker.date.past(),
-			updatedAt: faker.date.past(),
-			deletedAt: null,
-		};
-	};
-
-	const createReply = async (reply: RepliesAttributes) => {
-		return await ReplyRepository.createReply(reply);
-	};
 
 	it('should create a reply', async () => {
 		const user = newUser();
