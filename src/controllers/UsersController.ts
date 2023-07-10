@@ -8,7 +8,6 @@ import UserService from '../services/UserService';
 class UsersController {
 	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {
 		const createdUser = await UserService.createUser(req.body);
-
 		try {
 			return res
 				.status(HttpCodes.OK)

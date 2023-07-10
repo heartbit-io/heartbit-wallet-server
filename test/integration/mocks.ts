@@ -1,5 +1,4 @@
 import {faker} from '@faker-js/faker';
-import {Auth} from 'firebase-admin/lib/auth/auth';
 import BtcTransactionsRepository from '../../src/Repositories/BtcTransactionsRepository';
 import {BtcTransaction} from '../../src/domains/entities/BtcTransaction';
 import {

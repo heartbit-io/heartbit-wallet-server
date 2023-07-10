@@ -16,7 +16,6 @@ class UserService {
 		if (isExsist) {
 			return isExsist;
 		}
-
 		const querryRunner = dataSource.createQueryRunner();
 		await querryRunner.connect();
 		await querryRunner.startTransaction('REPEATABLE READ');
@@ -28,7 +27,6 @@ class UserService {
 				email: emailToLowerCase,
 				promotionBtcBalance: 1000, // SIGN_UP_BONUS
 			});
-
 			await BtcTransactionsRepository.createTransaction({
 				amount: 1000, // SIGN_UP_BONUS
 				toUserPubkey: pubkeyToLowerCase,
@@ -39,7 +37,9 @@ class UserService {
 			await querryRunner.commitTransaction();
 			return {
 				...createdUser,
-				btcBalance: createdUser.userBalance(),
+				btcBalance:
+					Number(createdUser.btcBalance) +
+					Number(createdUser.promotionBtcBalance),
 				withdrawableBtcBalance: createdUser.btcBalance,
 			};
 		} catch (error: any) {
@@ -68,7 +68,7 @@ class UserService {
 
 			return {
 				...user,
-				btcBalance: user.userBalance(),
+				btcBalance: Number(user.btcBalance) + Number(user.promotionBtcBalance),
 				withdrawableBtcBalance: user.btcBalance,
 			};
 		} catch (error: any) {

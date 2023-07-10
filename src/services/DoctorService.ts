@@ -37,7 +37,6 @@ class DoctorService {
 					'Only doctors can reply to a question',
 				);
 			}
-
 			const question = await QuestionRepository.getQuestion(
 				requestBody.questionId,
 			);
@@ -85,18 +84,18 @@ class DoctorService {
 				userId: doctor.id,
 			});
 
-			// question status update
 			await QuestionRepository.updateStatus(
 				QuestionStatus.CLOSED,
 				Number(question.id),
 			);
-			// XXX, TODO(david): end a database transaction
 
-			await FcmService.sendNotification(
-				question.userId,
-				'HeartBit',
-				"A human doctor's answer has arrived",
-			);
+			if (process.env.NODE_ENV !== 'test') {
+				await FcmService.sendNotification(
+					question.userId,
+					'HeartBit',
+					"A human doctor's answer has arrived",
+				);
+			}
 
 			return reply;
 		} catch (error: any) {
@@ -110,7 +109,8 @@ class DoctorService {
 	}
 
 	private async _updateDoctorBalance(doctor: User, question: Question) {
-		const doctorBalance = doctor.btcBalance + question.bountyAmount;
+		const doctorBalance =
+			Number(doctor.btcBalance) + Number(question.bountyAmount);
 		const creditDoctor = await UserRepository.updateUserBtcBalance(
 			doctorBalance,
 			doctor.id,

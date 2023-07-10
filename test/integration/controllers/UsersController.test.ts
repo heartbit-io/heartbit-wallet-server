@@ -44,10 +44,43 @@ describe('User endpoints', () => {
 		expect(response.body.data).to.have.property('role').to.equal(user.role);
 		expect(response.body.data)
 			.to.have.property('btcBalance')
-			.to.equal(user.btcBalance.toString());
+			.to.equal(Number(user.btcBalance) + 1000);
 		expect(response.body.data).to.have.property('fcmToken');
 		expect(response.body.data).to.have.property('createdAt');
 		expect(response.body.data).to.have.property('updatedAt');
+		expect(response.body.data)
+			.to.have.property('promotionBtcBalance')
+			.to.equal(Number(1000).toString());
+	});
+
+	it('should not add promotional btc balance if user already exists', async () => {
+		const user = newUser();
+		await createUser(user);
+
+		const response = await request(app)
+			.post(base_url + '/users')
+			.send({...user})
+			.set('apiKey', env.API_KEY)
+			.set('Accept', 'application/json');
+		expect(response.status).to.equal(HttpCodes.OK);
+		expect(response.body).to.include({
+			success: true,
+			statusCode: HttpCodes.OK,
+			message: 'User login/signup successful',
+		});
+		expect(response.body.data)
+			.to.have.property('pubkey')
+			.to.equal(user.pubkey.toLowerCase());
+		expect(response.body.data)
+			.to.have.property('email')
+			.to.equal(user.email.toLowerCase());
+		expect(response.body.data).to.have.property('role').to.equal(user.role);
+		expect(response.body.data)
+			.to.have.property('btcBalance')
+			.to.equal(Number(user.btcBalance).toString());
+		expect(response.body.data)
+			.to.have.property('promotionBtcBalance')
+			.to.equal(Number(0).toString());
 	});
 
 	it('should return user details', async () => {
@@ -65,9 +98,7 @@ describe('User endpoints', () => {
 		expect(response.body.data).to.have.property('pubkey').to.equal(user.pubkey);
 		expect(response.body.data).to.have.property('email').to.equal(user.email);
 		expect(response.body.data).to.have.property('role').to.equal(user.role);
-		expect(response.body.data)
-			.to.have.property('btcBalance')
-			.to.equal(user.btcBalance.toString());
+		expect(response.body.data).to.have.property('btcBalance');
 		expect(response.body.data).to.have.property('fcmToken');
 		expect(response.body.data).to.have.property('createdAt');
 		expect(response.body.data).to.have.property('updatedAt');

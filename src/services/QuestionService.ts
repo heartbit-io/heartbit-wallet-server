@@ -30,7 +30,8 @@ class QuestionService {
 
 			const questionBounty = Number(bountyAmount);
 
-			const userBtcBalance = user.userBalance();
+			const userBtcBalance =
+				Number(user.btcBalance) + Number(user.promotionBtcBalance);
 
 			if (questionBounty > userBtcBalance) {
 				throw new CustomError(

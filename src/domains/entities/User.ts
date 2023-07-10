@@ -88,10 +88,6 @@ export class User {
 			airTableRecordId: this.airTableRecordId,
 		};
 	}
-
-	userBalance() {
-		return this.btcBalance + this.promotionBtcBalance;
-	}
 }
 
 export interface UserAttributes {
