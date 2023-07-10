@@ -15,8 +15,8 @@ class UserRepository {
 		return await userDataSource.findOne({where: {pubkey}});
 	}
 
-	async createUser(user: UserAttributes, dbTransaction?: any) {
-		return await userDataSource.save({...user}, {transaction: dbTransaction});
+	async createUser(user: UserAttributes) {
+		return await userDataSource.save({...user});
 	}
 
 	async getUserBalance(id: number) {

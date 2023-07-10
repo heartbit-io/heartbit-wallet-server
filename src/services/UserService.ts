@@ -26,6 +26,7 @@ class UserService {
 				...user,
 				pubkey: pubkeyToLowerCase,
 				email: emailToLowerCase,
+				promotionBtcBalance: 1000, // SIGN_UP_BONUS
 			});
 
 			await BtcTransactionsRepository.createTransaction({

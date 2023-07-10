@@ -101,4 +101,5 @@ export interface UserAttributes {
 	role: UserRoles;
 	btcBalance: number;
 	airTableRecordId?: string;
+	promotionBtcBalance?: number;
 }
