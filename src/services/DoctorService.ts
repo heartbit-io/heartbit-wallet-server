@@ -62,7 +62,7 @@ class DoctorService {
 				// const calulatedFee =
 				// 	100 + Math.floor((question.bountyAmount - 100) * 0.02);
 
-				const creditDoctor = await this.updateDoctorBalance(doctor, question);
+				const creditDoctor = await this._updateDoctorBalance(doctor, question);
 
 				if (!creditDoctor)
 					throw new CustomError(
@@ -109,7 +109,7 @@ class DoctorService {
 		}
 	}
 
-	private async updateDoctorBalance(doctor: User, question: Question) {
+	private async _updateDoctorBalance(doctor: User, question: Question) {
 		const doctorBalance = doctor.btcBalance + question.bountyAmount;
 		const creditDoctor = await UserRepository.updateUserBtcBalance(
 			doctorBalance,
