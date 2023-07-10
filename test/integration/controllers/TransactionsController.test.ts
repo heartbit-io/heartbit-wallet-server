@@ -1,6 +1,5 @@
 import {expect} from 'chai';
 import {agent as request} from 'supertest';
-import {faker} from '@faker-js/faker';
 import {afterEach, after} from 'mocha';
 import {HttpCodes} from '../../../src/util/HttpCodes';
 import app from '../../../src/index';

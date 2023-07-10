@@ -21,6 +21,7 @@ export const newUser = () => {
 		pubkey: faker.string.alphanumeric(32).toLocaleLowerCase(),
 		btcBalance: Number(faker.finance.amount()),
 		role: faker.helpers.arrayElement(Object.values(UserRoles)),
+		promotionBtcBalance: 0,
 		fcmToken: faker.string.alphanumeric(32),
 		createdAt: faker.date.past(),
 		updatedAt: faker.date.past(),
