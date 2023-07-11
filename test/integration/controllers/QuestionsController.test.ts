@@ -156,7 +156,7 @@ describe('Questions endpoints', () => {
 		const user = newUser();
 		user.email = 'testemail@heartbit.io';
 		const createdUser = await createUser(user);
-		const bountyAmount = user.btcBalance * 2;
+		const bountyAmount = Number(user.btcBalance) * 2;
 		const question = newQuestion();
 		const question_request = {
 			...question,
