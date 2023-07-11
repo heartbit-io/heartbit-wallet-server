@@ -4,6 +4,7 @@ import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
 import ResponseDto from '../dto/ResponseDTO';
 import UserService from '../services/UserService';
+import FcmService from '../services/FcmService';
 
 class UsersController {
 	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {
@@ -47,6 +48,37 @@ class UsersController {
 						true,
 						HttpCodes.OK,
 						'Successfully retrieved user details',
+						user,
+					),
+				);
+		} catch (error) {
+			return res
+				.status(HttpCodes.INTERNAL_SERVER_ERROR)
+				.json(
+					new FormatResponse(
+						false,
+						HttpCodes.INTERNAL_SERVER_ERROR,
+						error,
+						null,
+					),
+				);
+		}
+	}
+
+	async updateFcmToken(req: DecodedRequest, res: Response) {
+		try {
+			const user = await FcmService.updateUserFcmToken(
+				req.body.token,
+				req.email,
+			);
+
+			return res
+				.status(HttpCodes.OK)
+				.json(
+					new FormatResponse(
+						true,
+						HttpCodes.OK,
+						'Successfully updated user fcm token',
 						user,
 					),
 				);

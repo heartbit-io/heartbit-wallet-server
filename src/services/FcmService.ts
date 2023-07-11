@@ -3,6 +3,8 @@ import * as Sentry from '@sentry/node';
 import UserRepository from '../Repositories/UserRepository';
 import admin from '../config/firebase-config';
 import logger from '../util/logger';
+import {CustomError} from '../util/CustomError';
+import {HttpCodes} from '../util/HttpCodes';
 
 class FcmService {
 	async sendNotification(
@@ -29,6 +31,11 @@ class FcmService {
 			Sentry.captureMessage(`FCM error: ${error}`);
 			logger.warn(error);
 		}
+	}
+	async updateUserFcmToken(fcmToken: string, email: string | undefined) {
+		if (!email)
+			throw new CustomError(HttpCodes.UNAUTHORIZED, 'User not logged in');
+		return await UserRepository.updateUserFcmToken(fcmToken, email);
 	}
 }
 

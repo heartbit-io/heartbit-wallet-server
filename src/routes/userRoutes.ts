@@ -15,4 +15,10 @@ router.post(
 );
 router.get('/:email', Auth.verifyToken, UsersController.getUser);
 
+router.post(
+	'/updatefcmtoken',
+	Auth.verifyToken,
+	UsersController.updateFcmToken,
+);
+
 export {router as userRoutes};
