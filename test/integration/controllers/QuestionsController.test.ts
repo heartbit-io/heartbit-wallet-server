@@ -9,6 +9,8 @@ import dataSource, {
 	QuestionDataSource,
 	userDataSource,
 } from '../../../src/domains/repo';
+import exp from 'constants';
+import UserRepository from '../../../src/Repositories/UserRepository';
 
 const base_url = '/api/v1';
 
@@ -81,6 +83,73 @@ describe('Questions endpoints', () => {
 		expect(response.body.data)
 			.to.have.property('status')
 			.to.equal(question.status);
+	});
+
+	it('should substract question bounty amount from user btc balance', async () => {
+		const user = newUser();
+		user.email = 'testemail@heartbit.io';
+		const createdUser = await createUser(user);
+		const bountyAmount = user.btcBalance / 2;
+		const question = newQuestion();
+		const question_request = {
+			...question,
+			userId: createdUser.id,
+			bountyAmount,
+		};
+
+		const response = await createQuestion(question_request);
+		const userDetails = await UserRepository.getUserDetailsById(createdUser.id);
+		expect(response.status).to.equal(HttpCodes.CREATED);
+		if (!userDetails) throw new Error('User not found');
+		expect(userDetails.btcBalance).to.equal(
+			Number(user.btcBalance - bountyAmount).toString(),
+		);
+	});
+
+	it('should deduct promotion btc balance if available', async () => {
+		const user = newUser();
+		user.email = 'testemail@heartbit.io';
+		user.promotionBtcBalance = 1000;
+		const createdUser = await createUser(user);
+		const bountyAmount = user.promotionBtcBalance / 2;
+		const question = newQuestion();
+		const question_request = {
+			...question,
+			userId: createdUser.id,
+			bountyAmount,
+		};
+
+		const response = await createQuestion(question_request);
+		const userDetails = await UserRepository.getUserDetailsById(createdUser.id);
+		expect(response.status).to.equal(HttpCodes.CREATED);
+		if (!userDetails) throw new Error('User not found');
+		expect(userDetails.btcBalance).to.equal(Number(user.btcBalance).toString());
+		expect(userDetails.promotionBtcBalance).to.equal(
+			Number(user.promotionBtcBalance - bountyAmount).toString(),
+		);
+	});
+
+	it('should deduct promotion btc balance if available and deduct from btc balance if promotion btc balance is not enough', async () => {
+		const user = newUser();
+		user.email = 'testemail@heartbit.io';
+		user.promotionBtcBalance = 1000;
+		user.btcBalance = 1000;
+		const createdUser = await createUser(user);
+		const halfBtcBalance = user.btcBalance / 2;
+		const bountyAmount = user.promotionBtcBalance + halfBtcBalance;
+		const question = newQuestion();
+		const question_request = {
+			...question,
+			userId: createdUser.id,
+			bountyAmount,
+		};
+
+		const response = await createQuestion(question_request);
+		const userDetails = await UserRepository.getUserDetailsById(createdUser.id);
+		expect(response.status).to.equal(HttpCodes.CREATED);
+		if (!userDetails) throw new Error('User not found');
+		expect(userDetails.btcBalance).to.equal(halfBtcBalance.toString());
+		expect(userDetails.promotionBtcBalance).to.equal('0');
 	});
 
 	it('should return validator error if bounty amount is greater than user btc balance', async () => {

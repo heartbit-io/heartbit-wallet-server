@@ -15,8 +15,8 @@ class UserRepository {
 		return await userDataSource.findOne({where: {pubkey}});
 	}
 
-	async createUser(user: UserAttributes, dbTransaction?: any) {
-		return await userDataSource.save({...user}, {transaction: dbTransaction});
+	async createUser(user: UserAttributes) {
+		return await userDataSource.save({...user});
 	}
 
 	async getUserBalance(id: number) {
@@ -40,6 +40,22 @@ class UserRepository {
 			where: {id},
 			select: {fcmToken: true},
 		});
+	}
+
+	async getUserTotalBalance(id: number): Promise<User | null> {
+		return await userDataSource.findOne({
+			where: {id},
+			select: {btcBalance: true, promotionBtcBalance: true},
+		});
+	}
+
+	async updateUserPromotionBtcBalance(promotionBtcBalance: number, id: number) {
+		return await dataSource
+			.createQueryBuilder()
+			.update(User)
+			.set({promotionBtcBalance})
+			.where('id = :id', {id})
+			.execute();
 	}
 }
 

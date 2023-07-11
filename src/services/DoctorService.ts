@@ -13,6 +13,8 @@ import TransactionsRepository from '../Repositories/BtcTransactionsRepository';
 import UserRepository from '../Repositories/UserRepository';
 import {UserRoles} from '../util/enums/userRoles';
 import admin from '../config/firebase-config';
+import {Question} from '../domains/entities/Question';
+import {User} from '../domains/entities/User';
 
 const eventEmitter = new EventEmitter();
 
@@ -35,7 +37,6 @@ class DoctorService {
 					'Only doctors can reply to a question',
 				);
 			}
-
 			const question = await QuestionRepository.getQuestion(
 				requestBody.questionId,
 			);
@@ -60,11 +61,7 @@ class DoctorService {
 				// const calulatedFee =
 				// 	100 + Math.floor((question.bountyAmount - 100) * 0.02);
 
-				const doctorBalance = doctor.btcBalance + question.bountyAmount;
-				const creditDoctor = await UserRepository.updateUserBtcBalance(
-					doctorBalance,
-					doctor.id,
-				);
+				const creditDoctor = await this._updateDoctorBalance(doctor, question);
 
 				if (!creditDoctor)
 					throw new CustomError(
@@ -87,18 +84,18 @@ class DoctorService {
 				userId: doctor.id,
 			});
 
-			// question status update
 			await QuestionRepository.updateStatus(
 				QuestionStatus.CLOSED,
 				Number(question.id),
 			);
-			// XXX, TODO(david): end a database transaction
 
-			await FcmService.sendNotification(
-				question.userId,
-				'HeartBit',
-				"A human doctor's answer has arrived",
-			);
+			if (process.env.NODE_ENV !== 'test') {
+				await FcmService.sendNotification(
+					question.userId,
+					'HeartBit',
+					"A human doctor's answer has arrived",
+				);
+			}
 
 			return reply;
 		} catch (error: any) {
@@ -109,6 +106,16 @@ class DoctorService {
 						'Internal Server Error',
 				  );
 		}
+	}
+
+	private async _updateDoctorBalance(doctor: User, question: Question) {
+		const doctorBalance =
+			Number(doctor.btcBalance) + Number(question.bountyAmount);
+		const creditDoctor = await UserRepository.updateUserBtcBalance(
+			doctorBalance,
+			doctor.id,
+		);
+		return creditDoctor;
 	}
 
 	async getQuestions(

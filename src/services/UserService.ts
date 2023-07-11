@@ -1,9 +1,8 @@
-import {getAuth, signInWithEmailAndPassword} from 'firebase/auth';
 import BtcTransactionsRepository from '../Repositories/BtcTransactionsRepository';
 import {CustomError} from '../util/CustomError';
 import {HttpCodes} from '../util/HttpCodes';
 import {TxTypes} from '../util/enums';
-import {User, UserAttributes} from '../domains/entities/User';
+import {UserAttributes} from '../domains/entities/User';
 import UserRepository from '../Repositories/UserRepository';
 import dataSource from '../domains/repo';
 
@@ -17,7 +16,6 @@ class UserService {
 		if (isExsist) {
 			return isExsist;
 		}
-
 		const querryRunner = dataSource.createQueryRunner();
 		await querryRunner.connect();
 		await querryRunner.startTransaction('REPEATABLE READ');
@@ -27,8 +25,8 @@ class UserService {
 				...user,
 				pubkey: pubkeyToLowerCase,
 				email: emailToLowerCase,
+				promotionBtcBalance: 1000, // SIGN_UP_BONUS
 			});
-
 			await BtcTransactionsRepository.createTransaction({
 				amount: 1000, // SIGN_UP_BONUS
 				toUserPubkey: pubkeyToLowerCase,
@@ -37,7 +35,13 @@ class UserService {
 				fee: 0,
 			});
 			await querryRunner.commitTransaction();
-			return createdUser;
+			return {
+				...createdUser,
+				btcBalance:
+					Number(createdUser.btcBalance) +
+					Number(createdUser.promotionBtcBalance),
+				withdrawableBtcBalance: createdUser.btcBalance,
+			};
 		} catch (error: any) {
 			await querryRunner.rollbackTransaction();
 			throw error.code && error.message
@@ -62,9 +66,11 @@ class UserService {
 			const user = await UserRepository.getUserDetailsByEmail(email);
 			if (!user) throw new CustomError(HttpCodes.NOT_FOUND, 'User not found');
 
-			const response = user;
-
-			return response;
+			return {
+				...user,
+				btcBalance: Number(user.btcBalance) + Number(user.promotionBtcBalance),
+				withdrawableBtcBalance: user.btcBalance,
+			};
 		} catch (error: any) {
 			throw error.code && error.message
 				? error
