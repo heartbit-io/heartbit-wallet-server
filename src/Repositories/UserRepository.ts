@@ -42,12 +42,12 @@ class UserRepository {
 		});
 	}
 
-	async updateUserFcmToken(fcmToken: string, id: number) {
+	async updateUserFcmToken(fcmToken: string, email: string) {
 		return await dataSource
 			.createQueryBuilder()
 			.update(User)
 			.set({fcmToken})
-			.where('id = :id', {id})
+			.where('email = :email', {email})
 			.execute();
 	}
 

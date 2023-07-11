@@ -110,7 +110,7 @@ describe('User Repository queries', () => {
 
 		const updatedUserFcmToken = await UserRepository.updateUserFcmToken(
 			newFcmToken,
-			result.id,
+			result.email,
 		);
 		const userFcmToken = await UserRepository.getUserFcmToken(result.id);
 		expect(updatedUserFcmToken).to.be.an('object');

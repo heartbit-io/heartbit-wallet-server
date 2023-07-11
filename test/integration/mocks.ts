@@ -53,7 +53,7 @@ export const createBtcTransaction = async (btcTransaction: BtcTransaction) => {
 
 export const newQuestion = () => {
 	return {
-		content: faker.lorem.sentence(),
+		content: faker.lorem.paragraph(),
 		rawContentLanguage: faker.lorem.word(),
 		rawContent: faker.lorem.sentence(),
 		userId: faker.number.int({min: 1, max: 50}),

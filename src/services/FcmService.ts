@@ -36,19 +36,16 @@ class FcmService {
 		if (!email)
 			throw new CustomError(HttpCodes.UNAUTHORIZED, 'User not logged in');
 
-		const user = await UserRepository.getUserDetailsByEmail(email);
-		if (!user) throw new CustomError(HttpCodes.NOT_FOUND, 'User not found');
 		const updateFcmToken = await UserRepository.updateUserFcmToken(
 			fcmToken,
-			user.id,
+			email,
 		);
 		if (!updateFcmToken)
 			throw new CustomError(
 				HttpCodes.BAD_REQUEST,
 				'Error updating user fcm token',
 			);
-		const updatedUser = await UserRepository.getUserDetailsByEmail(email);
-		return updatedUser;
+		return await UserRepository.getUserDetailsByEmail(email);
 	}
 }
 
