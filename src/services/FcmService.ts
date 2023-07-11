@@ -1,5 +1,8 @@
+import * as Sentry from '@sentry/node';
+
 import UserRepository from '../Repositories/UserRepository';
 import admin from '../config/firebase-config';
+import logger from '../util/logger';
 
 class FcmService {
 	async sendNotification(
@@ -23,7 +26,8 @@ class FcmService {
 
 			return admin.messaging().send(payload);
 		} catch (error) {
-			console.error('FCM Error:', error);
+			Sentry.captureMessage(`FCM error: ${error}`);
+			logger.warn(error);
 		}
 	}
 }

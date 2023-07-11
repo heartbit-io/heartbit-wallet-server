@@ -1,7 +1,9 @@
+import * as Sentry from '@sentry/node';
+
 import NodeCache from 'node-cache';
+import env from '../config/env';
 import https from 'https';
 import logger from '../util/logger';
-import env from '../config/env';
 
 const cache = new NodeCache();
 
@@ -54,7 +56,7 @@ class CoinPaprikaService {
 				customSatoshi: satoshi ? (satoshi * usd10000) / 10000 : 0,
 			};
 		} catch (error) {
-			// TODO(david): Sentry alert in slack
+			Sentry.captureMessage(`CoinPaprika error: ${error}`);
 			logger.warn(error);
 			return;
 		}

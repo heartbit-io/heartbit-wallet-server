@@ -1,11 +1,14 @@
+import * as Sentry from '@sentry/node';
+
 import {Configuration, OpenAIApi} from 'openai';
 import {makeAnswerToJson, makePrompt} from '../util/chatgpt';
+
+import {ChatGPTDataSource} from '../domains/repo';
+import {ChatGptReply} from '../domains/entities/ChatGptReply';
 import {QuestionAttributes} from '../domains/entities/Question';
 import {QuestionTypes} from '../util/enums';
 import env from '../config/env';
 import logger from '../util/logger';
-import {ChatGptReply} from '../domains/entities/ChatGptReply';
-import {ChatGPTDataSource} from '../domains/repo';
 
 export interface AnswerInterface {
 	role: string;
@@ -94,7 +97,7 @@ class ChatgptService {
 
 			return chatGptReply;
 		} catch (error) {
-			// TODO(david): Sentry alert in slack
+			Sentry.captureMessage(`ChatGPT error: ${error}`);
 			logger.warn(error);
 			return;
 		}
