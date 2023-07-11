@@ -101,4 +101,19 @@ describe('User Repository queries', () => {
 		const userFcmToken = await UserRepository.getUserFcmToken(result.id);
 		expect(userFcmToken?.fcmToken).to.equal(result.fcmToken);
 	});
+
+	it('should update user fcm token', async () => {
+		const user = newUser();
+		const result = await createUser(user);
+
+		const newFcmToken = 'new-fcm-token';
+
+		const updatedUserFcmToken = await UserRepository.updateUserFcmToken(
+			newFcmToken,
+			result.id,
+		);
+		const userFcmToken = await UserRepository.getUserFcmToken(result.id);
+		expect(updatedUserFcmToken).to.be.an('object');
+		expect(userFcmToken?.fcmToken).to.equal(newFcmToken);
+	});
 });

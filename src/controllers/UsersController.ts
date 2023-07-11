@@ -51,14 +51,14 @@ class UsersController {
 						user,
 					),
 				);
-		} catch (error) {
+		} catch (error: any) {
 			return res
-				.status(HttpCodes.INTERNAL_SERVER_ERROR)
+				.status(error.code ? error.code : HttpCodes.INTERNAL_SERVER_ERROR)
 				.json(
-					new FormatResponse(
+					new ResponseDto(
 						false,
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						error,
+						error.code ? error.code : HttpCodes.INTERNAL_SERVER_ERROR,
+						error.message ? error.message : 'HTTP error',
 						null,
 					),
 				);
@@ -68,7 +68,7 @@ class UsersController {
 	async updateFcmToken(req: DecodedRequest, res: Response) {
 		try {
 			const user = await FcmService.updateUserFcmToken(
-				req.body.token,
+				req.body.fcmToken,
 				req.email,
 			);
 
@@ -82,14 +82,14 @@ class UsersController {
 						user,
 					),
 				);
-		} catch (error) {
+		} catch (error: any) {
 			return res
-				.status(HttpCodes.INTERNAL_SERVER_ERROR)
+				.status(error.code ? error.code : HttpCodes.INTERNAL_SERVER_ERROR)
 				.json(
-					new FormatResponse(
+					new ResponseDto(
 						false,
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						error,
+						error.code ? error.code : HttpCodes.INTERNAL_SERVER_ERROR,
+						error.message ? error.message : 'HTTP error',
 						null,
 					),
 				);
