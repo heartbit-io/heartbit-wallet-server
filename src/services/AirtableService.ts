@@ -1,3 +1,5 @@
+import * as Sentry from '@sentry/node';
+
 import env from '../config/env';
 import https from 'https';
 import logger from '../util/logger';
@@ -39,7 +41,7 @@ class AirtableService {
 		try {
 			return this.fetchData(airTableRecordId);
 		} catch (error) {
-			// TODO(david): Sentry alert in slack
+			Sentry.captureMessage(`Airtable error: ${error}`);
 			logger.warn(error);
 			return;
 		}

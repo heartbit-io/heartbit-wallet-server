@@ -1,3 +1,5 @@
+import * as Sentry from '@sentry/node';
+
 import env from '../config/env';
 import logger from '../util/logger';
 import translate from 'deepl';
@@ -30,7 +32,7 @@ class DeeplService {
 
 			return result.data.translations[0];
 		} catch (error) {
-			// TODO(david): Sentry alert in slack
+			Sentry.captureMessage(`DeepL error: ${error}`);
 			logger.warn(error);
 			return;
 		}
