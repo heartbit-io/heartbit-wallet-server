@@ -6,15 +6,15 @@ import EventEmitter from 'events';
 import FcmService from '../services/FcmService';
 import {HttpCodes} from '../util/HttpCodes';
 import {JsonAnswerInterface} from '../domains/entities/ChatGptReply';
+import {Question} from '../domains/entities/Question';
 import QuestionRepository from '../Repositories/QuestionRepository';
 import {RepliesAttributes} from '../domains/entities/Reply';
 import ReplyRepository from '../Repositories/ReplyRepository';
 import TransactionsRepository from '../Repositories/BtcTransactionsRepository';
+import {User} from '../domains/entities/User';
 import UserRepository from '../Repositories/UserRepository';
 import {UserRoles} from '../util/enums/userRoles';
 import admin from '../config/firebase-config';
-import {Question} from '../domains/entities/Question';
-import {User} from '../domains/entities/User';
 
 const eventEmitter = new EventEmitter();
 
@@ -94,6 +94,7 @@ class DoctorService {
 					question.userId,
 					'HeartBit',
 					"A human doctor's answer has arrived",
+					{type: 'DOCTOR_ANSWER'},
 				);
 			}
 
