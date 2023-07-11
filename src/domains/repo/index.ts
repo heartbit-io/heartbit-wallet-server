@@ -1,11 +1,11 @@
-import {DataSource} from 'typeorm';
-import env from '../../config/env';
-import {SnakeNamingStrategy} from 'typeorm-naming-strategies';
-import {User} from '../entities/User';
-import {Reply} from '../entities/Reply';
 import {BtcTransaction} from '../entities/BtcTransaction';
 import {ChatGptReply} from '../entities/ChatGptReply';
+import {DataSource} from 'typeorm';
 import {Question} from '../entities/Question';
+import {Reply} from '../entities/Reply';
+import {SnakeNamingStrategy} from 'typeorm-naming-strategies';
+import {User} from '../entities/User';
+import env from '../../config/env';
 
 const dataSource = new DataSource({
 	type: env.DB_DRIVER as 'postgres',
@@ -17,7 +17,7 @@ const dataSource = new DataSource({
 	synchronize: env.NODE_ENV === 'production' ? false : true,
 	namingStrategy: new SnakeNamingStrategy(),
 	entities: [User, Reply, BtcTransaction, ChatGptReply, Question],
-	migrations: ['src/migrations/*.ts'],
+	// migrations: ['src/migrations/*.ts'],
 });
 
 export const userDataSource = dataSource.getRepository(User);
