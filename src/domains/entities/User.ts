@@ -96,6 +96,7 @@ export interface UserAttributes {
 	email: string;
 	role: UserRoles;
 	btcBalance: number;
+	fcmToken?: string;
 	airTableRecordId?: string;
 	promotionBtcBalance?: number;
 }
