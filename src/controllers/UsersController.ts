@@ -4,6 +4,7 @@ import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
 import ResponseDto from '../dto/ResponseDTO';
 import UserService from '../services/UserService';
+import FcmService from '../services/FcmService';
 
 class UsersController {
 	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {
@@ -50,14 +51,45 @@ class UsersController {
 						user,
 					),
 				);
-		} catch (error) {
+		} catch (error: any) {
 			return res
-				.status(HttpCodes.INTERNAL_SERVER_ERROR)
+				.status(error.code ? error.code : HttpCodes.INTERNAL_SERVER_ERROR)
+				.json(
+					new ResponseDto(
+						false,
+						error.code ? error.code : HttpCodes.INTERNAL_SERVER_ERROR,
+						error.message ? error.message : 'HTTP error',
+						null,
+					),
+				);
+		}
+	}
+
+	async updateFcmToken(req: DecodedRequest, res: Response) {
+		try {
+			const user = await FcmService.updateUserFcmToken(
+				req.body.fcmToken,
+				req.email,
+			);
+
+			return res
+				.status(HttpCodes.OK)
 				.json(
 					new FormatResponse(
+						true,
+						HttpCodes.OK,
+						'Successfully updated user fcm token',
+						user,
+					),
+				);
+		} catch (error: any) {
+			return res
+				.status(error.code ? error.code : HttpCodes.INTERNAL_SERVER_ERROR)
+				.json(
+					new ResponseDto(
 						false,
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						error,
+						error.code ? error.code : HttpCodes.INTERNAL_SERVER_ERROR,
+						error.message ? error.message : 'HTTP error',
 						null,
 					),
 				);

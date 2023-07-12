@@ -103,4 +103,24 @@ describe('User endpoints', () => {
 		expect(response.body.data).to.have.property('createdAt');
 		expect(response.body.data).to.have.property('updatedAt');
 	});
+
+	it('should update user fcm token', async () => {
+		const user = newUser();
+		user.email = 'testemail@heartbit.io';
+		await createUser(user);
+		const response = await request(app)
+			.patch(`${base_url}/users/fcmtoken`)
+			.send({fcmToken: 'testtoken'})
+			.set('apiKey', env.API_KEY)
+			.set('Accept', 'application/json');
+		expect(response.status).to.equal(HttpCodes.OK);
+		expect(response.body.data).to.have.property('id');
+		expect(response.body.data).to.have.property('pubkey').to.equal(user.pubkey);
+		expect(response.body.data).to.have.property('email').to.equal(user.email);
+		expect(response.body.data).to.have.property('role').to.equal(user.role);
+		expect(response.body.data).to.have.property('btcBalance');
+		expect(response.body.data)
+			.to.have.property('fcmToken')
+			.to.equal('testtoken');
+	});
 });

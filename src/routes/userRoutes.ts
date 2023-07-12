@@ -13,6 +13,7 @@ router.post(
 	Validation.validate,
 	UsersController.create,
 );
+router.patch('/fcmtoken', Auth.verifyToken, UsersController.updateFcmToken);
 router.get('/:email', Auth.verifyToken, UsersController.getUser);
 
 export {router as userRoutes};

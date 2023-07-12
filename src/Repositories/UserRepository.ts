@@ -42,6 +42,15 @@ class UserRepository {
 		});
 	}
 
+	async updateUserFcmToken(fcmToken: string, email: string) {
+		return await dataSource
+			.createQueryBuilder()
+			.update(User)
+			.set({fcmToken})
+			.where('email = :email', {email})
+			.execute();
+	}
+
 	async getUserTotalBalance(id: number): Promise<User | null> {
 		return await userDataSource.findOne({
 			where: {id},
