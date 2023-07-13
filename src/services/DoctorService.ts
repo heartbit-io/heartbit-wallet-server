@@ -16,6 +16,8 @@ import UserRepository from '../Repositories/UserRepository';
 import {UserRoles} from '../util/enums/userRoles';
 import admin from '../config/firebase-config';
 import ChatGptRepository from '../Repositories/ChatGptRepository';
+import DoctorQuestionRepository from '../Repositories/DoctorQuestionRepository';
+import dataSource from '../domains/repo';
 
 const eventEmitter = new EventEmitter();
 
@@ -335,6 +337,81 @@ class DoctorService {
 						HttpCodes.INTERNAL_SERVER_ERROR,
 						'Internal Server Error',
 				  );
+		}
+	}
+
+	async assignQuestionToDoctor(
+		questionId: number,
+		doctorId: number,
+		email: string | undefined,
+	) {
+		const querryRunner = dataSource.createQueryRunner();
+		await querryRunner.connect();
+		await querryRunner.startTransaction('REPEATABLE READ');
+		try {
+			const question = await QuestionRepository.getQuestion(questionId);
+
+			if (!question || question.status !== QuestionStatus.OPEN)
+				throw new CustomError(
+					HttpCodes.BAD_REQUEST,
+					'Question not found or is no longer open',
+				);
+
+			const doctor = await UserRepository.getUserDetailsById(doctorId);
+
+			if (!doctor || doctor.role !== UserRoles.DOCTOR)
+				throw new CustomError(HttpCodes.NOT_FOUND, 'Doctor not found');
+
+			if (!email || email !== doctor.email)
+				throw new CustomError(
+					HttpCodes.UNAUTHORIZED,
+					'You dont have permission to access this resource',
+				);
+
+			const doctorQuestionStatus =
+				await DoctorQuestionRepository.getDoctorQuestionStatus(
+					doctorId,
+					questionId,
+				);
+
+			if (doctorQuestionStatus)
+				throw new CustomError(
+					HttpCodes.BAD_REQUEST,
+					'Doctor is already assigned to question',
+				);
+
+			const doctorQuestion =
+				await DoctorQuestionRepository.createDoctorQuestion({
+					doctorId,
+					questionId,
+				});
+			if (!doctorQuestion)
+				throw new CustomError(
+					HttpCodes.INTERNAL_SERVER_ERROR,
+					'Error assigning question to doctor',
+				);
+			const updatedQuestion = await QuestionRepository.updateStatus(
+				QuestionStatus.ASSIGNED,
+				questionId,
+			);
+
+			if (!updatedQuestion)
+				throw new CustomError(
+					HttpCodes.INTERNAL_SERVER_ERROR,
+					'Error updating question',
+				);
+			querryRunner.commitTransaction();
+			return doctorQuestion;
+		} catch (error: any) {
+			await querryRunner.rollbackTransaction();
+			throw error.code && error.message
+				? error
+				: new CustomError(
+						HttpCodes.INTERNAL_SERVER_ERROR,
+						'Internal Server Error',
+				  );
+		} finally {
+			await querryRunner.release();
 		}
 	}
 }

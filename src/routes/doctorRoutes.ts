@@ -26,4 +26,9 @@ router.get(
 	DoctorsController.getDoctorAnsweredQuestion,
 );
 
+router.post(
+	'/assign-question',
+	Auth.verifyToken,
+	DoctorsController.assignQuestion,
+);
 export {router as doctorRoutes};

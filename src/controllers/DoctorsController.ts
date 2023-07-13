@@ -209,6 +209,40 @@ class DoctorsController {
 	portal(req: Request, res: Response) {
 		return res.sendFile(path.join(__dirname, '../public/qrcode.html'));
 	}
+
+	async assignQuestion(req: DecodedRequest, res: Response) {
+		try {
+			const {doctorId, questionId} = req.params;
+
+			const result = await DoctorService.assignQuestionToDoctor(
+				Number(doctorId),
+				Number(questionId),
+				req.email,
+			);
+
+			return res
+				.status(HttpCodes.OK)
+				.json(
+					new ResponseDto(
+						true,
+						HttpCodes.OK,
+						'Question assigned successfully',
+						result,
+					),
+				);
+		} catch (error: any) {
+			return res
+				.status(error.code ? error.code : HttpCodes.INTERNAL_SERVER_ERROR)
+				.json(
+					new ResponseDto(
+						false,
+						error.code ? error.code : HttpCodes.INTERNAL_SERVER_ERROR,
+						error.message ? error.message : 'HTTP error',
+						null,
+					),
+				);
+		}
+	}
 }
 
 export default new DoctorsController();
