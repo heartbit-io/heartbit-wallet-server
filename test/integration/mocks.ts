@@ -15,6 +15,8 @@ import {RepliesAttributes} from '../../src/domains/entities/Reply';
 import ReplyRepository from '../../src/Repositories/ReplyRepository';
 import {ChatgptRepliesAttributes} from '../../src/domains/entities/ChatGptReply';
 import ChatGptRepository from '../../src/Repositories/ChatGptRepository';
+import {DoctorQuestionAttributes} from '../../src/domains/entities/DoctorQuestion';
+import DoctorQuestionRepository from '../../src/Repositories/DoctorQuestionRepository';
 
 export const newUser = () => {
 	return {
@@ -134,4 +136,21 @@ export const createChatGptReply = async (
 	chatGptReply: ChatgptRepliesAttributes,
 ) => {
 	return await ChatGptRepository.createChaptgptReply(chatGptReply);
+};
+
+export const newDoctorQuestion = () => {
+	return {
+		id: faker.number.int({min: 1, max: 50}),
+		doctorId: faker.number.int({min: 1, max: 50}),
+		questionId: faker.number.int({min: 1, max: 50}),
+		createdAt: faker.date.past(),
+		updatedAt: faker.date.past(),
+		deletedAt: null,
+	};
+};
+
+export const saveDoctorQuestion = async (
+	doctorQuestion: DoctorQuestionAttributes,
+) => {
+	return await DoctorQuestionRepository.createDoctorQuestion(doctorQuestion);
 };

@@ -5,9 +5,10 @@ import {
 } from '../domains/entities/DoctorQuestion';
 
 class DoctorQuestionRepository {
-	async createDoctorQuestion(doctorQuestion: DoctorQuestionAttributes) {
-		const result = await DoctorQuestionDataSource.save({...doctorQuestion});
-		return result;
+	async createDoctorQuestion(
+		doctorQuestion: DoctorQuestionAttributes,
+	): Promise<DoctorQuestion> {
+		return await DoctorQuestionDataSource.save({...doctorQuestion});
 	}
 
 	async getDoctorQuestionStatus(
