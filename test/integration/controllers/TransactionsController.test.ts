@@ -32,38 +32,36 @@ describe('Transactions endpoints', () => {
 		await dataSource.destroy();
 	});
 
-	describe('get user transactions', () => {
-		it('should return all user transactions', async () => {
-			const user = newUser();
-			user.email = 'testemail@heartbit.io';
-			const createdUser = await createUser(user);
-			const doctor = newUser();
-			const createdSecondUser = await createUser(doctor);
+	it('should return all user transactions', async () => {
+		const user = newUser();
+		user.email = 'testemail@heartbit.io';
+		const createdUser = await createUser(user);
+		const doctor = newUser();
+		const createdSecondUser = await createUser(doctor);
 
-			const question = newQuestion();
-			const question_body = {
-				...question,
-				userId: createdUser.id,
-				bountyAmount: user.btcBalance / 2,
-			};
-			await createQuestion(question_body);
+		const question = newQuestion();
+		const question_body = {
+			...question,
+			userId: createdUser.id,
+			bountyAmount: user.btcBalance / 2,
+		};
+		await createQuestion(question_body);
 
-			const btcTransaction = newBtcTransaction();
-			btcTransaction.fromUserPubkey = createdUser.pubkey;
-			btcTransaction.toUserPubkey = doctor.pubkey;
-			const result = await createBtcTransaction(btcTransaction);
+		const btcTransaction = newBtcTransaction();
+		btcTransaction.fromUserPubkey = createdUser.pubkey;
+		btcTransaction.toUserPubkey = doctor.pubkey;
+		const result = await createBtcTransaction(btcTransaction);
 
-			const response = await request(app)
-				.get(base_url + '/transactions/' + result.fromUserPubkey)
-				.set('Accept', 'application/json');
-			expect(response.status).to.equal(HttpCodes.OK);
-			expect(response.body.data.transactions).to.be.an('array');
-			expect(response.body.data.transactions[0].fromUserPubkey).to.equal(
-				result.fromUserPubkey,
-			);
-			expect(response.body.data.transactions[0].toUserPubkey).to.equal(
-				result.toUserPubkey,
-			);
-		});
+		const response = await request(app)
+			.get(base_url + '/transactions/' + result.fromUserPubkey)
+			.set('Accept', 'application/json');
+		expect(response.status).to.equal(HttpCodes.OK);
+		expect(response.body.data.transactions).to.be.an('array');
+		expect(response.body.data.transactions[0].fromUserPubkey).to.equal(
+			result.fromUserPubkey,
+		);
+		expect(response.body.data.transactions[0].toUserPubkey).to.equal(
+			result.toUserPubkey,
+		);
 	});
 });

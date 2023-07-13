@@ -13,6 +13,8 @@ import {QuestionAttributes} from '../../src/domains/entities/Question';
 import QuestionRepository from '../../src/Repositories/QuestionRepository';
 import {RepliesAttributes} from '../../src/domains/entities/Reply';
 import ReplyRepository from '../../src/Repositories/ReplyRepository';
+import {ChatgptRepliesAttributes} from '../../src/domains/entities/ChatGptReply';
+import ChatGptRepository from '../../src/Repositories/ChatGptRepository';
 
 export const newUser = () => {
 	return {
@@ -97,4 +99,39 @@ export const newReply = () => {
 
 export const createReply = async (reply: RepliesAttributes) => {
 	return await ReplyRepository.createReply(reply);
+};
+
+const jsonAnswer = () => {
+	return {
+		title: faker.lorem.sentence(),
+		aiAnswer: faker.lorem.paragraph(),
+		doctorAnswer: faker.lorem.paragraph(),
+		guide: faker.lorem.paragraph(),
+		chiefComplaint: faker.lorem.sentence(),
+		medicalHistory: faker.lorem.sentence(),
+		currentMedication: faker.lorem.sentence(),
+		assessment: faker.lorem.sentence(),
+		plan: faker.lorem.sentence(),
+		doctorNote: faker.lorem.paragraph(),
+	};
+};
+export const chatGptReply = () => {
+	return {
+		id: faker.number.int({min: 1, max: 50}),
+		questionId: faker.number.int({min: 1, max: 50}),
+		model: 'gpt-3.5-turbo',
+		maxTokens: 150,
+		prompt: faker.lorem.sentence(),
+		rawAnswer: faker.lorem.paragraph(),
+		jsonAnswer: jsonAnswer(),
+		createdAt: faker.date.past(),
+		updatedAt: faker.date.past(),
+		deletedAt: null,
+	};
+};
+
+export const createChatGptReply = async (
+	chatGptReply: ChatgptRepliesAttributes,
+) => {
+	return await ChatGptRepository.createChaptgptReply(chatGptReply);
 };
