@@ -2,7 +2,6 @@ import {expect} from 'chai';
 import {agent as request} from 'supertest';
 import {QuestionAttributes} from '../../../src/domains/entities/Question';
 import {HttpCodes} from '../../../src/util/HttpCodes';
-import {QuestionStatus} from '../../../src/util/enums';
 import app from '../../../src/index';
 import {newUser, createUser, newQuestion} from '../mocks';
 import dataSource, {
@@ -10,12 +9,15 @@ import dataSource, {
 	userDataSource,
 } from '../../../src/domains/repo';
 import UserRepository from '../../../src/Repositories/UserRepository';
+import {QuestionStatus} from '../../../src/util/enums';
 
 const base_url = '/api/v1';
 
 describe('Questions endpoints', () => {
 	before(async () => {
-		await dataSource.initialize();
+		if (!dataSource.isInitialized) {
+			await dataSource.initialize();
+		}
 	});
 	afterEach(async () => {
 		await QuestionDataSource.delete({});
@@ -46,25 +48,20 @@ describe('Questions endpoints', () => {
 	const createQuestion = async (question: QuestionAttributes) => {
 		return await request(app)
 			.post(base_url + '/questions')
-			.send({
-				...question,
-			})
+			.send({...question})
 			.set('Accept', 'application/json');
 	};
 
 	it('should create a question', async () => {
-		const user = newUser();
-		user.email = 'testemail@heartbit.io';
-		const createdUser = await createUser(user);
+		const userData = newUser();
+		userData.email = 'testemail@heartbit.io';
+		const user = await createUser(userData);
 		const bountyAmount = user.btcBalance / 2;
 		const question = newQuestion();
-		const question_request = {
-			...question,
-			userId: createdUser.id,
-			bountyAmount,
-		};
-
-		const response = await createQuestion(question_request);
+		question.userId = user.id;
+		question.bountyAmount = bountyAmount;
+		question.status = QuestionStatus.OPEN;
+		const response = await createQuestion(question);
 		expect(response.status).to.equal(HttpCodes.CREATED);
 		expect(response.body).to.include(
 			successResponse(true, HttpCodes.CREATED, 'Question posted successfully'),

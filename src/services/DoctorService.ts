@@ -139,8 +139,8 @@ class DoctorService {
 				);
 			const openQuestion =
 				await QuestionRepository.getOpenQuestionsOrderByBounty();
-			if (!openQuestion)
-				throw new CustomError(HttpCodes.NOT_FOUND, 'No open question found');
+
+			if (!openQuestion) return;
 
 			const aiReply = await ChatGptRepository.getChatgptReply(
 				Number(openQuestion.id),
@@ -341,8 +341,8 @@ class DoctorService {
 	}
 
 	async assignQuestionToDoctor(
-		questionId: number,
 		doctorId: number,
+		questionId: number,
 		email: string | undefined,
 	) {
 		const querryRunner = dataSource.createQueryRunner();
@@ -350,7 +350,6 @@ class DoctorService {
 		await querryRunner.startTransaction('REPEATABLE READ');
 		try {
 			const question = await QuestionRepository.getQuestion(questionId);
-
 			if (!question || question.status !== QuestionStatus.OPEN)
 				throw new CustomError(
 					HttpCodes.BAD_REQUEST,

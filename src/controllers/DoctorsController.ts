@@ -212,7 +212,7 @@ class DoctorsController {
 
 	async assignQuestion(req: DecodedRequest, res: Response) {
 		try {
-			const {doctorId, questionId} = req.params;
+			const {doctorId, questionId} = req.body;
 
 			const result = await DoctorService.assignQuestionToDoctor(
 				Number(doctorId),
