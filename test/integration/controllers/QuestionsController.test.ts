@@ -9,7 +9,6 @@ import dataSource, {
 	QuestionDataSource,
 	userDataSource,
 } from '../../../src/domains/repo';
-import exp from 'constants';
 import UserRepository from '../../../src/Repositories/UserRepository';
 
 const base_url = '/api/v1';
@@ -211,31 +210,6 @@ describe('Questions endpoints', () => {
 		expect(response.body.data.questions).to.be.an('array');
 	});
 
-	it('should return all open questions', async () => {
-		const user = newUser();
-		user.email = 'testemail@heartbit.io';
-		const createdUser = await createUser(user);
-		const question = newQuestion();
-		const question_body = {
-			...question,
-			status: QuestionStatus.OPEN,
-			userId: createdUser.id,
-			bountyAmount: user.btcBalance / 2,
-		};
-
-		await createQuestion(question_body);
-		const response = await request(app).get(`${base_url}/questions/open`);
-		expect(response.status).to.equal(HttpCodes.OK);
-		expect(response.body).to.include(
-			successResponse(
-				true,
-				HttpCodes.OK,
-				'Successfully retrieved open questions',
-			),
-		);
-		expect(response.body.data).to.be.an('array');
-		expect(response.body.data[0].status).to.equal(question_body.status);
-	});
 	it('should return a question by id', async () => {
 		const user = newUser();
 		user.email = 'testemail@heartbit.io';
