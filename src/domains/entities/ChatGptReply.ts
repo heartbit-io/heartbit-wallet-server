@@ -3,6 +3,7 @@ import {
 	Column,
 	PrimaryGeneratedColumn,
 	OneToOne,
+	JoinColumn,
 	CreateDateColumn,
 	DeleteDateColumn,
 	UpdateDateColumn,
@@ -62,8 +63,9 @@ export class ChatGptReply {
 	updatedAt: Date;
 
 	@DeleteDateColumn({type: 'timestamp', nullable: true})
-	deletedAt: Date;
+	deletedAt: Date | null;
 
 	@OneToOne(() => Question, question => question.chatGptReply)
+	@JoinColumn({name: 'questionId'})
 	question: Question;
 }

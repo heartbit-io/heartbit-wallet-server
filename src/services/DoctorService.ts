@@ -15,6 +15,7 @@ import {User} from '../domains/entities/User';
 import UserRepository from '../Repositories/UserRepository';
 import {UserRoles} from '../util/enums/userRoles';
 import admin from '../config/firebase-config';
+import ChatGptRepository from '../Repositories/ChatGptRepository';
 
 const eventEmitter = new EventEmitter();
 
@@ -119,11 +120,7 @@ class DoctorService {
 		return creditDoctor;
 	}
 
-	async getQuestions(
-		email: string | undefined,
-		limit: number,
-		offset: number | undefined,
-	) {
+	async getOpenQuestionForDoctor(email: string | undefined) {
 		try {
 			if (!email)
 				throw new CustomError(
@@ -138,14 +135,13 @@ class DoctorService {
 					HttpCodes.UNAUTHORIZED,
 					'User must be a doctor to get user questions',
 				);
+			const openQuestion =
+				await QuestionRepository.getOpenQuestionsOrderByBounty();
+			if (!openQuestion)
+				throw new CustomError(HttpCodes.NOT_FOUND, 'No open question found');
 
-			const openQuestions =
-				await QuestionRepository.getOpenQuestionsOrderByBounty(limit, offset);
-
-			if (!openQuestions.length) return openQuestions;
-			// TODO(david): join the question and reply table
-			const aiReply = await ChatgptService.getChatGptReplyByQuestionId(
-				Number(openQuestions[0].id),
+			const aiReply = await ChatGptRepository.getChatgptReply(
+				Number(openQuestion.id),
 			);
 
 			if (!aiReply)
@@ -154,7 +150,7 @@ class DoctorService {
 			const aiJsonReply: JsonAnswerInterface = aiReply.jsonAnswer;
 
 			return {
-				...openQuestions[0],
+				...openQuestion,
 				title: aiJsonReply.title,
 				chiefComplaint: aiJsonReply.chiefComplaint,
 			};
