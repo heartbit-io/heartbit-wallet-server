@@ -57,4 +57,20 @@ describe('Doctor-Question Repository queries', () => {
 		expect(response).to.have.property('createdAt');
 		expect(response).to.have.property('updatedAt');
 	});
+
+	it('should delete doctor-question', async () => {
+		const doctorQuestion = newDoctorQuestion();
+		await saveDoctorQuestion(doctorQuestion);
+
+		await DoctorQuestionRepository.deleteDoctorQuestion(
+			doctorQuestion.doctorId,
+			doctorQuestion.questionId,
+		);
+
+		const response = await DoctorQuestionRepository.getDoctorQuestionStatus(
+			doctorQuestion.doctorId,
+			doctorQuestion.questionId,
+		);
+		expect(response).to.be.null;
+	});
 });

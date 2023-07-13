@@ -9,6 +9,8 @@ import {
 	newReply,
 	createQuestion,
 	newQuestion,
+	newDoctorQuestion,
+	saveDoctorQuestion,
 } from '../mocks';
 import {UserRoles} from '../../../src/util/enums';
 import dataSource, {
@@ -16,6 +18,7 @@ import dataSource, {
 	QuestionDataSource,
 	ReplyDataSource,
 } from '../../../src/domains/repo';
+import DoctorQuestionRepository from '../../../src/Repositories/DoctorQuestionRepository';
 
 const base_url = '/api/v1';
 
@@ -100,5 +103,45 @@ describe('Replies endpoints', () => {
 			success: false,
 			statusCode: HttpCodes.BAD_REQUEST,
 		});
+	});
+
+	it('should delete doctor-question when a reply is posted by doctor', async () => {
+		const user = newUser();
+		const createdUser = await createUser(user);
+
+		const doctorUser = newUser();
+		doctorUser.role = UserRoles.DOCTOR;
+		doctorUser.email = 'testemail@heartbit.io';
+		const doctor = await createUser(doctorUser);
+
+		const question = newQuestion();
+		question.userId = createdUser.id;
+		const createdQuestion = await createQuestion(question);
+
+		const doctorQuestion = newDoctorQuestion();
+		doctorQuestion.doctorId = doctor.id;
+		doctorQuestion.questionId = createdQuestion.id;
+		await saveDoctorQuestion(doctorQuestion);
+
+		const replyRequest = newReply();
+		replyRequest.userId = doctor.id;
+		replyRequest.questionId = createdQuestion.id;
+
+		const response = await request(app)
+			.post(base_url + '/replies')
+			.send(replyRequest)
+			.set('Accept', 'application/json');
+		expect(response.status).to.equal(HttpCodes.CREATED);
+		expect(response.body).to.include({
+			success: true,
+			statusCode: HttpCodes.CREATED,
+			message: 'Reply created successfully',
+		});
+		const deletedDoctorQuestion =
+			await DoctorQuestionRepository.getDoctorQuestionStatus(
+				doctorQuestion.doctorId,
+				doctorQuestion.questionId,
+			);
+		expect(deletedDoctorQuestion).to.be.null;
 	});
 });

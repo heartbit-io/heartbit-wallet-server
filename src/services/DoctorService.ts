@@ -1,5 +1,4 @@
 import {QuestionStatus, QuestionTypes, TxTypes} from '../util/enums';
-
 import ChatgptService from './ChatgptService';
 import {CustomError} from '../util/CustomError';
 import EventEmitter from 'events';
@@ -27,11 +26,9 @@ class DoctorService {
 		email: string | undefined,
 	) {
 		try {
-			// check that the user is logged in
 			if (!email)
 				throw new CustomError(HttpCodes.UNAUTHORIZED, 'User not logged in');
 
-			// check that it is a doctor
 			const doctor = await UserRepository.getUserDetailsByEmail(email);
 
 			if (!doctor || !doctor.isDoctor) {
@@ -47,7 +44,6 @@ class DoctorService {
 			if (!question)
 				throw new CustomError(HttpCodes.NOT_FOUND, 'Question was not found');
 
-			// create a transaction
 			const user = await UserRepository.getUserDetailsById(question.userId);
 
 			if (!user) throw new CustomError(HttpCodes.NOT_FOUND, 'User not found');
@@ -72,7 +68,6 @@ class DoctorService {
 						'error crediting doctor account',
 					);
 
-				// create a transaction
 				await TransactionsRepository.createTransaction({
 					amount: question.bountyAmount,
 					toUserPubkey: doctor.pubkey,
@@ -82,15 +77,7 @@ class DoctorService {
 				});
 			}
 
-			const reply = await ReplyRepository.createReply({
-				...requestBody,
-				userId: doctor.id,
-			});
-
-			await QuestionRepository.updateStatus(
-				QuestionStatus.CLOSED,
-				Number(question.id),
-			);
+			const reply = await this._updateQuestion(requestBody, doctor, question);
 
 			if (process.env.NODE_ENV !== 'test') {
 				await FcmService.sendNotification(
@@ -110,6 +97,29 @@ class DoctorService {
 						'Internal Server Error',
 				  );
 		}
+	}
+
+	private async _updateQuestion(
+		requestBody: RepliesAttributes,
+		doctor: User,
+		question: Question,
+	) {
+		const reply = await ReplyRepository.createReply({
+			...requestBody,
+			userId: doctor.id,
+		});
+
+		await QuestionRepository.updateStatus(
+			QuestionStatus.CLOSED,
+			Number(question.id),
+		);
+
+		//[TODO:Peter] move to an event bus
+		await DoctorQuestionRepository.deleteDoctorQuestion(
+			Number(doctor.id),
+			Number(question.id),
+		);
+		return reply;
 	}
 
 	private async _updateDoctorBalance(doctor: User, question: Question) {

@@ -22,6 +22,14 @@ class DoctorQuestionRepository {
 			},
 		});
 	}
+
+	async deleteDoctorQuestion(doctorId: number, questionId: number) {
+		return await DoctorQuestionDataSource.createQueryBuilder()
+			.softDelete()
+			.where('doctorId = :doctorId', {doctorId})
+			.andWhere('questionId = :questionId', {questionId})
+			.execute();
+	}
 }
 
 export default new DoctorQuestionRepository();
