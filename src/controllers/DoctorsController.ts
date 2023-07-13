@@ -42,14 +42,7 @@ class DoctorsController {
 		res: Response,
 	): Promise<Response<FormatResponse>> {
 		try {
-			const limit = (req.query.limit as number | undefined) || 1;
-			const offset = req.query.offset as number | undefined;
-
-			const response = await DoctorService.getQuestions(
-				req.email,
-				limit,
-				offset,
-			);
+			const response = await DoctorService.getOpenQuestionForDoctor(req.email);
 
 			return res
 				.status(HttpCodes.OK)
@@ -57,7 +50,7 @@ class DoctorsController {
 					new ResponseDto(
 						true,
 						HttpCodes.OK,
-						'Questions retrieved successfully',
+						'Open question retrieved successfully',
 						response,
 					),
 				);

@@ -55,17 +55,12 @@ class QuestionRepository {
 		return await QuestionDataSource.find({where: {userId}});
 	}
 
-	async getOpenQuestionsOrderByBounty(
-		limit?: number | undefined,
-		offset?: number | undefined,
-	) {
-		return await QuestionDataSource.find({
+	async getOpenQuestionsOrderByBounty() {
+		return await QuestionDataSource.findOne({
 			where: {status: QuestionStatus.OPEN},
-			take: limit,
-			skip: offset,
 			order: {
 				bountyAmount: 'DESC',
-				createdAt: 'ASC',
+				createdAt: 'DESC',
 			},
 		});
 	}

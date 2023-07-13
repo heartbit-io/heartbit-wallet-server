@@ -114,13 +114,7 @@ class QuestionsController {
 	//get user open questions
 	async getOpenQuestionsOrderByBounty(req: DecodedRequest, res: Response) {
 		try {
-			const limit = (req.query.limit as number | undefined) || 20;
-			const offset = req.query.offset as number | undefined;
-
-			const questions = await QuestionService.getOpenQuestionsOrderByBounty(
-				limit,
-				offset,
-			);
+			const questions = await QuestionService.getOpenQuestionsOrderByBounty();
 
 			return res
 				.status(HttpCodes.OK)
