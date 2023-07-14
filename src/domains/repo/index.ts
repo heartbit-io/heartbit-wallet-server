@@ -17,14 +17,7 @@ const dataSource = new DataSource({
 	logging: false,
 	synchronize: env.NODE_ENV === 'production' ? false : true,
 	namingStrategy: new SnakeNamingStrategy(),
-	entities: [
-		User,
-		Reply,
-		BtcTransaction,
-		ChatGptReply,
-		Question,
-		DoctorQuestion,
-	],
+	entities: ['build/src/domains/entities/*.js'],
 	migrations: ['src/migrations/*.ts'],
 });
 
