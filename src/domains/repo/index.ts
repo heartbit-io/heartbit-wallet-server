@@ -17,10 +17,14 @@ const dataSource = new DataSource({
 	logging: false,
 	synchronize: env.NODE_ENV === 'production' ? false : true,
 	namingStrategy: new SnakeNamingStrategy(),
-	entities:
-		env.NODE_ENV === 'production'
-			? ['build/src/domains/entities/*.js']
-			: [User, Reply, BtcTransaction, ChatGptReply, Question, DoctorQuestion],
+	entities: [
+		User,
+		Reply,
+		BtcTransaction,
+		ChatGptReply,
+		Question,
+		DoctorQuestion,
+	],
 	migrations: ['src/migrations/*.ts'],
 });
 
