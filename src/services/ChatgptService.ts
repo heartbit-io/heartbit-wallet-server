@@ -1,14 +1,13 @@
 import * as Sentry from '@sentry/node';
-
 import {Configuration, OpenAIApi} from 'openai';
 import {makeAnswerToJson, makePrompt} from '../util/chatgpt';
-
-import {ChatGPTDataSource} from '../domains/repo';
 import {ChatGptReply} from '../domains/entities/ChatGptReply';
 import {QuestionAttributes} from '../domains/entities/Question';
 import {QuestionTypes} from '../util/enums';
 import env from '../config/env';
-import logger from '../util/logger';
+import ChatGptRepository from '../Repositories/ChatGptRepository';
+import {CustomError} from '../util/CustomError';
+import {HttpCodes} from '../util/HttpCodes';
 
 export interface AnswerInterface {
 	role: string;
@@ -62,7 +61,7 @@ class ChatgptService {
 			const rawAnswer = completion.data.choices[0].message?.content || '';
 			const jsonAnswer: JsonAnswerInterface = makeAnswerToJson(rawAnswer);
 
-			return await ChatGPTDataSource.save({
+			return await ChatGptRepository.createChaptGptReply({
 				questionId,
 				model,
 				maxTokens,
@@ -76,10 +75,14 @@ class ChatgptService {
 							: jsonAnswer.guide,
 				},
 			});
-		} catch (error) {
-			// TODO(david): Sentry alert in slack
-			logger.warn(error);
-			return;
+		} catch (error: any) {
+			Sentry.captureMessage(`ChatGPT error: ${error}`);
+			throw error.code && error.message
+				? error
+				: new CustomError(
+						HttpCodes.INTERNAL_SERVER_ERROR,
+						'Internal Server Error',
+				  );
 		}
 	}
 
@@ -89,17 +92,20 @@ class ChatgptService {
 	 */
 	async getChatGptReplyByQuestionId(questionId: number) {
 		try {
-			const chatGptReply = await ChatGPTDataSource.findOne({
-				where: {questionId},
-			});
+			const chatGptReply = await ChatGptRepository.getChatGptReply(questionId);
 
-			if (!chatGptReply) return;
+			if (!chatGptReply)
+				throw new CustomError(HttpCodes.NOT_FOUND, 'ChatGPT reply not found');
 
 			return chatGptReply;
-		} catch (error) {
+		} catch (error: any) {
 			Sentry.captureMessage(`ChatGPT error: ${error}`);
-			logger.warn(error);
-			return;
+			throw error.code && error.message
+				? error
+				: new CustomError(
+						HttpCodes.INTERNAL_SERVER_ERROR,
+						'Internal Server Error',
+				  );
 		}
 	}
 }

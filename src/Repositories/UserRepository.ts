@@ -1,5 +1,4 @@
 import {User, UserAttributes} from '../domains/entities/User';
-
 import dataSource, {userDataSource} from '../domains/repo';
 
 class UserRepository {

@@ -1,5 +1,4 @@
 import {QuestionStatus, QuestionTypes, TxTypes} from '../util/enums';
-
 import ChatgptService from './ChatgptService';
 import {CustomError} from '../util/CustomError';
 import EventEmitter from 'events';
@@ -15,6 +14,9 @@ import {User} from '../domains/entities/User';
 import UserRepository from '../Repositories/UserRepository';
 import {UserRoles} from '../util/enums/userRoles';
 import admin from '../config/firebase-config';
+import ChatGptRepository from '../Repositories/ChatGptRepository';
+import DoctorQuestionRepository from '../Repositories/DoctorQuestionRepository';
+import dataSource from '../domains/repo';
 
 const eventEmitter = new EventEmitter();
 
@@ -24,11 +26,9 @@ class DoctorService {
 		email: string | undefined,
 	) {
 		try {
-			// check that the user is logged in
 			if (!email)
 				throw new CustomError(HttpCodes.UNAUTHORIZED, 'User not logged in');
 
-			// check that it is a doctor
 			const doctor = await UserRepository.getUserDetailsByEmail(email);
 
 			if (!doctor || !doctor.isDoctor) {
@@ -44,7 +44,6 @@ class DoctorService {
 			if (!question)
 				throw new CustomError(HttpCodes.NOT_FOUND, 'Question was not found');
 
-			// create a transaction
 			const user = await UserRepository.getUserDetailsById(question.userId);
 
 			if (!user) throw new CustomError(HttpCodes.NOT_FOUND, 'User not found');
@@ -69,7 +68,6 @@ class DoctorService {
 						'error crediting doctor account',
 					);
 
-				// create a transaction
 				await TransactionsRepository.createTransaction({
 					amount: question.bountyAmount,
 					toUserPubkey: doctor.pubkey,
@@ -79,15 +77,7 @@ class DoctorService {
 				});
 			}
 
-			const reply = await ReplyRepository.createReply({
-				...requestBody,
-				userId: doctor.id,
-			});
-
-			await QuestionRepository.updateStatus(
-				QuestionStatus.CLOSED,
-				Number(question.id),
-			);
+			const reply = await this._updateQuestion(requestBody, doctor, question);
 
 			if (process.env.NODE_ENV !== 'test') {
 				await FcmService.sendNotification(
@@ -109,6 +99,29 @@ class DoctorService {
 		}
 	}
 
+	private async _updateQuestion(
+		requestBody: RepliesAttributes,
+		doctor: User,
+		question: Question,
+	) {
+		const reply = await ReplyRepository.createReply({
+			...requestBody,
+			userId: doctor.id,
+		});
+
+		await QuestionRepository.updateStatus(
+			QuestionStatus.CLOSED,
+			Number(question.id),
+		);
+
+		//[TODO:Peter] move to an event bus
+		await DoctorQuestionRepository.deleteDoctorQuestion(
+			Number(doctor.id),
+			Number(question.id),
+		);
+		return reply;
+	}
+
 	private async _updateDoctorBalance(doctor: User, question: Question) {
 		const doctorBalance =
 			Number(doctor.btcBalance) + Number(question.bountyAmount);
@@ -119,11 +132,7 @@ class DoctorService {
 		return creditDoctor;
 	}
 
-	async getQuestions(
-		email: string | undefined,
-		limit: number,
-		offset: number | undefined,
-	) {
+	async getOpenQuestionForDoctor(email: string | undefined) {
 		try {
 			if (!email)
 				throw new CustomError(
@@ -138,14 +147,13 @@ class DoctorService {
 					HttpCodes.UNAUTHORIZED,
 					'User must be a doctor to get user questions',
 				);
+			const openQuestion =
+				await QuestionRepository.getOpenQuestionsOrderByBounty();
 
-			const openQuestions =
-				await QuestionRepository.getOpenQuestionsOrderByBounty(limit, offset);
+			if (!openQuestion) return;
 
-			if (!openQuestions.length) return openQuestions;
-			// TODO(david): join the question and reply table
-			const aiReply = await ChatgptService.getChatGptReplyByQuestionId(
-				Number(openQuestions[0].id),
+			const aiReply = await ChatGptRepository.getChatGptReply(
+				Number(openQuestion.id),
 			);
 
 			if (!aiReply)
@@ -154,7 +162,7 @@ class DoctorService {
 			const aiJsonReply: JsonAnswerInterface = aiReply.jsonAnswer;
 
 			return {
-				...openQuestions[0],
+				...openQuestion,
 				title: aiJsonReply.title,
 				chiefComplaint: aiJsonReply.chiefComplaint,
 			};
@@ -339,6 +347,81 @@ class DoctorService {
 						HttpCodes.INTERNAL_SERVER_ERROR,
 						'Internal Server Error',
 				  );
+		}
+	}
+
+	async assignQuestionToDoctor(
+		doctorId: number,
+		questionId: number,
+		email: string | undefined,
+	) {
+		const querryRunner = dataSource.createQueryRunner();
+		try {
+			const question = await QuestionRepository.getQuestion(questionId);
+			if (!question || question.status !== QuestionStatus.OPEN)
+				throw new CustomError(
+					HttpCodes.BAD_REQUEST,
+					'Question not found or is no longer open',
+				);
+
+			const doctor = await UserRepository.getUserDetailsById(doctorId);
+
+			if (!doctor || doctor.role !== UserRoles.DOCTOR)
+				throw new CustomError(HttpCodes.NOT_FOUND, 'Doctor not found');
+
+			if (!email || email !== doctor.email)
+				throw new CustomError(
+					HttpCodes.UNAUTHORIZED,
+					'You dont have permission to access this resource',
+				);
+
+			const doctorQuestionStatus =
+				await DoctorQuestionRepository.getDoctorQuestionStatus(
+					doctorId,
+					questionId,
+				);
+
+			if (doctorQuestionStatus)
+				throw new CustomError(
+					HttpCodes.BAD_REQUEST,
+					'Doctor is already assigned to question',
+				);
+
+			await querryRunner.connect();
+			await querryRunner.startTransaction('REPEATABLE READ');
+
+			const doctorQuestion =
+				await DoctorQuestionRepository.createDoctorQuestion({
+					doctorId,
+					questionId,
+				});
+			if (!doctorQuestion)
+				throw new CustomError(
+					HttpCodes.INTERNAL_SERVER_ERROR,
+					'Error assigning question to doctor',
+				);
+			const updatedQuestion = await QuestionRepository.updateStatus(
+				QuestionStatus.ASSIGNED,
+				questionId,
+			);
+
+			if (!updatedQuestion)
+				throw new CustomError(
+					HttpCodes.INTERNAL_SERVER_ERROR,
+					'Error updating question',
+				);
+			querryRunner.commitTransaction();
+			return doctorQuestion;
+		} catch (error: any) {
+			await querryRunner.rollbackTransaction();
+			throw error.code && error.message
+				? error
+				: new CustomError(
+						HttpCodes.INTERNAL_SERVER_ERROR,
+						'Internal Server Error',
+				  );
+		} finally {
+			await querryRunner.release();
 		}
 	}
 }

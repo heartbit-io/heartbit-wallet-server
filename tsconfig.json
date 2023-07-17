@@ -4,7 +4,7 @@
     "experimentalDecorators": true,
     "module": "NodeNext",
     "rootDir": "./src",
-    "moduleResolution": "node",
+    "moduleResolution": "NodeNext",
     "resolveJsonModule": true,
     "allowJs": true,
     "outDir": "./build",

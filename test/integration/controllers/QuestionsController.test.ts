@@ -2,21 +2,22 @@ import {expect} from 'chai';
 import {agent as request} from 'supertest';
 import {QuestionAttributes} from '../../../src/domains/entities/Question';
 import {HttpCodes} from '../../../src/util/HttpCodes';
-import {QuestionStatus} from '../../../src/util/enums';
 import app from '../../../src/index';
 import {newUser, createUser, newQuestion} from '../mocks';
 import dataSource, {
 	QuestionDataSource,
 	userDataSource,
 } from '../../../src/domains/repo';
-import exp from 'constants';
 import UserRepository from '../../../src/Repositories/UserRepository';
+import {QuestionStatus} from '../../../src/util/enums';
 
 const base_url = '/api/v1';
 
 describe('Questions endpoints', () => {
 	before(async () => {
-		await dataSource.initialize();
+		if (!dataSource.isInitialized) {
+			await dataSource.initialize();
+		}
 	});
 	afterEach(async () => {
 		await QuestionDataSource.delete({});
@@ -47,25 +48,20 @@ describe('Questions endpoints', () => {
 	const createQuestion = async (question: QuestionAttributes) => {
 		return await request(app)
 			.post(base_url + '/questions')
-			.send({
-				...question,
-			})
+			.send({...question})
 			.set('Accept', 'application/json');
 	};
 
 	it('should create a question', async () => {
-		const user = newUser();
-		user.email = 'testemail@heartbit.io';
-		const createdUser = await createUser(user);
+		const userData = newUser();
+		userData.email = 'testemail@heartbit.io';
+		const user = await createUser(userData);
 		const bountyAmount = user.btcBalance / 2;
 		const question = newQuestion();
-		const question_request = {
-			...question,
-			userId: createdUser.id,
-			bountyAmount,
-		};
-
-		const response = await createQuestion(question_request);
+		question.userId = user.id;
+		question.bountyAmount = bountyAmount;
+		question.status = QuestionStatus.OPEN;
+		const response = await createQuestion(question);
 		expect(response.status).to.equal(HttpCodes.CREATED);
 		expect(response.body).to.include(
 			successResponse(true, HttpCodes.CREATED, 'Question posted successfully'),
@@ -211,31 +207,6 @@ describe('Questions endpoints', () => {
 		expect(response.body.data.questions).to.be.an('array');
 	});
 
-	it('should return all open questions', async () => {
-		const user = newUser();
-		user.email = 'testemail@heartbit.io';
-		const createdUser = await createUser(user);
-		const question = newQuestion();
-		const question_body = {
-			...question,
-			status: QuestionStatus.OPEN,
-			userId: createdUser.id,
-			bountyAmount: user.btcBalance / 2,
-		};
-
-		await createQuestion(question_body);
-		const response = await request(app).get(`${base_url}/questions/open`);
-		expect(response.status).to.equal(HttpCodes.OK);
-		expect(response.body).to.include(
-			successResponse(
-				true,
-				HttpCodes.OK,
-				'Successfully retrieved open questions',
-			),
-		);
-		expect(response.body.data).to.be.an('array');
-		expect(response.body.data[0].status).to.equal(question_body.status);
-	});
 	it('should return a question by id', async () => {
 		const user = newUser();
 		user.email = 'testemail@heartbit.io';

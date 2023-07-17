@@ -1,6 +1,6 @@
 import {faker} from '@faker-js/faker';
 import BtcTransactionsRepository from '../../src/Repositories/BtcTransactionsRepository';
-import {BtcTransaction} from '../../src/domains/entities/BtcTransaction';
+import {BtcTransactionFields} from '../../src/domains/entities/BtcTransaction';
 import {
 	QuestionStatus,
 	QuestionTypes,
@@ -13,29 +13,29 @@ import {QuestionAttributes} from '../../src/domains/entities/Question';
 import QuestionRepository from '../../src/Repositories/QuestionRepository';
 import {RepliesAttributes} from '../../src/domains/entities/Reply';
 import ReplyRepository from '../../src/Repositories/ReplyRepository';
+import {ChatGptReplyAttributes} from '../../src/domains/entities/ChatGptReply';
+import ChatGptRepository from '../../src/Repositories/ChatGptRepository';
+import {DoctorQuestionAttributes} from '../../src/domains/entities/DoctorQuestion';
+import DoctorQuestionRepository from '../../src/Repositories/DoctorQuestionRepository';
+import {UserAttributes} from '../../src/domains/entities/User';
 
 export const newUser = () => {
 	return {
-		id: faker.number.int({min: 1, max: 50}),
 		email: faker.internet.email().toLocaleLowerCase(),
 		pubkey: faker.string.alphanumeric(32).toLocaleLowerCase(),
 		btcBalance: Number(faker.finance.amount()),
 		role: faker.helpers.arrayElement(Object.values(UserRoles)),
 		promotionBtcBalance: 0,
 		fcmToken: faker.string.alphanumeric(32),
-		createdAt: faker.date.past(),
-		updatedAt: faker.date.past(),
-		deletedAt: null,
 	};
 };
 
-export const createUser = async (user: any) => {
+export const createUser = async (user: UserAttributes) => {
 	return await UserRepository.createUser(user);
 };
 
 export const newBtcTransaction = () => {
 	return {
-		id: faker.number.int({min: 1, max: 50}),
 		amount: Number(faker.finance.amount()),
 		fromUserPubkey: faker.string.alphanumeric(32),
 		toUserPubkey: faker.string.alphanumeric(32),
@@ -47,7 +47,9 @@ export const newBtcTransaction = () => {
 	};
 };
 
-export const createBtcTransaction = async (btcTransaction: BtcTransaction) => {
+export const createBtcTransaction = async (
+	btcTransaction: BtcTransactionFields,
+) => {
 	return await BtcTransactionsRepository.createTransaction(btcTransaction);
 };
 
@@ -76,7 +78,6 @@ export const createQuestion = async (question: QuestionAttributes) => {
 
 export const newReply = () => {
 	return {
-		id: faker.number.int({min: 1, max: 50}),
 		questionId: faker.number.int({min: 1, max: 50}),
 		userId: faker.number.int({min: 1, max: 50}),
 		title: faker.lorem.sentence(),
@@ -97,4 +98,54 @@ export const newReply = () => {
 
 export const createReply = async (reply: RepliesAttributes) => {
 	return await ReplyRepository.createReply(reply);
+};
+
+const jsonAnswer = () => {
+	return {
+		title: faker.lorem.sentence(),
+		aiAnswer: faker.lorem.paragraph(),
+		doctorAnswer: faker.lorem.paragraph(),
+		guide: faker.lorem.paragraph(),
+		chiefComplaint: faker.lorem.sentence(),
+		medicalHistory: faker.lorem.sentence(),
+		currentMedication: faker.lorem.sentence(),
+		assessment: faker.lorem.sentence(),
+		plan: faker.lorem.sentence(),
+		doctorNote: faker.lorem.paragraph(),
+	};
+};
+export const chatGptReply = () => {
+	return {
+		questionId: faker.number.int({min: 1, max: 50}),
+		model: 'gpt-3.5-turbo',
+		maxTokens: 150,
+		prompt: faker.lorem.sentence(),
+		rawAnswer: faker.lorem.paragraph(),
+		jsonAnswer: jsonAnswer(),
+		createdAt: faker.date.past(),
+		updatedAt: faker.date.past(),
+		deletedAt: null,
+	};
+};
+
+export const createChatGptReply = async (
+	chatGptReply: ChatGptReplyAttributes,
+) => {
+	return await ChatGptRepository.createChaptGptReply(chatGptReply);
+};
+
+export const newDoctorQuestion = () => {
+	return {
+		doctorId: faker.number.int({min: 1, max: 50}),
+		questionId: faker.number.int({min: 1, max: 50}),
+		createdAt: faker.date.past(),
+		updatedAt: faker.date.past(),
+		deletedAt: null,
+	};
+};
+
+export const saveDoctorQuestion = async (
+	doctorQuestion: DoctorQuestionAttributes,
+) => {
+	return await DoctorQuestionRepository.createDoctorQuestion(doctorQuestion);
 };

@@ -244,11 +244,11 @@ describe('Question Repository queries', () => {
 	it('should get open questions ordered by their bounty', async () => {
 		const user = newUser();
 		const createdUser = await createUser(user);
-		const question = newQuestion();
-		question.userId = createdUser.id;
-		question.status = QuestionStatus.OPEN;
-		question.bountyAmount = 100;
-		await createQuestion(question);
+		const questionData = newQuestion();
+		questionData.userId = createdUser.id;
+		questionData.status = QuestionStatus.OPEN;
+		questionData.bountyAmount = 100;
+		await createQuestion(questionData);
 
 		const question2 = newQuestion();
 		question2.userId = createdUser.id;
@@ -256,20 +256,19 @@ describe('Question Repository queries', () => {
 		question2.bountyAmount = 200;
 		await createQuestion(question2);
 
-		const questions = await QuestionRepository.getOpenQuestionsOrderByBounty();
-		expect(questions).to.be.an('array');
-		expect(questions).to.have.lengthOf(2);
-		expect(questions[0]).to.have.property('id');
-		expect(questions[0]).to.have.property('content');
-		expect(questions[0]).to.have.property('rawContentLanguage');
-		expect(questions[0]).to.have.property('rawContent');
-		expect(questions[0]).to.have.property('userId');
-		expect(questions[0]).to.have.property('bountyAmount');
-		expect(questions[0]).to.have.property('status');
-		expect(questions[0]).to.have.property('createdAt');
-		expect(questions[0]).to.have.property('updatedAt');
-		expect(Number(questions[0].bountyAmount)).to.equal(200);
-		expect(Number(questions[1].bountyAmount)).to.equal(100);
+		const question = await QuestionRepository.getOpenQuestionsOrderByBounty();
+		expect(question).to.be.an('object');
+		expect(question).to.have.property('id');
+		expect(question).to.have.property('content');
+		expect(question).to.have.property('rawContentLanguage');
+		expect(question).to.have.property('rawContent');
+		expect(question).to.have.property('userId');
+		expect(question).to.have.property('bountyAmount');
+		expect(question).to.have.property('status');
+		expect(question).to.have.property('createdAt');
+		expect(question).to.have.property('updatedAt');
+		if (!question) throw new Error('question is null');
+		expect(Number(question.bountyAmount)).to.equal(200);
 	});
 
 	it('should get sum of user open bounty questions', async () => {

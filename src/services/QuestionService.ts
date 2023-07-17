@@ -1,5 +1,4 @@
 import {QuestionStatus, TxTypes} from '../util/enums';
-
 import {CustomError} from '../util/CustomError';
 import DeeplService from './DeeplService';
 import {HttpCodes} from '../util/HttpCodes';
@@ -275,15 +274,9 @@ class QuestionService {
 		}
 	}
 
-	async getOpenQuestionsOrderByBounty(
-		limit?: number | undefined,
-		offset?: number | undefined,
-	) {
+	async getOpenQuestionsOrderByBounty() {
 		try {
-			return await QuestionRepository.getOpenQuestionsOrderByBounty(
-				limit,
-				offset,
-			);
+			return await QuestionRepository.getOpenQuestionsOrderByBounty();
 		} catch (error: any) {
 			throw error.code && error.message
 				? error
