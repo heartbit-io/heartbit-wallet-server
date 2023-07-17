@@ -1,5 +1,4 @@
 import * as Sentry from '@sentry/node';
-
 import UserRepository from '../Repositories/UserRepository';
 import admin from '../config/firebase-config';
 import logger from '../util/logger';

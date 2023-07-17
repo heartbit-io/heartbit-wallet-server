@@ -37,7 +37,7 @@ describe('ChaptGpt Repository queries', () => {
 		const newChatGptReply = chatGptReply();
 		newChatGptReply.questionId = createdQuestion.id;
 
-		const response = await ChatGptRepository.createChaptgptReply(
+		const response = await ChatGptRepository.createChaptGptReply(
 			newChatGptReply,
 		);
 		expect(response).to.be.an('object');
@@ -58,7 +58,7 @@ describe('ChaptGpt Repository queries', () => {
 		newChatGptReply.questionId = createdQuestion.id;
 		await createChatGptReply(newChatGptReply);
 
-		const response = await ChatGptRepository.getChatgptReply(
+		const response = await ChatGptRepository.getChatGptReply(
 			createdQuestion.id,
 		);
 		expect(response).to.be.an('object');

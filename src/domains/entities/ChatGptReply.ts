@@ -23,7 +23,7 @@ export interface JsonAnswerInterface {
 	doctorNote: string;
 }
 
-export interface ChatgptRepliesAttributes {
+export interface ChatGptReplyAttributes {
 	id?: number;
 	questionId?: number;
 	model: string;

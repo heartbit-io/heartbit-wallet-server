@@ -1,6 +1,6 @@
 import {QuestionDataSource} from '../domains/repo';
 import {QuestionStatus} from '../util/enums';
-import {QuestionAttributes, Question} from '../domains/entities/Question';
+import {QuestionAttributes} from '../domains/entities/Question';
 import {In} from 'typeorm';
 
 class QuestionRepository {

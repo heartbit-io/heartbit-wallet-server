@@ -60,8 +60,6 @@ export class User {
 	@OneToMany(() => Reply, reply => reply.user)
 	replies: Reply[];
 
-	dataValues: any;
-
 	isDoctor() {
 		return this.role === UserRoles.DOCTOR;
 	}

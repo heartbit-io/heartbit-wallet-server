@@ -13,7 +13,7 @@ import {QuestionAttributes} from '../../src/domains/entities/Question';
 import QuestionRepository from '../../src/Repositories/QuestionRepository';
 import {RepliesAttributes} from '../../src/domains/entities/Reply';
 import ReplyRepository from '../../src/Repositories/ReplyRepository';
-import {ChatgptRepliesAttributes} from '../../src/domains/entities/ChatGptReply';
+import {ChatGptReplyAttributes} from '../../src/domains/entities/ChatGptReply';
 import ChatGptRepository from '../../src/Repositories/ChatGptRepository';
 import {DoctorQuestionAttributes} from '../../src/domains/entities/DoctorQuestion';
 import DoctorQuestionRepository from '../../src/Repositories/DoctorQuestionRepository';
@@ -129,9 +129,9 @@ export const chatGptReply = () => {
 };
 
 export const createChatGptReply = async (
-	chatGptReply: ChatgptRepliesAttributes,
+	chatGptReply: ChatGptReplyAttributes,
 ) => {
-	return await ChatGptRepository.createChaptgptReply(chatGptReply);
+	return await ChatGptRepository.createChaptGptReply(chatGptReply);
 };
 
 export const newDoctorQuestion = () => {

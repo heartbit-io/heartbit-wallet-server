@@ -1,17 +1,17 @@
 import {ChatGPTDataSource} from '../domains/repo';
 import {
 	ChatGptReply,
-	ChatgptRepliesAttributes,
+	ChatGptReplyAttributes,
 } from '../domains/entities/ChatGptReply';
 
 class ChatGptRepository {
-	async createChaptgptReply(
-		chatGptReply: ChatgptRepliesAttributes,
+	async createChaptGptReply(
+		chatGptReply: ChatGptReplyAttributes,
 	): Promise<ChatGptReply> {
-		return await ChatGPTDataSource.save({...chatGptReply});
+		return await ChatGPTDataSource.save(chatGptReply);
 	}
 
-	async getChatgptReply(questionId: number): Promise<ChatGptReply | null> {
+	async getChatGptReply(questionId: number): Promise<ChatGptReply | null> {
 		return await ChatGPTDataSource.findOne({
 			where: {questionId},
 		});

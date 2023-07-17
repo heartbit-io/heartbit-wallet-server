@@ -1,5 +1,4 @@
 import * as Sentry from '@sentry/node';
-
 import env from '../config/env';
 import logger from '../util/logger';
 import translate from 'deepl';

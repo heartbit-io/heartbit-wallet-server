@@ -26,8 +26,6 @@ export class DoctorQuestion {
 
 	@DeleteDateColumn({type: 'timestamp', nullable: true})
 	deletedAt: Date;
-
-	dataValues: any;
 }
 
 export interface DoctorQuestionAttributes {

@@ -26,8 +26,8 @@ class DoctorQuestionRepository {
 	async deleteDoctorQuestion(doctorId: number, questionId: number) {
 		return await DoctorQuestionDataSource.createQueryBuilder()
 			.softDelete()
-			.where('doctorId = :doctorId', {doctorId})
-			.andWhere('questionId = :questionId', {questionId})
+			.where('doctor_id = :doctorId', {doctorId})
+			.andWhere('question_id = :questionId', {questionId})
 			.execute();
 	}
 }

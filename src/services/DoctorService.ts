@@ -152,7 +152,7 @@ class DoctorService {
 
 			if (!openQuestion) return;
 
-			const aiReply = await ChatGptRepository.getChatgptReply(
+			const aiReply = await ChatGptRepository.getChatGptReply(
 				Number(openQuestion.id),
 			);
 
@@ -356,8 +356,6 @@ class DoctorService {
 		email: string | undefined,
 	) {
 		const querryRunner = dataSource.createQueryRunner();
-		await querryRunner.connect();
-		await querryRunner.startTransaction('REPEATABLE READ');
 		try {
 			const question = await QuestionRepository.getQuestion(questionId);
 			if (!question || question.status !== QuestionStatus.OPEN)
@@ -388,6 +386,9 @@ class DoctorService {
 					HttpCodes.BAD_REQUEST,
 					'Doctor is already assigned to question',
 				);
+
+			await querryRunner.connect();
+			await querryRunner.startTransaction('REPEATABLE READ');
 
 			const doctorQuestion =
 				await DoctorQuestionRepository.createDoctorQuestion({
