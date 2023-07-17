@@ -65,6 +65,11 @@ export class Question20230404055110 implements MigrationInterface {
 						isNullable: true,
 					},
 					{
+						name: 'lifestyle',
+						type: 'text',
+						isNullable: true,
+					},
+					{
 						name: 'others',
 						type: 'text',
 						isNullable: true,

@@ -1,6 +1,3 @@
-import {faker} from '@faker-js/faker';
-import BtcTransactionsRepository from '../../src/Repositories/BtcTransactionsRepository';
-import {BtcTransaction} from '../../src/domains/entities/BtcTransaction';
 import {
 	QuestionStatus,
 	QuestionTypes,
@@ -8,11 +5,15 @@ import {
 	TxTypes,
 	UserRoles,
 } from '../../src/util/enums';
-import UserRepository from '../../src/Repositories/UserRepository';
+
+import {BtcTransaction} from '../../src/domains/entities/BtcTransaction';
+import BtcTransactionsRepository from '../../src/Repositories/BtcTransactionsRepository';
 import {QuestionAttributes} from '../../src/domains/entities/Question';
 import QuestionRepository from '../../src/Repositories/QuestionRepository';
 import {RepliesAttributes} from '../../src/domains/entities/Reply';
 import ReplyRepository from '../../src/Repositories/ReplyRepository';
+import UserRepository from '../../src/Repositories/UserRepository';
+import {faker} from '@faker-js/faker';
 
 export const newUser = () => {
 	return {
@@ -63,6 +64,7 @@ export const newQuestion = () => {
 		currentMedication: faker.lorem.sentence(),
 		ageSexEthnicity: faker.lorem.sentence(),
 		pastIllnessHistory: faker.lorem.sentence(),
+		lifestyle: faker.lorem.sentence(),
 		others: faker.lorem.sentence(),
 		createdAt: faker.date.past(),
 		updatedAt: faker.date.past(),

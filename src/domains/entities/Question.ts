@@ -58,6 +58,9 @@ export class Question {
 	pastIllnessHistory: string;
 
 	@Column({type: 'text'})
+	lifestyle: string;
+
+	@Column({type: 'text'})
 	others: string;
 
 	@CreateDateColumn({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
@@ -94,5 +97,6 @@ export interface QuestionAttributes {
 	currentMedication?: string;
 	ageSexEthnicity?: string;
 	pastIllnessHistory?: string;
+	lifestyle?: string;
 	others?: string;
 }

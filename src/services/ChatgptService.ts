@@ -60,7 +60,7 @@ class ChatgptService {
 			});
 
 			const rawAnswer = completion.data.choices[0].message?.content || '';
-			const jsonAnswer: JsonAnswerInterface = makeAnswerToJson(rawAnswer);
+			const jsonAnswer: JsonAnswerInterface = JSON.parse(rawAnswer);
 
 			return await ChatGPTDataSource.save({
 				questionId,
