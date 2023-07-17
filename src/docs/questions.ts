@@ -94,6 +94,10 @@ const questionResponseData = {
 		type: 'string',
 		example: 'Early cataracts',
 	},
+	lifestyle: {
+		type: 'string',
+		example: 'Allergies, dietary habits, and exercise',
+	},
 	others: {
 		type: 'string',
 		example: 'Share anything that might help',
@@ -693,6 +697,10 @@ const createQuestionBody = {
 		pastIllnessHistory: {
 			type: 'string',
 			example: '(optional) Early cataracts',
+		},
+		lifestyle: {
+			type: 'string',
+			example: 'Allergies, dietary habits, and exercise',
 		},
 		others: {
 			type: 'string',

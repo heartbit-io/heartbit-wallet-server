@@ -16,6 +16,7 @@ class QuestionService {
 			currentMedication,
 			ageSexEthnicity,
 			pastIllnessHistory,
+			lifestyle,
 			others,
 		} = question;
 		const querryRunner = dataSource.createQueryRunner();
@@ -53,6 +54,7 @@ class QuestionService {
 				currentMedication: currentMedication || '',
 				ageSexEthnicity: ageSexEthnicity || '',
 				pastIllnessHistory: pastIllnessHistory || '',
+				lifestyle: lifestyle || '',
 				others: others || '',
 				rawContentLanguage: enContent.detected_source_language, // snake case because deepl response
 				rawContent: content,

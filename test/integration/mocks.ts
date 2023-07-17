@@ -1,6 +1,3 @@
-import {faker} from '@faker-js/faker';
-import BtcTransactionsRepository from '../../src/Repositories/BtcTransactionsRepository';
-import {BtcTransactionFields} from '../../src/domains/entities/BtcTransaction';
 import {
 	QuestionStatus,
 	QuestionTypes,
@@ -8,16 +5,21 @@ import {
 	TxTypes,
 	UserRoles,
 } from '../../src/util/enums';
-import UserRepository from '../../src/Repositories/UserRepository';
-import {QuestionAttributes} from '../../src/domains/entities/Question';
-import QuestionRepository from '../../src/Repositories/QuestionRepository';
-import {RepliesAttributes} from '../../src/domains/entities/Reply';
-import ReplyRepository from '../../src/Repositories/ReplyRepository';
+
+import {BtcTransaction} from '../../src/domains/entities/BtcTransaction';
+import {BtcTransactionFields} from '../../src/domains/entities/BtcTransaction';
+import BtcTransactionsRepository from '../../src/Repositories/BtcTransactionsRepository';
 import {ChatGptReplyAttributes} from '../../src/domains/entities/ChatGptReply';
 import ChatGptRepository from '../../src/Repositories/ChatGptRepository';
 import {DoctorQuestionAttributes} from '../../src/domains/entities/DoctorQuestion';
 import DoctorQuestionRepository from '../../src/Repositories/DoctorQuestionRepository';
+import {QuestionAttributes} from '../../src/domains/entities/Question';
+import QuestionRepository from '../../src/Repositories/QuestionRepository';
+import {RepliesAttributes} from '../../src/domains/entities/Reply';
+import ReplyRepository from '../../src/Repositories/ReplyRepository';
 import {UserAttributes} from '../../src/domains/entities/User';
+import UserRepository from '../../src/Repositories/UserRepository';
+import {faker} from '@faker-js/faker';
 
 export const newUser = () => {
 	return {
@@ -65,6 +67,7 @@ export const newQuestion = () => {
 		currentMedication: faker.lorem.sentence(),
 		ageSexEthnicity: faker.lorem.sentence(),
 		pastIllnessHistory: faker.lorem.sentence(),
+		lifestyle: faker.lorem.sentence(),
 		others: faker.lorem.sentence(),
 		createdAt: faker.date.past(),
 		updatedAt: faker.date.past(),

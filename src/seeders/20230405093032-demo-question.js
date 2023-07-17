@@ -22,6 +22,7 @@ module.exports = {
 			current_medication: faker.lorem.sentences(),
 			age_sex_ethnicity: faker.lorem.sentences(),
 			past_illness_history: faker.lorem.sentences(),
+			lifestyle: faker.lorem.sentences(),
 			others: faker.lorem.sentences(),
 			status: faker.helpers.arrayElement(['Open', 'Closed']),
 			created_at: new Date(),
