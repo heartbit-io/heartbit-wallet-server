@@ -111,38 +111,6 @@ class QuestionsController {
 		}
 	}
 
-	//get user open questions
-	async getOpenQuestionsOrderByBounty(req: DecodedRequest, res: Response) {
-		try {
-			const index = req.query.index ? Number(req.query.index) : 0;
-			const questions = await QuestionService.getOpenQuestionsOrderByBounty(
-				index,
-			);
-
-			return res
-				.status(HttpCodes.OK)
-				.json(
-					new ResponseDto(
-						true,
-						HttpCodes.OK,
-						'Successfully retrieved open questions',
-						questions,
-					),
-				);
-		} catch (error: any) {
-			return res
-				.status(error.code ? error.code : HttpCodes.INTERNAL_SERVER_ERROR)
-				.json(
-					new ResponseDto(
-						false,
-						error.code ? error.code : HttpCodes.INTERNAL_SERVER_ERROR,
-						error.message ? error.message : 'HTTP error',
-						null,
-					),
-				);
-		}
-	}
-
 	async getUserQuestionsByStatus(req: DecodedRequest, res: Response) {
 		try {
 			const status = req.query.status as QuestionStatus;

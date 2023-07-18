@@ -15,7 +15,6 @@ router.post(
 	QuestionsController.create,
 );
 
-router.get('/open', QuestionsController.getOpenQuestionsOrderByBounty);
 router.get(
 	'/status',
 	QuestionsValidator.getUserQuestionsBystatus(),
