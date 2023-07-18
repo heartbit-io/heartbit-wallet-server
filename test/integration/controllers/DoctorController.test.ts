@@ -65,6 +65,7 @@ describe('Doctor endpoints', () => {
 
 		const response = await request(app)
 			.get(base_url + '/doctors/questions')
+			.send({index: 0})
 			.set('Accept', 'application/json');
 		expect(response.status).to.equal(HttpCodes.OK);
 		expect(response.body.data).to.be.an('object');

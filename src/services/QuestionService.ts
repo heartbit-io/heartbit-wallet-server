@@ -275,19 +275,6 @@ class QuestionService {
 				  );
 		}
 	}
-
-	async getOpenQuestionsOrderByBounty(index: number) {
-		try {
-			return await QuestionRepository.getOpenQuestionsOrderByBounty(index);
-		} catch (error: any) {
-			throw error.code && error.message
-				? error
-				: new CustomError(
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						'Internal Server Error',
-				  );
-		}
-	}
 }
 
 export default new QuestionService();
