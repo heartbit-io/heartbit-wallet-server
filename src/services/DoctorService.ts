@@ -185,7 +185,6 @@ class DoctorService {
 					HttpCodes.UNAUTHORIZED,
 					'Error getting user email',
 				);
-			// check that it is a doctor
 			const doctor = await UserRepository.getUserDetailsByEmail(email);
 
 			if (!doctor || doctor.role !== UserRoles.DOCTOR)
@@ -201,21 +200,24 @@ class DoctorService {
 			if (!question)
 				throw new CustomError(HttpCodes.NOT_FOUND, 'Question not found');
 
-			// TODO(david): join the question and reply table
-			const aiReply = await ChatgptService.getChatGptReplyByQuestionId(
+			let aiJsonReply = null;
+			if (question.chatGptReply) {
+				aiJsonReply = question.chatGptReply.jsonAnswer;
+
+				if (question.type === QuestionTypes.GENERAL) {
+					aiJsonReply.doctorNote = aiJsonReply.doctorAnswer;
+				}
+			}
+
+			const assignedDoctorId = await this._getAssignedDoctor(
 				Number(questionId),
 			);
 
-			if (!aiReply)
-				throw new CustomError(HttpCodes.NOT_FOUND, 'AI reply not found');
-
-			const aiJsonReply = aiReply.jsonAnswer;
-
-			if (question.type === QuestionTypes.GENERAL) {
-				aiJsonReply.doctorNote = aiJsonReply.doctorAnswer;
-			}
-
-			return {...question, aiJsonReply};
+			return {
+				...question,
+				assignedDoctorId: assignedDoctorId ?? null,
+				aiJsonReply,
+			};
 		} catch (error: any) {
 			throw error.code && error.message
 				? error
@@ -224,6 +226,18 @@ class DoctorService {
 						'Internal Server Error',
 				  );
 		}
+	}
+
+	private async _getAssignedDoctor(
+		questionId: number,
+	): Promise<number | undefined> {
+		const assignedDoctorId = await ReplyRepository.getDoctorIdByQuestionId(
+			questionId,
+		);
+		if (!assignedDoctorId) {
+			return await DoctorQuestionRepository.getAssignedDoctorId(questionId);
+		}
+		return assignedDoctorId;
 	}
 
 	async getDoctorAnsweredQuestions(

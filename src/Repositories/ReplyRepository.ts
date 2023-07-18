@@ -46,6 +46,15 @@ class ReplyRepository {
 			.where('id = :id', {id: replyId})
 			.execute();
 	}
+
+	async getDoctorIdByQuestionId(
+		questionId: number,
+	): Promise<number | undefined> {
+		const reply = await ReplyDataSource.findOne({
+			where: {questionId},
+		});
+		return reply?.userId;
+	}
 }
 
 export default new ReplyRepository();

@@ -196,4 +196,28 @@ describe('Replies Repository queries', () => {
 			.to.equal(createdQuestion.id);
 		expect(doctorReply).to.have.property('userId').to.equal(doctor.id);
 	});
+
+	it('should get doctor Id by question id', async () => {
+		const user = newUser();
+		const createdUser = await createUser(user);
+
+		const doctorUser = newUser();
+		doctorUser.role = UserRoles.DOCTOR;
+		const doctor = await createUser(doctorUser);
+
+		const question = newQuestion();
+		question.userId = createdUser.id;
+		const createdQuestion = await createQuestion(question);
+
+		const reply = newReply();
+		reply.userId = doctor.id;
+		reply.questionId = createdQuestion.id;
+		await createReply(reply);
+
+		const doctorId = await ReplyRepository.getDoctorIdByQuestionId(
+			createdQuestion.id,
+		);
+
+		expect(doctorId).to.equal(doctor.id);
+	});
 });

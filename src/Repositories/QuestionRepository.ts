@@ -78,6 +78,9 @@ class QuestionRepository {
 			where: {
 				id,
 			},
+			relations: {
+				chatGptReply: true,
+			},
 		});
 	}
 

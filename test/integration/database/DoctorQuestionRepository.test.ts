@@ -73,4 +73,14 @@ describe('Doctor-Question Repository queries', () => {
 		);
 		expect(response).to.be.null;
 	});
+
+	it('should get assigned doctor ID by question Id', async () => {
+		const doctorQuestion = newDoctorQuestion();
+		await saveDoctorQuestion(doctorQuestion);
+
+		const response = await DoctorQuestionRepository.getAssignedDoctorId(
+			doctorQuestion.questionId,
+		);
+		expect(response).to.equal(doctorQuestion.doctorId);
+	});
 });
