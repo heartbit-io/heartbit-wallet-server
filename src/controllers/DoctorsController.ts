@@ -42,7 +42,11 @@ class DoctorsController {
 		res: Response,
 	): Promise<Response<FormatResponse>> {
 		try {
-			const response = await DoctorService.getOpenQuestionForDoctor(req.email);
+			const index = Number(req.body.index) || 0;
+			const response = await DoctorService.getOpenQuestionForDoctor(
+				index,
+				req.email,
+			);
 
 			return res
 				.status(HttpCodes.OK)

@@ -276,9 +276,9 @@ class QuestionService {
 		}
 	}
 
-	async getOpenQuestionsOrderByBounty() {
+	async getOpenQuestionsOrderByBounty(index: number) {
 		try {
-			return await QuestionRepository.getOpenQuestionsOrderByBounty();
+			return await QuestionRepository.getOpenQuestionsOrderByBounty(index);
 		} catch (error: any) {
 			throw error.code && error.message
 				? error

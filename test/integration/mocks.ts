@@ -5,8 +5,6 @@ import {
 	TxTypes,
 	UserRoles,
 } from '../../src/util/enums';
-
-import {BtcTransaction} from '../../src/domains/entities/BtcTransaction';
 import {BtcTransactionFields} from '../../src/domains/entities/BtcTransaction';
 import BtcTransactionsRepository from '../../src/Repositories/BtcTransactionsRepository';
 import {ChatGptReplyAttributes} from '../../src/domains/entities/ChatGptReply';
@@ -92,6 +90,7 @@ export const newReply = () => {
 		assessment: faker.lorem.sentence(),
 		plan: faker.lorem.sentence(),
 		triage: faker.lorem.sentence(),
+		lifestyle: faker.lorem.sentence(),
 		doctorNote: faker.lorem.paragraph(),
 		createdAt: faker.date.past(),
 		updatedAt: faker.date.past(),
