@@ -25,7 +25,7 @@ const dataSource = new DataSource({
 		Question,
 		DoctorQuestion,
 	],
-	migrations: ['src/migrations/*.ts'],
+	// migrations: ['src/migrations/*.ts'],
 });
 
 export const userDataSource = dataSource.getRepository(User);
