@@ -208,11 +208,10 @@ class DoctorService {
 					aiJsonReply.doctorNote = aiJsonReply.doctorAnswer;
 				}
 			}
-
-			const assignedDoctorId = await this._getAssignedDoctor(
-				Number(questionId),
-			);
-
+			let assignedDoctorId = null;
+			if (question.status !== QuestionStatus.OPEN) {
+				assignedDoctorId = await this._getAssignedDoctor(Number(questionId));
+			}
 			return {
 				...question,
 				assignedDoctorId: assignedDoctorId ?? null,
