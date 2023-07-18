@@ -66,6 +66,6 @@ export class ChatGptReply {
 	deletedAt: Date | null;
 
 	@OneToOne(() => Question, question => question.chatGptReply)
-	@JoinColumn({name: 'questionId'})
+	@JoinColumn({name: 'question_id'})
 	question: Question;
 }
