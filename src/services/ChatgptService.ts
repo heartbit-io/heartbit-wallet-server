@@ -93,10 +93,6 @@ class ChatgptService {
 	async getChatGptReplyByQuestionId(questionId: number) {
 		try {
 			const chatGptReply = await ChatGptRepository.getChatGptReply(questionId);
-
-			if (!chatGptReply)
-				throw new CustomError(HttpCodes.NOT_FOUND, 'ChatGPT reply not found');
-
 			return chatGptReply;
 		} catch (error: any) {
 			Sentry.captureMessage(`ChatGPT error: ${error}`);
