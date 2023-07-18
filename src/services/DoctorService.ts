@@ -132,7 +132,7 @@ class DoctorService {
 		return creditDoctor;
 	}
 
-	async getOpenQuestionForDoctor(email: string | undefined) {
+	async getOpenQuestionForDoctor(index: number, email: string | undefined) {
 		try {
 			if (!email)
 				throw new CustomError(
@@ -148,12 +148,14 @@ class DoctorService {
 					'User must be a doctor to get user questions',
 				);
 			const openQuestion =
-				await QuestionRepository.getOpenQuestionsOrderByBounty();
+				await QuestionRepository.getOpenQuestionsOrderByBounty(index);
 
-			if (!openQuestion) return;
+			if (openQuestion.length === 0) return null;
+
+			const selectedQuestion = openQuestion[0];
 
 			const aiReply = await ChatGptRepository.getChatGptReply(
-				Number(openQuestion.id),
+				Number(selectedQuestion.id),
 			);
 
 			if (!aiReply)
@@ -162,7 +164,7 @@ class DoctorService {
 			const aiJsonReply: JsonAnswerInterface = aiReply.jsonAnswer;
 
 			return {
-				...openQuestion,
+				...selectedQuestion,
 				title: aiJsonReply.title,
 				chiefComplaint: aiJsonReply.chiefComplaint,
 			};
@@ -356,6 +358,9 @@ class DoctorService {
 		email: string | undefined,
 	) {
 		const querryRunner = dataSource.createQueryRunner();
+		await querryRunner.connect();
+		await querryRunner.startTransaction('REPEATABLE READ');
+
 		try {
 			const question = await QuestionRepository.getQuestion(questionId);
 			if (!question || question.status !== QuestionStatus.OPEN)
@@ -386,9 +391,6 @@ class DoctorService {
 					HttpCodes.BAD_REQUEST,
 					'Doctor is already assigned to question',
 				);
-
-			await querryRunner.connect();
-			await querryRunner.startTransaction('REPEATABLE READ');
 
 			const doctorQuestion =
 				await DoctorQuestionRepository.createDoctorQuestion({

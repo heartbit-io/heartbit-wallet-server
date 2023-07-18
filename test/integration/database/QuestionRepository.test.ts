@@ -1,12 +1,20 @@
 import {expect} from 'chai';
 import {afterEach, after, before} from 'mocha';
 import dataSource, {
+	ChatGPTDataSource,
 	QuestionDataSource,
 	userDataSource,
 } from '../../../src/domains/repo';
 import QuestionRepository from '../../../src/Repositories/QuestionRepository';
 import {QuestionStatus} from '../../../src/util/enums';
-import {newQuestion, createQuestion, createUser, newUser} from '../mocks';
+import {
+	newQuestion,
+	createQuestion,
+	createUser,
+	newUser,
+	chatGptReply,
+	createChatGptReply,
+} from '../mocks';
 
 describe('Question Repository queries', () => {
 	before(async () => {
@@ -16,6 +24,7 @@ describe('Question Repository queries', () => {
 		dataSource.destroy();
 	});
 	afterEach(async () => {
+		await ChatGPTDataSource.delete({});
 		await QuestionDataSource.delete({});
 		await userDataSource.delete({});
 	});
@@ -248,27 +257,42 @@ describe('Question Repository queries', () => {
 		questionData.userId = createdUser.id;
 		questionData.status = QuestionStatus.OPEN;
 		questionData.bountyAmount = 100;
-		await createQuestion(questionData);
+		const firstQuestion = await createQuestion(questionData);
+		const firstChatGptReply = chatGptReply();
+		firstChatGptReply.questionId = firstQuestion.id;
+		await createChatGptReply(firstChatGptReply);
 
 		const question2 = newQuestion();
 		question2.userId = createdUser.id;
 		question2.status = QuestionStatus.OPEN;
 		question2.bountyAmount = 200;
-		await createQuestion(question2);
+		const secondQuestion = await createQuestion(question2);
+		const newChatGptReply = chatGptReply();
+		newChatGptReply.questionId = secondQuestion.id;
+		await createChatGptReply(newChatGptReply);
 
-		const question = await QuestionRepository.getOpenQuestionsOrderByBounty();
-		expect(question).to.be.an('object');
-		expect(question).to.have.property('id');
-		expect(question).to.have.property('content');
-		expect(question).to.have.property('rawContentLanguage');
-		expect(question).to.have.property('rawContent');
-		expect(question).to.have.property('userId');
-		expect(question).to.have.property('bountyAmount');
-		expect(question).to.have.property('status');
-		expect(question).to.have.property('createdAt');
-		expect(question).to.have.property('updatedAt');
+		const index = 0;
+
+		const question = await QuestionRepository.getOpenQuestionsOrderByBounty(
+			index,
+		);
+		const secondSelectedQuestion =
+			await QuestionRepository.getOpenQuestionsOrderByBounty(1);
+		expect(question[0]).to.be.an('object');
+		expect(question[0]).to.have.property('id');
+		expect(question[0]).to.have.property('content');
+		expect(question[0]).to.have.property('rawContentLanguage');
+		expect(question[0]).to.have.property('rawContent');
+		expect(question[0]).to.have.property('userId');
+		expect(question[0]).to.have.property('bountyAmount');
+		expect(question[0]).to.have.property('status');
+		expect(question[0]).to.have.property('createdAt');
+		expect(question[0]).to.have.property('updatedAt');
 		if (!question) throw new Error('question is null');
-		expect(Number(question.bountyAmount)).to.equal(200);
+		expect(Number(question[0].bountyAmount)).to.equal(200);
+
+		expect(secondSelectedQuestion[0]).to.be.an('object');
+		expect(Number(secondSelectedQuestion[0].bountyAmount)).to.equal(100);
 	});
 
 	it('should get sum of user open bounty questions', async () => {
