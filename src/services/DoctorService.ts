@@ -205,7 +205,7 @@ class DoctorService {
 				aiJsonReply = question.chatGptReply.jsonAnswer;
 
 				if (question.type === QuestionTypes.GENERAL) {
-					aiJsonReply.doctorNote = aiJsonReply.doctorAnswer;
+					aiJsonReply.doctorNote = aiJsonReply.aiAnswer;
 				}
 			}
 			let assignedDoctorId = null;
