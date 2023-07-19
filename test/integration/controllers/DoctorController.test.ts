@@ -114,11 +114,12 @@ describe('Doctor endpoints', () => {
 			createdQuestion.id,
 		);
 		expect(response.status).to.equal(HttpCodes.OK);
-		expect(response.body.data.assignedQuestion).to.have.property('id');
-		expect(response.body.data.assignedQuestion)
+		expect(response.body.data).to.be.an('object');
+		expect(response.body.data).to.have.property('id');
+		expect(response.body.data)
 			.to.have.property('doctorId')
 			.to.equal(createdDoctor.id);
-		expect(response.body.data.assignedQuestion)
+		expect(response.body.data)
 			.to.have.property('questionId')
 			.to.equal(createdQuestion.id);
 		expect(assignedQuestion)
@@ -302,6 +303,42 @@ describe('Doctor endpoints', () => {
 			success: true,
 			statusCode: HttpCodes.OK,
 			message: 'Question removed successfully',
+		});
+	});
+
+	it('should not assign additional question to doctor if he has an assigned questions', async () => {
+		const user = newUser();
+		const createdUser = await createUser(user);
+
+		const doctorUser = newUser();
+		doctorUser.role = UserRoles.DOCTOR;
+		doctorUser.email = 'testemail@heartbit.io';
+		const createdDoctor = await createUser(doctorUser);
+
+		const firstDoctorQuestion = newDoctorQuestion();
+		firstDoctorQuestion.doctorId = createdDoctor.id;
+		await saveDoctorQuestion(firstDoctorQuestion);
+
+		const question = newQuestion();
+		question.userId = createdUser.id;
+		question.status = QuestionStatus.OPEN;
+		const createdQuestion = await createQuestion(question);
+		const newChatGptReply = chatGptReply();
+		newChatGptReply.questionId = createdQuestion.id;
+		await createChatGptReply(newChatGptReply);
+
+		const response = await request(app)
+			.post(base_url + '/doctors/assign-question')
+			.send({
+				doctorId: createdDoctor.id,
+				questionId: createdQuestion.id,
+			})
+			.set('Accept', 'application/json');
+		expect(response.status).to.equal(HttpCodes.ALREADY_EXIST);
+		expect(response.body).to.include({
+			success: false,
+			statusCode: HttpCodes.ALREADY_EXIST,
+			message: `Doctor has pending assigned questions: ${firstDoctorQuestion.questionId}`,
 		});
 	});
 });

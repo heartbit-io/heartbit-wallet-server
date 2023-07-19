@@ -31,7 +31,7 @@ class ReplyService {
 
 			if (replyForChatGpt)
 				throw new CustomError(
-					HttpCodes.AREADY_EXIST,
+					HttpCodes.ALREADY_EXIST,
 					'Chatgpt reply already exist',
 				);
 

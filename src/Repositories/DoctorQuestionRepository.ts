@@ -38,7 +38,7 @@ class DoctorQuestionRepository {
 		return result?.doctorId;
 	}
 
-	async getDoctorQuestions(doctorId: number): Promise<number[] | undefined> {
+	async getDoctorQuestions(doctorId: number): Promise<number[]> {
 		const result = await DoctorQuestionDataSource.find({
 			where: {doctorId},
 			select: {questionId: true},

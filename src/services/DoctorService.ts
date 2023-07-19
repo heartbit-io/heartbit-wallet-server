@@ -17,7 +17,6 @@ import admin from '../config/firebase-config';
 import ChatGptRepository from '../Repositories/ChatGptRepository';
 import DoctorQuestionRepository from '../Repositories/DoctorQuestionRepository';
 import dataSource from '../domains/repo';
-import {doc} from 'firebase/firestore';
 
 const eventEmitter = new EventEmitter();
 
@@ -408,6 +407,13 @@ class DoctorService {
 			const otherAssignedQuestions =
 				await DoctorQuestionRepository.getDoctorQuestions(doctorId);
 
+			if (otherAssignedQuestions && otherAssignedQuestions.length > 0) {
+				throw new CustomError(
+					HttpCodes.ALREADY_EXIST,
+					`Doctor has pending assigned questions: ${otherAssignedQuestions}`,
+				);
+			}
+
 			const doctorQuestion =
 				await DoctorQuestionRepository.createDoctorQuestion({
 					doctorId,
@@ -429,7 +435,7 @@ class DoctorService {
 					'Error updating question',
 				);
 			querryRunner.commitTransaction();
-			return {assignedQuestion: doctorQuestion, otherAssignedQuestions};
+			return doctorQuestion;
 		} catch (error: any) {
 			await querryRunner.rollbackTransaction();
 			throw error.code && error.message
