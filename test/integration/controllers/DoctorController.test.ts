@@ -306,7 +306,7 @@ describe('Doctor endpoints', () => {
 		});
 	});
 
-	it('should not assign additional question to doctor if he has an assigned questions', async () => {
+	it('should return assigned question if doctor already has an assigned question', async () => {
 		const user = newUser();
 		const createdUser = await createUser(user);
 
@@ -334,11 +334,9 @@ describe('Doctor endpoints', () => {
 				questionId: createdQuestion.id,
 			})
 			.set('Accept', 'application/json');
-		expect(response.status).to.equal(HttpCodes.ALREADY_EXIST);
-		expect(response.body).to.include({
-			success: false,
-			statusCode: HttpCodes.ALREADY_EXIST,
-			message: `Doctor has pending assigned questions: ${firstDoctorQuestion.questionId}`,
+		expect(response.status).to.equal(HttpCodes.OK);
+		expect(response.body.data).to.include({
+			questionId: firstDoctorQuestion.questionId,
 		});
 	});
 });

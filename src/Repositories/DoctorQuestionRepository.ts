@@ -3,6 +3,7 @@ import {
 	DoctorQuestion,
 	DoctorQuestionAttributes,
 } from '../domains/entities/DoctorQuestion';
+import {Question} from '../domains/entities/Question';
 
 class DoctorQuestionRepository {
 	async createDoctorQuestion(
@@ -38,12 +39,11 @@ class DoctorQuestionRepository {
 		return result?.doctorId;
 	}
 
-	async getDoctorQuestions(doctorId: number): Promise<number[]> {
-		const result = await DoctorQuestionDataSource.find({
+	async getDoctorQuestions(doctorId: number): Promise<DoctorQuestion | null> {
+		return await DoctorQuestionDataSource.findOne({
 			where: {doctorId},
 			select: {questionId: true},
 		});
-		return result?.map(item => item.questionId);
 	}
 }
 
