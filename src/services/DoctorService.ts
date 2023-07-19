@@ -439,6 +439,81 @@ class DoctorService {
 			await querryRunner.release();
 		}
 	}
+
+	async removeQuestionFromDoctor(
+		doctorId: number,
+		questionId: number,
+		email: string | undefined,
+	) {
+		const querryRunner = dataSource.createQueryRunner();
+		await querryRunner.connect();
+		await querryRunner.startTransaction('REPEATABLE READ');
+
+		try {
+			const question = await QuestionRepository.getQuestion(questionId);
+			if (!question || question.status !== QuestionStatus.ASSIGNED)
+				throw new CustomError(
+					HttpCodes.BAD_REQUEST,
+					'Question not found or is no longer assigned',
+				);
+
+			const doctor = await UserRepository.getUserDetailsById(doctorId);
+
+			if (!doctor || doctor.role !== UserRoles.DOCTOR)
+				throw new CustomError(HttpCodes.NOT_FOUND, 'Doctor not found');
+
+			if (!email || email !== doctor.email)
+				throw new CustomError(
+					HttpCodes.UNAUTHORIZED,
+					'You dont have permission to access this resource',
+				);
+
+			const doctorQuestionStatus =
+				await DoctorQuestionRepository.getDoctorQuestionStatus(
+					doctorId,
+					questionId,
+				);
+
+			if (!doctorQuestionStatus)
+				throw new CustomError(
+					HttpCodes.BAD_REQUEST,
+					'Doctor is not assigned to question',
+				);
+
+			const doctorQuestion =
+				await DoctorQuestionRepository.deleteDoctorQuestion(
+					doctorId,
+					questionId,
+				);
+			if (!doctorQuestion)
+				throw new CustomError(
+					HttpCodes.INTERNAL_SERVER_ERROR,
+					'Error removing question from doctor',
+				);
+			const updatedQuestion = await QuestionRepository.updateStatus(
+				QuestionStatus.OPEN,
+				questionId,
+			);
+
+			if (!updatedQuestion)
+				throw new CustomError(
+					HttpCodes.INTERNAL_SERVER_ERROR,
+					'Error updating question',
+				);
+			querryRunner.commitTransaction();
+			return doctorQuestion;
+		} catch (error: any) {
+			await querryRunner.rollbackTransaction();
+			throw error.code && error.message
+				? error
+				: new CustomError(
+						HttpCodes.INTERNAL_SERVER_ERROR,
+						'Internal Server Error',
+				  );
+		} finally {
+			await querryRunner.release();
+		}
+	}
 }
 
 export default new DoctorService();

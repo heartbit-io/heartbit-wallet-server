@@ -38,4 +38,9 @@ router.post(
 	Auth.verifyToken,
 	DoctorsController.assignQuestion,
 );
+router.post(
+	'/remove-question',
+	Auth.verifyToken,
+	DoctorsController.removeQuestion,
+);
 export {router as doctorRoutes};
