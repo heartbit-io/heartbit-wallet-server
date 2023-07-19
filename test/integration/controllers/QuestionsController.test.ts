@@ -5,6 +5,7 @@ import {HttpCodes} from '../../../src/util/HttpCodes';
 import app from '../../../src/index';
 import {newUser, createUser, newQuestion} from '../mocks';
 import dataSource, {
+	ChatGPTDataSource,
 	QuestionDataSource,
 	userDataSource,
 } from '../../../src/domains/repo';
@@ -15,11 +16,10 @@ const base_url = '/api/v1';
 
 describe('Questions endpoints', () => {
 	before(async () => {
-		if (!dataSource.isInitialized) {
-			await dataSource.initialize();
-		}
+		await dataSource.initialize();
 	});
 	afterEach(async () => {
+		await ChatGPTDataSource.delete({});
 		await QuestionDataSource.delete({});
 		await userDataSource.delete({});
 	});
@@ -48,7 +48,7 @@ describe('Questions endpoints', () => {
 	const createQuestion = async (question: QuestionAttributes) => {
 		return await request(app)
 			.post(base_url + '/questions')
-			.send({...question})
+			.send(question)
 			.set('Accept', 'application/json');
 	};
 

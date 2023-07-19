@@ -83,4 +83,23 @@ describe('Doctor-Question Repository queries', () => {
 		);
 		expect(response).to.equal(doctorQuestion.doctorId);
 	});
+
+	it('should get doctor questions', async () => {
+		const doctorQuestion = newDoctorQuestion();
+		const createdDQ = await saveDoctorQuestion(doctorQuestion);
+
+		const anotherQuestion = newDoctorQuestion();
+		anotherQuestion.doctorId = doctorQuestion.doctorId;
+		const secondDQ = await saveDoctorQuestion(anotherQuestion);
+
+		const response = await DoctorQuestionRepository.getDoctorQuestions(
+			doctorQuestion.doctorId,
+		);
+		expect(response).to.be.an('array');
+		expect(response).to.have.lengthOf(2);
+		expect(response).to.include.members([
+			createdDQ.questionId,
+			secondDQ.questionId,
+		]);
+	});
 });

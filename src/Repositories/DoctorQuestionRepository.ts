@@ -37,6 +37,14 @@ class DoctorQuestionRepository {
 		});
 		return result?.doctorId;
 	}
+
+	async getDoctorQuestions(doctorId: number): Promise<number[]> {
+		const result = await DoctorQuestionDataSource.find({
+			where: {doctorId},
+			select: {questionId: true},
+		});
+		return result?.map(item => item.questionId);
+	}
 }
 
 export default new DoctorQuestionRepository();

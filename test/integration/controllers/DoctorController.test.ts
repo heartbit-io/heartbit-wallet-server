@@ -168,13 +168,11 @@ describe('Doctor endpoints', () => {
 		user.role = UserRoles.DOCTOR;
 		const createdUser = await createUser(user);
 		const question = newQuestion();
-		const question_body = {
-			...question,
-			bountyAmount: user.btcBalance / 2,
-			userId: createdUser.id,
-		};
+		question.status = QuestionStatus.ASSIGNED;
+		question.bountyAmount = user.btcBalance / 2;
+		question.userId = createdUser.id;
 
-		const createdQuestion = await createQuestion(question_body);
+		const createdQuestion = await createQuestion(question);
 		const newChatGptReply = chatGptReply();
 		newChatGptReply.questionId = createdQuestion.id;
 		await createChatGptReply(newChatGptReply);
@@ -216,13 +214,11 @@ describe('Doctor endpoints', () => {
 		user.role = UserRoles.DOCTOR;
 		const createdUser = await createUser(user);
 		const question = newQuestion();
-		const question_body = {
-			...question,
-			bountyAmount: user.btcBalance / 2,
-			userId: createdUser.id,
-		};
+		question.status = QuestionStatus.ASSIGNED;
+		question.bountyAmount = user.btcBalance / 2;
+		question.userId = createdUser.id;
 
-		const createdQuestion = await createQuestion(question_body);
+		const createdQuestion = await createQuestion(question);
 		const newChatGptReply = chatGptReply();
 		newChatGptReply.questionId = createdQuestion.id;
 		await createChatGptReply(newChatGptReply);
@@ -256,13 +252,11 @@ describe('Doctor endpoints', () => {
 		user.role = UserRoles.DOCTOR;
 		const createdUser = await createUser(user);
 		const question = newQuestion();
-		const question_body = {
-			...question,
-			bountyAmount: user.btcBalance / 2,
-			userId: createdUser.id,
-		};
+		question.status = QuestionStatus.OPEN;
+		question.bountyAmount = user.btcBalance / 2;
+		question.userId = createdUser.id;
 
-		const createdQuestion = await createQuestion(question_body);
+		const createdQuestion = await createQuestion(question);
 		const newChatGptReply = chatGptReply();
 		newChatGptReply.questionId = createdQuestion.id;
 		await createChatGptReply(newChatGptReply);
@@ -273,5 +267,78 @@ describe('Doctor endpoints', () => {
 
 		expect(response.status).to.equal(HttpCodes.OK);
 		expect(response.body.data).to.have.property('assignedDoctorId').to.be.null;
+	});
+
+	it('should remove question from doctor', async () => {
+		const user = newUser();
+		const createdUser = await createUser(user);
+
+		const question = newQuestion();
+		question.userId = createdUser.id;
+		question.status = QuestionStatus.ASSIGNED;
+		const createdQuestion = await createQuestion(question);
+		const newChatGptReply = chatGptReply();
+		newChatGptReply.questionId = createdQuestion.id;
+		await createChatGptReply(newChatGptReply);
+
+		const doctorUser = newUser();
+		doctorUser.role = UserRoles.DOCTOR;
+		doctorUser.email = 'testemail@heartbit.io';
+		const createdDoctor = await createUser(doctorUser);
+
+		const doctorQuestion = newDoctorQuestion();
+		doctorQuestion.doctorId = createdDoctor.id;
+		doctorQuestion.questionId = createdQuestion.id;
+		await saveDoctorQuestion(doctorQuestion);
+
+		const response = await request(app)
+			.post(base_url + '/doctors/remove-question')
+			.send({
+				doctorId: createdDoctor.id,
+				questionId: createdQuestion.id,
+			})
+			.set('Accept', 'application/json');
+		expect(response.status).to.equal(HttpCodes.OK);
+		expect(response.body).to.include({
+			success: true,
+			statusCode: HttpCodes.OK,
+			message: 'Question removed successfully',
+		});
+	});
+
+	it('should not assign additional question to doctor if he has an assigned questions', async () => {
+		const user = newUser();
+		const createdUser = await createUser(user);
+
+		const doctorUser = newUser();
+		doctorUser.role = UserRoles.DOCTOR;
+		doctorUser.email = 'testemail@heartbit.io';
+		const createdDoctor = await createUser(doctorUser);
+
+		const firstDoctorQuestion = newDoctorQuestion();
+		firstDoctorQuestion.doctorId = createdDoctor.id;
+		await saveDoctorQuestion(firstDoctorQuestion);
+
+		const question = newQuestion();
+		question.userId = createdUser.id;
+		question.status = QuestionStatus.OPEN;
+		const createdQuestion = await createQuestion(question);
+		const newChatGptReply = chatGptReply();
+		newChatGptReply.questionId = createdQuestion.id;
+		await createChatGptReply(newChatGptReply);
+
+		const response = await request(app)
+			.post(base_url + '/doctors/assign-question')
+			.send({
+				doctorId: createdDoctor.id,
+				questionId: createdQuestion.id,
+			})
+			.set('Accept', 'application/json');
+		expect(response.status).to.equal(HttpCodes.ALREADY_EXIST);
+		expect(response.body).to.include({
+			success: false,
+			statusCode: HttpCodes.ALREADY_EXIST,
+			message: `Doctor has pending assigned questions: ${firstDoctorQuestion.questionId}`,
+		});
 	});
 });
