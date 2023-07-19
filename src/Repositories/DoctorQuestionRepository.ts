@@ -3,7 +3,6 @@ import {
 	DoctorQuestion,
 	DoctorQuestionAttributes,
 } from '../domains/entities/DoctorQuestion';
-import {Question} from '../domains/entities/Question';
 
 class DoctorQuestionRepository {
 	async createDoctorQuestion(
