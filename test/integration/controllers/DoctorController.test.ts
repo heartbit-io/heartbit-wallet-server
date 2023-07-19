@@ -13,10 +13,13 @@ import {
 	createChatGptReply,
 	newDoctorQuestion,
 	saveDoctorQuestion,
+	newReply,
+	createReply,
 } from '../mocks';
 import dataSource, {
 	ChatGPTDataSource,
 	QuestionDataSource,
+	ReplyDataSource,
 	userDataSource,
 } from '../../../src/domains/repo';
 import QuestionRepository from '../../../src/Repositories/QuestionRepository';
@@ -29,6 +32,7 @@ describe('Doctor endpoints', () => {
 	});
 	afterEach(async () => {
 		await ChatGPTDataSource.delete({});
+		await ReplyDataSource.delete({});
 		await QuestionDataSource.delete({});
 		await userDataSource.delete({});
 	});
@@ -156,5 +160,118 @@ describe('Doctor endpoints', () => {
 		expect(response.body.message).to.equal(
 			'Question not found or is no longer open',
 		);
+	});
+
+	it('should return a question for a doctor by id', async () => {
+		const user = newUser();
+		user.email = 'testemail@heartbit.io';
+		user.role = UserRoles.DOCTOR;
+		const createdUser = await createUser(user);
+		const question = newQuestion();
+		const question_body = {
+			...question,
+			bountyAmount: user.btcBalance / 2,
+			userId: createdUser.id,
+		};
+
+		const createdQuestion = await createQuestion(question_body);
+		const newChatGptReply = chatGptReply();
+		newChatGptReply.questionId = createdQuestion.id;
+		await createChatGptReply(newChatGptReply);
+
+		const doctor = newUser();
+		doctor.role = UserRoles.DOCTOR;
+		const newDoctor = await createUser(doctor);
+
+		const replyRequest = newReply();
+		replyRequest.questionId = createdQuestion.id;
+		replyRequest.userId = newDoctor.id;
+		const reply = await createReply(replyRequest);
+		const response = await request(app).get(
+			`${base_url}/doctors/questions/${createdQuestion.id}`,
+		);
+		expect(response.status).to.equal(HttpCodes.OK);
+		expect(response.body.data).to.be.an('object');
+		expect(response.body.data)
+			.to.have.property('id')
+			.to.equal(createdQuestion.id);
+		expect(response.body.data)
+			.to.have.property('content')
+			.to.equal(question.content);
+		expect(response.body.data).to.have.property('rawContentLanguage');
+		expect(response.body.data)
+			.to.have.property('userId')
+			.to.equal(createdUser.id);
+		expect(response.body.data)
+			.to.have.property('bountyAmount')
+			.to.equal(createdQuestion.bountyAmount);
+		expect(response.body.data)
+			.to.have.property('assignedDoctorId')
+			.to.equal(newDoctor.id);
+	});
+
+	it('should get assigned doctor Id if question is assigned doctor', async () => {
+		const user = newUser();
+		user.email = 'testemail@heartbit.io';
+		user.role = UserRoles.DOCTOR;
+		const createdUser = await createUser(user);
+		const question = newQuestion();
+		const question_body = {
+			...question,
+			bountyAmount: user.btcBalance / 2,
+			userId: createdUser.id,
+		};
+
+		const createdQuestion = await createQuestion(question_body);
+		const newChatGptReply = chatGptReply();
+		newChatGptReply.questionId = createdQuestion.id;
+		await createChatGptReply(newChatGptReply);
+
+		const doctor = newUser();
+		doctor.role = UserRoles.DOCTOR;
+		const newDoctor = await createUser(doctor);
+
+		const doctorQuestion = newDoctorQuestion();
+		doctorQuestion.doctorId = newDoctor.id;
+		doctorQuestion.questionId = createdQuestion.id;
+		await saveDoctorQuestion(doctorQuestion);
+
+		const response = await request(app).get(
+			`${base_url}/doctors/questions/${createdQuestion.id}`,
+		);
+		expect(response.body.data)
+			.to.have.property('userId')
+			.to.equal(createdUser.id);
+		expect(response.body.data)
+			.to.have.property('bountyAmount')
+			.to.equal(createdQuestion.bountyAmount);
+		expect(response.body.data)
+			.to.have.property('assignedDoctorId')
+			.to.equal(newDoctor.id);
+	});
+
+	it('should return null for assigned doctor Id if doctor is not assigned', async () => {
+		const user = newUser();
+		user.email = 'testemail@heartbit.io';
+		user.role = UserRoles.DOCTOR;
+		const createdUser = await createUser(user);
+		const question = newQuestion();
+		const question_body = {
+			...question,
+			bountyAmount: user.btcBalance / 2,
+			userId: createdUser.id,
+		};
+
+		const createdQuestion = await createQuestion(question_body);
+		const newChatGptReply = chatGptReply();
+		newChatGptReply.questionId = createdQuestion.id;
+		await createChatGptReply(newChatGptReply);
+
+		const response = await request(app).get(
+			`${base_url}/doctors/questions/${createdQuestion.id}`,
+		);
+
+		expect(response.status).to.equal(HttpCodes.OK);
+		expect(response.body.data).to.have.property('assignedDoctorId').to.be.null;
 	});
 });

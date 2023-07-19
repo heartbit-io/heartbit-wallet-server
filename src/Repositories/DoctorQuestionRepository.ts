@@ -30,6 +30,13 @@ class DoctorQuestionRepository {
 			.andWhere('question_id = :questionId', {questionId})
 			.execute();
 	}
+
+	async getAssignedDoctorId(questionId: number): Promise<number | undefined> {
+		const result = await DoctorQuestionDataSource.findOne({
+			where: {questionId},
+		});
+		return result?.doctorId;
+	}
 }
 
 export default new DoctorQuestionRepository();
