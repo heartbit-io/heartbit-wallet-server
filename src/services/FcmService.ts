@@ -20,9 +20,9 @@ class FcmService {
 				token: userFcmToken.fcmToken,
 				notification: {
 					title,
-					data,
 					body: message,
 				},
+				data,
 			};
 
 			return admin.messaging().send(payload);
