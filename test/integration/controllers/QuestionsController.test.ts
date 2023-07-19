@@ -62,7 +62,6 @@ describe('Questions endpoints', () => {
 		question.bountyAmount = bountyAmount;
 		question.status = QuestionStatus.OPEN;
 		const response = await createQuestion(question);
-		console.log(response.body);
 		expect(response.status).to.equal(HttpCodes.CREATED);
 		expect(response.body).to.include(
 			successResponse(true, HttpCodes.CREATED, 'Question posted successfully'),

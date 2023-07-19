@@ -114,12 +114,11 @@ describe('Doctor endpoints', () => {
 			createdQuestion.id,
 		);
 		expect(response.status).to.equal(HttpCodes.OK);
-		expect(response.body.data).to.be.an('object');
-		expect(response.body.data).to.have.property('id');
-		expect(response.body.data)
+		expect(response.body.data.assignedQuestion).to.have.property('id');
+		expect(response.body.data.assignedQuestion)
 			.to.have.property('doctorId')
 			.to.equal(createdDoctor.id);
-		expect(response.body.data)
+		expect(response.body.data.assignedQuestion)
 			.to.have.property('questionId')
 			.to.equal(createdQuestion.id);
 		expect(assignedQuestion)
