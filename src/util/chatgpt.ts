@@ -16,6 +16,7 @@ export function makePrompt(question: QuestionAttributes): string {
 				- "aiAnswer" should have at least 200 words. 
 				- "title" should be derived from the patient's question
 				- Please provide your answer in JSON format with each category as a key and the value of each key.
+				- Please answer in English.
 				
 				If you determine that the question is unrelated to any illness or health matter, you should ignore the above and write, "I can't answer anything but health-related questions" in 'aiAnswer'.
 				
@@ -29,7 +30,7 @@ export function makePrompt(question: QuestionAttributes): string {
 
 				Your job is to organize the patient's description and write answers in a clinical record format with the following conditions after receiving a set of descriptions:
 				- Category: "chiefComplaint", "medicalHistory", "currentMedication", "assessment", "plan", "guide", "doctorNote", and "title".
-				- "title" should be derived from the "Chief Complaint"
+				- "title" should be derived from the "chiefComplaint"
 				- "guide" should include a short explanation of what simple symptomatic treatment can be done at home in the patient's case and what kind of condition it is best to visit the hospital.
 				- "guide" should be written in the tone and manner you would speak to a patient.
 				- Please make sure to fill out the "guide" field.
@@ -38,6 +39,7 @@ export function makePrompt(question: QuestionAttributes): string {
 				- "doctorNote" should have a few paragraphs of kind notes for the patient based on the answers from the other categories in at least 500 words. 
 				- Please provide your answer in JSON format with each category as a key and the value of each key.
 				- Please put the value in string format.
+				- Please answer in English.
 
 				If you determine that the question is unrelated to any illness or health matter, you should ignore the above and write, "Sorry, I can't answer anything but health-related questions" in your response.
 
