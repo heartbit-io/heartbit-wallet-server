@@ -275,9 +275,13 @@ describe('Question Repository queries', () => {
 
 		const question = await QuestionRepository.getOpenQuestionsOrderByBounty(
 			index,
+			Number(createdUser.id) + 1,
 		);
 		const secondSelectedQuestion =
-			await QuestionRepository.getOpenQuestionsOrderByBounty(1);
+			await QuestionRepository.getOpenQuestionsOrderByBounty(
+				1,
+				Number(createdUser.id) + 1,
+			);
 		expect(question[0]).to.be.an('object');
 		expect(question[0]).to.have.property('id');
 		expect(question[0]).to.have.property('content');

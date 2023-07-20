@@ -148,7 +148,10 @@ class DoctorService {
 					'User must be a doctor to get user questions',
 				);
 			const openQuestion =
-				await QuestionRepository.getOpenQuestionsOrderByBounty(index);
+				await QuestionRepository.getOpenQuestionsOrderByBounty(
+					index,
+					doctor.id,
+				);
 
 			if (openQuestion.length === 0) return null;
 
@@ -399,11 +402,13 @@ class DoctorService {
 					questionId,
 				);
 
-			if (doctorQuestionStatus)
-				throw new CustomError(
-					HttpCodes.BAD_REQUEST,
-					'Doctor is already assigned to question',
+			if (doctorQuestionStatus) {
+				await QuestionRepository.updateStatus(
+					QuestionStatus.ASSIGNED,
+					questionId,
 				);
+				return doctorQuestionStatus;
+			}
 			const otherAssignedQuestions =
 				await DoctorQuestionRepository.getDoctorQuestions(doctorId);
 			if (otherAssignedQuestions) {
