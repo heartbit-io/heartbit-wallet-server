@@ -1,7 +1,7 @@
 import {QuestionDataSource} from '../domains/repo';
 import {QuestionStatus} from '../util/enums';
 import {QuestionAttributes} from '../domains/entities/Question';
-import {In} from 'typeorm';
+import {In, Not} from 'typeorm';
 
 class QuestionRepository {
 	async create(question: QuestionAttributes) {
@@ -55,9 +55,9 @@ class QuestionRepository {
 		return await QuestionDataSource.find({where: {userId}});
 	}
 
-	async getOpenQuestionsOrderByBounty(offset: number) {
+	async getOpenQuestionsOrderByBounty(offset: number, userId: number) {
 		return await QuestionDataSource.find({
-			where: {status: QuestionStatus.OPEN},
+			where: {status: QuestionStatus.OPEN, userId: Not(userId)},
 			order: {
 				bountyAmount: 'DESC',
 				createdAt: 'DESC',
