@@ -406,12 +406,8 @@ class DoctorService {
 				);
 			const otherAssignedQuestions =
 				await DoctorQuestionRepository.getDoctorQuestions(doctorId);
-
-			if (otherAssignedQuestions && otherAssignedQuestions.length > 0) {
-				throw new CustomError(
-					HttpCodes.ALREADY_EXIST,
-					`Doctor has pending assigned questions: ${otherAssignedQuestions}`,
-				);
+			if (otherAssignedQuestions) {
+				return otherAssignedQuestions;
 			}
 
 			const doctorQuestion =
