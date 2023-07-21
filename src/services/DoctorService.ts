@@ -17,6 +17,7 @@ import admin from '../config/firebase-config';
 import ChatGptRepository from '../Repositories/ChatGptRepository';
 import DoctorQuestionRepository from '../Repositories/DoctorQuestionRepository';
 import dataSource from '../domains/repo';
+import ResponseDto from '../dto/ResponseDTO';
 
 const eventEmitter = new EventEmitter();
 
@@ -407,12 +408,22 @@ class DoctorService {
 					QuestionStatus.ASSIGNED,
 					questionId,
 				);
-				return doctorQuestionStatus;
+				return new ResponseDto(
+					true,
+					HttpCodes.OK,
+					'Question assigned successfully',
+					doctorQuestionStatus,
+				);
 			}
 			const otherAssignedQuestions =
 				await DoctorQuestionRepository.getDoctorQuestions(doctorId);
 			if (otherAssignedQuestions) {
-				return otherAssignedQuestions;
+				return new ResponseDto(
+					false,
+					HttpCodes.ALREADY_EXIST,
+					'You already have a question assigned to you',
+					otherAssignedQuestions,
+				);
 			}
 
 			const doctorQuestion =
@@ -436,7 +447,12 @@ class DoctorService {
 					'Error updating question',
 				);
 			querryRunner.commitTransaction();
-			return doctorQuestion;
+			return new ResponseDto(
+				true,
+				HttpCodes.OK,
+				'Question assigned successfully',
+				doctorQuestion,
+			);
 		} catch (error: any) {
 			await querryRunner.rollbackTransaction();
 			throw error.code && error.message

@@ -334,7 +334,7 @@ describe('Doctor endpoints', () => {
 				questionId: createdQuestion.id,
 			})
 			.set('Accept', 'application/json');
-		expect(response.status).to.equal(HttpCodes.OK);
+		expect(response.status).to.equal(HttpCodes.ALREADY_EXIST);
 		expect(response.body.data).to.include({
 			questionId: firstDoctorQuestion.questionId,
 		});

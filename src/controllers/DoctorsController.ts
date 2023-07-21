@@ -218,22 +218,13 @@ class DoctorsController {
 		try {
 			const {doctorId, questionId} = req.body;
 
-			const result = await DoctorService.assignQuestionToDoctor(
+			const result: FormatResponse = await DoctorService.assignQuestionToDoctor(
 				Number(doctorId),
 				Number(questionId),
 				req.email,
 			);
 
-			return res
-				.status(HttpCodes.OK)
-				.json(
-					new ResponseDto(
-						true,
-						HttpCodes.OK,
-						'Question assigned successfully',
-						result,
-					),
-				);
+			return res.status(result.statusCode).json(result);
 		} catch (error: any) {
 			return res
 				.status(error.code ? error.code : HttpCodes.INTERNAL_SERVER_ERROR)
