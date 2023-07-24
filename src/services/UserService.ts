@@ -101,9 +101,7 @@ class UserService {
 		if (!email)
 			throw new CustomError(HttpCodes.UNAUTHORIZED, 'User not logged in');
 
-		const deleted = await UserRepository.deleteUserFcmToken(
-			email,
-		);
+		const deleted = await UserRepository.deleteUserFcmToken(email);
 		if (!deleted)
 			throw new CustomError(
 				HttpCodes.BAD_REQUEST,
