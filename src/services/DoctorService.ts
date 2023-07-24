@@ -446,7 +446,7 @@ class DoctorService {
 					HttpCodes.INTERNAL_SERVER_ERROR,
 					'Error updating question',
 				);
-			querryRunner.commitTransaction();
+			await querryRunner.commitTransaction();
 			return new ResponseDto(
 				true,
 				HttpCodes.OK,
