@@ -67,7 +67,7 @@ class UsersController {
 
 	async updateFcmToken(req: DecodedRequest, res: Response) {
 		try {
-			const user = await FcmService.updateUserFcmToken(
+			const user = await UserService.updateUserFcmToken(
 				req.body.fcmToken,
 				req.email,
 			);
@@ -79,6 +79,36 @@ class UsersController {
 						true,
 						HttpCodes.OK,
 						'Successfully updated user fcm token',
+						user,
+					),
+				);
+		} catch (error: any) {
+			return res
+				.status(error.code ? error.code : HttpCodes.INTERNAL_SERVER_ERROR)
+				.json(
+					new ResponseDto(
+						false,
+						error.code ? error.code : HttpCodes.INTERNAL_SERVER_ERROR,
+						error.message ? error.message : 'HTTP error',
+						null,
+					),
+				);
+		}
+	}
+
+	async deleteFcmToken(req: DecodedRequest, res: Response) {
+		try {
+			const user = await UserService.deleteUserFcmToken(
+				req.email,
+			);
+
+			return res
+				.status(HttpCodes.OK)
+				.json(
+					new FormatResponse(
+						true,
+						HttpCodes.OK,
+						'Successfully deleted user fcm token',
 						user,
 					),
 				);

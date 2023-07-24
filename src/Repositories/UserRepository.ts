@@ -50,6 +50,15 @@ class UserRepository {
 			.execute();
 	}
 
+	async deleteUserFcmToken(email: string) {
+		return await dataSource
+			.createQueryBuilder()
+			.update(User)
+			.set({fcmToken: null})
+			.where('email = :email', {email})
+			.execute();
+	}
+
 	async getUserTotalBalance(id: number): Promise<User | null> {
 		return await userDataSource.findOne({
 			where: {id},

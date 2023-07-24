@@ -80,6 +80,37 @@ class UserService {
 				  );
 		}
 	}
+
+	async updateUserFcmToken(fcmToken: string, email: string | undefined) {
+		if (!email)
+			throw new CustomError(HttpCodes.UNAUTHORIZED, 'User not logged in');
+
+		const updateFcmToken = await UserRepository.updateUserFcmToken(
+			fcmToken,
+			email,
+		);
+		if (!updateFcmToken)
+			throw new CustomError(
+				HttpCodes.BAD_REQUEST,
+				'Error updating user fcm token',
+			);
+		return await UserRepository.getUserDetailsByEmail(email);
+	}
+
+	async deleteUserFcmToken(email: string | undefined) {
+		if (!email)
+			throw new CustomError(HttpCodes.UNAUTHORIZED, 'User not logged in');
+
+		const deleted = await UserRepository.deleteUserFcmToken(
+			email,
+		);
+		if (!deleted)
+			throw new CustomError(
+				HttpCodes.BAD_REQUEST,
+				'Error deleting user fcm token',
+			);
+		return await UserRepository.getUserDetailsByEmail(email);
+	}
 }
 
 export default new UserService();
