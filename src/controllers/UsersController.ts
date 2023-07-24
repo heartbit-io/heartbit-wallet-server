@@ -67,7 +67,7 @@ class UsersController {
 
 	async updateFcmToken(req: DecodedRequest, res: Response) {
 		try {
-			const user = await FcmService.updateUserFcmToken(
+			const user = await UserService.updateUserFcmToken(
 				req.body.fcmToken,
 				req.email,
 			);
