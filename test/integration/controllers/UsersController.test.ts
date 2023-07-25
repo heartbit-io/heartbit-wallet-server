@@ -109,7 +109,7 @@ describe('User endpoints', () => {
 		user.email = 'testemail@heartbit.io';
 		await createUser(user);
 		const response = await request(app)
-			.patch(`${base_url}/users/fcmtoken`)
+			.patch(`${base_url}/users/fcmtoken/update`)
 			.send({fcmToken: 'testtoken'})
 			.set('apiKey', env.API_KEY)
 			.set('Accept', 'application/json');
