@@ -339,4 +339,37 @@ describe('Doctor endpoints', () => {
 			questionId: firstDoctorQuestion.questionId,
 		});
 	});
+
+	it('should return assigned question even if AI reply is not found', async () => {
+		const firstUser = newUser();
+		const createdUser = await createUser(firstUser);
+
+		const firstQuestion = newQuestion();
+		firstQuestion.userId = createdUser.id;
+		firstQuestion.status = QuestionStatus.OPEN;
+		firstQuestion.bountyAmount = 500;
+		await createQuestion(firstQuestion);
+
+		const secondQuestion = newQuestion();
+		secondQuestion.bountyAmount = 1000;
+		secondQuestion.userId = createdUser.id;
+		secondQuestion.status = QuestionStatus.OPEN;
+		await createQuestion(secondQuestion);
+
+		const doctorUser = newUser();
+		doctorUser.role = UserRoles.DOCTOR;
+		doctorUser.email = 'testemail@heartbit.io';
+		await createUser(doctorUser);
+
+		const response = await request(app)
+			.get(base_url + '/doctors/questions?index=0')
+			.set('Accept', 'application/json');
+		expect(response.status).to.equal(HttpCodes.OK);
+		expect(response.body.data).to.include({
+			userId: createdUser.id,
+			bountyAmount: Number(secondQuestion.bountyAmount).toString(),
+			title: null,
+			chiefComplaint: null,
+		});
+	});
 });

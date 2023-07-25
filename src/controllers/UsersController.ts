@@ -98,9 +98,7 @@ class UsersController {
 
 	async deleteFcmToken(req: DecodedRequest, res: Response) {
 		try {
-			const user = await UserService.deleteUserFcmToken(
-				req.email,
-			);
+			const user = await UserService.deleteUserFcmToken(req.email);
 
 			return res
 				.status(HttpCodes.OK)

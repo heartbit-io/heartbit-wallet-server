@@ -162,15 +162,17 @@ class DoctorService {
 				Number(selectedQuestion.id),
 			);
 
-			if (!aiReply)
-				throw new CustomError(HttpCodes.NOT_FOUND, 'AI Reply not found');
-
-			const aiJsonReply: JsonAnswerInterface = aiReply.jsonAnswer;
-
+			let title = null;
+			let chiefComplaint = null;
+			if (aiReply) {
+				const aiJsonReply: JsonAnswerInterface = aiReply.jsonAnswer;
+				title = aiJsonReply.title;
+				chiefComplaint = aiJsonReply.chiefComplaint;
+			}
 			return {
 				...selectedQuestion,
-				title: aiJsonReply.title,
-				chiefComplaint: aiJsonReply.chiefComplaint,
+				title,
+				chiefComplaint,
 			};
 		} catch (error: any) {
 			throw error.code && error.message
