@@ -221,7 +221,11 @@ const getDoctorQuestion = {
 										type: 'string',
 										example: 'Early cataracts',
 									},
-									medicalHistory: {
+									presentIllness: {
+										type: 'string',
+										example: 'Early cataracts / Arthritis',
+									},
+									pastMedicalHistory: {
 										type: 'string',
 										example: 'Early cataracts / Arthritis',
 									},
@@ -532,7 +536,11 @@ const getDoctorAnsweredQuestion = {
 										type: 'string',
 										example: 'Early cataracts',
 									},
-									medicalHistory: {
+									presentIllness: {
+										type: 'string',
+										example: 'Early cataracts / Arthritis',
+									},
+									pastMedicalHistory: {
 										type: 'string',
 										example: 'Early cataracts / Arthritis',
 									},

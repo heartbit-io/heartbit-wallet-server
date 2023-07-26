@@ -55,7 +55,8 @@ describe('Replies Repository queries', () => {
 		expect(result).to.have.property('content');
 		expect(result).to.have.property('status');
 		expect(result).to.have.property('majorComplaint');
-		expect(result).to.have.property('medicalHistory');
+		expect(result).to.have.property('presentIllness');
+		expect(result).to.have.property('pastMedicalHistory');
 		expect(result).to.have.property('currentMedications');
 		expect(result).to.have.property('assessment');
 		expect(result).to.have.property('plan');

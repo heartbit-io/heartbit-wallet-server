@@ -43,9 +43,13 @@ const replyResponseData = {
 			type: 'string',
 			example: 'I have a headache and I feel dizzy',
 		},
-		medicalHistory: {
+		presentIllness: {
 			type: 'string',
-			example: 'I have a history of heart disease',
+			example: 'Early cataracts / Arthritis',
+		},
+		pastMedicalHistory: {
+			type: 'string',
+			example: 'Early cataracts / Arthritis',
 		},
 		assessment: {
 			type: 'string',

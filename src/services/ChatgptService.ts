@@ -20,7 +20,8 @@ export interface JsonAnswerInterface {
 	doctorAnswer: string;
 	guide: string;
 	chiefComplaint: string;
-	medicalHistory: string;
+	presentIllness: string;
+	pastMedicalHistory: string;
 	currentMedication: string;
 	assessment: string;
 	plan: string;

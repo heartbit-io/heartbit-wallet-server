@@ -41,7 +41,10 @@ export class Reply {
 	plan: string;
 
 	@Column({type: 'text'})
-	medicalHistory: string;
+	presentIllness: string;
+
+	@Column({type: 'text'})
+	pastMedicalHistory: string;
 
 	@Column({type: 'text'})
 	doctorNote: string;
@@ -76,7 +79,8 @@ export interface RepliesAttributes {
 	content: string;
 	status: ReplyStatus;
 	majorComplaint: string;
-	medicalHistory: string;
+	presentIllness: string;
+	pastMedicalHistory: string;
 	currentMedications: string;
 	assessment: string;
 	plan: string;
