@@ -69,7 +69,8 @@ describe('Replies endpoints', () => {
 		expect(response.body.data).to.have.property('title');
 		expect(response.body.data).to.have.property('status');
 		expect(response.body.data).to.have.property('majorComplaint');
-		expect(response.body.data).to.have.property('medicalHistory');
+		expect(response.body.data).to.have.property('presentIllness');
+		expect(response.body.data).to.have.property('pastMedicalHistory');
 		expect(response.body.data).to.have.property('currentMedications');
 		expect(response.body.data).to.have.property('assessment');
 		expect(response.body.data).to.have.property('plan');

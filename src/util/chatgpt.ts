@@ -29,12 +29,12 @@ export function makePrompt(question: QuestionAttributes): string {
 				You are a Dr.HeartBit, a kind and professional doctor. 
 
 				Your job is to organize the patient's description and write answers in a clinical record format with the following conditions after receiving a set of descriptions:
-				- Category: "chiefComplaint", "medicalHistory", "currentMedication", "assessment", "plan", "guide", "doctorNote", and "title".
+				- Category: "chiefComplaint", "presentIllness", "pastMedicalHistory", "currentMedication", "assessment", "plan", "guide", "doctorNote", and "title".
 				- "title" should be derived from the "chiefComplaint"
 				- "guide" should include a short explanation of what simple symptomatic treatment can be done at home in the patient's case and what kind of condition it is best to visit the hospital.
 				- "guide" should be written in the tone and manner you would speak to a patient.
 				- Please make sure to fill out the "guide" field.
-				- The patient's profile information should be excluded from the "medicalHistory" section.
+				- The patient's profile information should be excluded from the "presentIllness" section.
 				- All answers above should be bullet-pointed.
 				- "doctorNote" should have a few paragraphs of kind notes for the patient based on the answers from the other categories in at least 500 words. 
 				- Please provide your answer in JSON format with each category as a key and the value of each key.
@@ -52,48 +52,4 @@ export function makePrompt(question: QuestionAttributes): string {
 				- Specific questions: ${question.others}
 			`;
 	}
-}
-
-export function makeAnswerToJson(answer: string): JsonAnswerInterface {
-	const jsonAnswer: JsonAnswerInterface = {
-		title: '',
-		aiAnswer: '',
-		doctorAnswer: '',
-		guide: '',
-		chiefComplaint: '',
-		medicalHistory: '',
-		currentMedication: '',
-		assessment: '',
-		plan: '',
-		doctorNote: '',
-	};
-
-	const unableToRespond =
-		"Sorry I can't answer anything but health-related questions.";
-	if (answer === unableToRespond) {
-		jsonAnswer.aiAnswer = unableToRespond;
-	}
-
-	const regexes = {
-		doctorAnswer: /## DoctorAnswer\s*(.*)/i,
-		title: /## Title\s*(.*)/i,
-		aiAnswer: /## AIanswer\s*(.*)/i,
-		guide: /## Guide\s*([\s\S]*)## Chief Complaint/i,
-		chiefComplaint: /## Chief Complaint\s*([\s\S]*)## Medical History/i,
-		medicalHistory: /## Medical History\s*([\s\S]*)## Current Medication/i,
-		currentMedication: /## Current Medication\s*([\s\S]*)## Assessment/i,
-		assessment: /## Assessment\s*([\s\S]*)## Plan/i,
-		plan: /## Plan\s*([\s\S]*)## Doctor's Note/i,
-		doctorNote: /## Doctor's Note\s*([\s\S]*)/i,
-	};
-
-	const toJson = (answer: string) => {
-		for (const [key, regex] of Object.entries(regexes)) {
-			const match = answer.match(regex);
-			if (match) jsonAnswer[key] = match[1].trim();
-		}
-		return jsonAnswer;
-	};
-
-	return toJson(answer);
 }

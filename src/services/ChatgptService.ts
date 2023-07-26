@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/node';
 import {Configuration, OpenAIApi} from 'openai';
-import {makeAnswerToJson, makePrompt} from '../util/chatgpt';
+import {makePrompt} from '../util/chatgpt';
 import {ChatGptReply} from '../domains/entities/ChatGptReply';
 import {QuestionAttributes} from '../domains/entities/Question';
 import {QuestionTypes} from '../util/enums';
@@ -20,7 +20,8 @@ export interface JsonAnswerInterface {
 	doctorAnswer: string;
 	guide: string;
 	chiefComplaint: string;
-	medicalHistory: string;
+	presentIllness: string;
+	pastMedicalHistory: string;
 	currentMedication: string;
 	assessment: string;
 	plan: string;

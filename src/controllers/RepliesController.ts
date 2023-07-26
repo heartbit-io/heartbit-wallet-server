@@ -15,7 +15,8 @@ export interface ReplyResponseInterface extends FormatResponse {
 		createdAt: Date;
 		plan?: string;
 		majorComplaint?: string;
-		medicalHistory?: string;
+		presentIllness?: string;
+		pastMedicalHistory?: string;
 		currentMedications?: string;
 		assessment?: string;
 		triage?: string;
