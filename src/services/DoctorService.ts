@@ -80,14 +80,12 @@ class DoctorService {
 
 			const reply = await this._updateQuestion(requestBody, doctor, question);
 
-			if (process.env.NODE_ENV !== 'test') {
-				await FcmService.sendNotification(
-					question.userId,
-					'HeartBit',
-					"A human doctor's answer has arrived",
-					{type: 'DOCTOR_ANSWER'},
-				);
-			}
+			FcmService.sendNotification(
+				question.userId,
+				'HeartBit',
+				"A human doctor's answer has arrived",
+				{type: 'DOCTOR_ANSWER'},
+			);
 
 			return reply;
 		} catch (error: any) {

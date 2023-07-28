@@ -59,13 +59,6 @@ class ReplyService {
 				translateText,
 				rawContentLanguage,
 			);
-
-			await FcmService.sendNotification(
-				question.userId,
-				'HeartBit',
-				"GPT-3.5's advice has arrived",
-			);
-
 			// set response
 			const replyResponseInterface: ReplyResponseInterface = {
 				success: true,
@@ -79,6 +72,12 @@ class ReplyService {
 					createdAt: chatgptReply.createdAt, // TODO(david): date formatting, 1 Apr 2023
 				},
 			};
+
+			FcmService.sendNotification(
+				question.userId,
+				'HeartBit',
+				"GPT-3.5's advice has arrived",
+			);
 
 			return replyResponseInterface;
 		} catch (error: any) {
