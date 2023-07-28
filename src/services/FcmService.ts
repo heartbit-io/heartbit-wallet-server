@@ -23,7 +23,7 @@ class FcmService {
 				data,
 			};
 
-			return admin.messaging().send(payload);
+			await admin.messaging().send(payload);
 		} catch (error) {
 			Sentry.captureMessage(`FCM error: ${error}`);
 			logger.warn(error);
