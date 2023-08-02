@@ -61,6 +61,9 @@ class ChatgptService {
 
 			const rawAnswer = completion.data.choices[0].message?.content || '';
 			const jsonAnswer: JsonAnswerInterface = JSON.parse(rawAnswer);
+			if (!jsonAnswer.title) {
+				jsonAnswer.title = new Date().toISOString();
+			}
 
 			return await ChatGptRepository.createChaptGptReply({
 				questionId,
