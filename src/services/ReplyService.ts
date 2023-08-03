@@ -41,11 +41,20 @@ class ReplyService {
 			const model =
 				question.bountyAmount === 0 ? 'gpt-3.5-turbo' : 'gpt-3.5-turbo';
 			const maxTokens = 2048;
-			const chatgptReply = await ChatgptService.create(
+			let chatgptReply = await ChatgptService.create(
 				questionAttr,
 				model,
 				maxTokens,
 			);
+
+			// If ChatGPT reply is not created, try again.
+			if (!chatgptReply) {
+				chatgptReply = await ChatgptService.create(
+					questionAttr,
+					model,
+					maxTokens,
+				);
+			}
 
 			if (!chatgptReply)
 				throw new CustomError(HttpCodes.NOT_FOUND, 'ChatGPT not replied');
