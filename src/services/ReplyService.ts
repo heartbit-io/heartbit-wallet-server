@@ -12,6 +12,9 @@ import ReplyRepository from '../Repositories/ReplyRepository';
 import {ReplyResponseInterface} from '../controllers/RepliesController';
 import {ReplyTypes} from '../util/enums';
 import UserRepository from '../Repositories/UserRepository';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//@ts-ignore
+import {airTableDoctorDetails} from '../../test/integration/mocks';
 
 class ReplyService {
 	async createChatGPTReply(reply: RepliesAttributes) {
@@ -110,9 +113,12 @@ class ReplyService {
 				if (!user || !user.airTableRecordId)
 					throw new CustomError(HttpCodes.NOT_FOUND, 'Doctor was not found');
 
-				const doctorDetails = await AirtableService.getAirtableDoctorInfo(
-					user.airTableRecordId,
-				);
+				const doctorDetails =
+					process.env.NODE_ENV === 'test'
+						? airTableDoctorDetails()
+						: await AirtableService.getAirtableDoctorInfo(
+								user.airTableRecordId,
+						  );
 
 				if (!doctorDetails)
 					throw new CustomError(

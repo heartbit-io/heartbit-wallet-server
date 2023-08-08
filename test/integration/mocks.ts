@@ -154,3 +154,12 @@ export const saveDoctorQuestion = async (
 ) => {
 	return await DoctorQuestionRepository.createDoctorQuestion(doctorQuestion);
 };
+
+export const airTableDoctorDetails = () => {
+	return {
+		fields: {
+			'First Name': 'John',
+			'Last Name': 'Doe',
+		},
+	};
+};
