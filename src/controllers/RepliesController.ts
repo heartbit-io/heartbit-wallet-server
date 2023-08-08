@@ -58,7 +58,7 @@ class RepliesController {
 					new ResponseDto(
 						true,
 						HttpCodes.OK,
-						'Reply retreived successfully',
+						'Reply retrieved successfully',
 						reply,
 					),
 				);

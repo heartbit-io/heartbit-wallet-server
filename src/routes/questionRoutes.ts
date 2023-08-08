@@ -3,13 +3,11 @@ import QuestionsValidator from '../lib/QuestionsValidator';
 import RepliesController from '../controllers/RepliesController';
 import {Router} from 'express';
 import Validation from '../middleware/Validation';
-import Auth from '../middleware/Auth';
 
 const router = Router();
 
 router.post(
 	'/',
-	Auth.verifyToken,
 	QuestionsValidator.checkCreateQuestion(),
 	Validation.validate,
 	QuestionsController.create,

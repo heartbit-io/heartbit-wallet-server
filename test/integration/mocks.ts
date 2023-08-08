@@ -19,7 +19,7 @@ import {UserAttributes} from '../../src/domains/entities/User';
 import UserRepository from '../../src/Repositories/UserRepository';
 import {faker} from '@faker-js/faker';
 
-export const newUser = () => {
+export const newUser = (): UserAttributes => {
 	return {
 		email: faker.internet.email().toLocaleLowerCase(),
 		pubkey: faker.string.alphanumeric(32).toLocaleLowerCase(),
@@ -27,6 +27,7 @@ export const newUser = () => {
 		role: faker.helpers.arrayElement(Object.values(UserRoles)),
 		promotionBtcBalance: 0,
 		fcmToken: faker.string.alphanumeric(32),
+		airTableRecordId: undefined,
 	};
 };
 
@@ -95,7 +96,7 @@ export const newReply = () => {
 		doctorNote: faker.lorem.paragraph(),
 		createdAt: faker.date.past(),
 		updatedAt: faker.date.past(),
-		deletedAt: null,
+		deletedAt: undefined,
 	};
 };
 

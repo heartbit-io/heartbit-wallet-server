@@ -69,6 +69,12 @@ export class Reply {
 
 	@ManyToOne(() => Question, question => question.replies)
 	question: Question;
+
+	@Column({type: 'text', nullable: true})
+	translated_content: string;
+
+	@Column({type: 'text', nullable: true})
+	translated_title: string;
 }
 
 export interface RepliesAttributes {
@@ -87,4 +93,9 @@ export interface RepliesAttributes {
 	triage: string;
 	lifestyle: string;
 	doctorNote: string;
+	createdAt?: Date;
+	updatedAt?: Date;
+	deletedAt?: Date;
+	translated_content?: string;
+	translated_title?: string;
 }
