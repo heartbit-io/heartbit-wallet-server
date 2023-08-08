@@ -127,25 +127,14 @@ class ReplyService {
 					doctorDetails.fields['Last Name'];
 				const classification = 'General physician'; // TODO(david): Get from user like user.classification
 
-				// FIXME(david): Currently multiple transaltion is not supported
-				const title = await DeeplService.getTextTranslatedIntoEnglish(
-					doctorReply.title,
-					rawContentLanguage,
-				);
-
-				const doctorNote = await DeeplService.getTextTranslatedIntoEnglish(
-					doctorReply.doctorNote,
-					rawContentLanguage,
-				);
-
 				return {
 					...doctorReply,
 					replyType,
 					name,
 					classification,
 					reply: doctorReply.content,
-					doctorNote: doctorNote.text,
-					title: title.text,
+					doctorNote: doctorReply.translatedContent,
+					title: doctorReply.translatedTitle,
 				};
 			}
 

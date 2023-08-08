@@ -71,10 +71,10 @@ export class Reply {
 	question: Question;
 
 	@Column({type: 'text', nullable: true})
-	translated_content: string;
+	translatedContent: string;
 
 	@Column({type: 'text', nullable: true})
-	translated_title: string;
+	translatedTitle: string;
 }
 
 export interface RepliesAttributes {
@@ -96,6 +96,6 @@ export interface RepliesAttributes {
 	createdAt?: Date;
 	updatedAt?: Date;
 	deletedAt?: Date;
-	translated_content?: string;
-	translated_title?: string;
+	translatedContent?: string;
+	translatedTitle?: string;
 }

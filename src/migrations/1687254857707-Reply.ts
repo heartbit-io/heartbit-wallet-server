@@ -79,6 +79,16 @@ export class Reply1687254857707 implements MigrationInterface {
 						type: 'timestamp',
 						isNullable: true,
 					},
+					{
+						name: 'translated_content',
+						type: 'text',
+						isNullable: true,
+					},
+					{
+						name: 'translated_title',
+						type: 'text',
+						isNullable: true,
+					},
 				],
 			}),
 			true,
