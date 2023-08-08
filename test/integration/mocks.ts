@@ -163,3 +163,11 @@ export const airTableDoctorDetails = () => {
 		},
 	};
 };
+
+export const mockTranslatedContent = () => {
+	return {
+		replyId: faker.number.int({min: 1, max: 50}),
+		translatedDoctorNote: faker.lorem.paragraph(),
+		translatedTitle: faker.lorem.sentence(),
+	};
+};
