@@ -1,5 +1,5 @@
-import {RepliesAttributes} from '../domains/entities/Reply';
-import {ReplyDataSource} from '../domains/repo';
+import {RepliesAttributes, Reply} from '../domains/entities/Reply';
+import dataSource, {ReplyDataSource} from '../domains/repo';
 
 class ReplyRepository {
 	async createReply(reply: RepliesAttributes) {
@@ -54,6 +54,19 @@ class ReplyRepository {
 			where: {questionId},
 		});
 		return reply?.userId;
+	}
+
+	async updateReplyTranslatedContent(
+		id: number,
+		translatedContent: string,
+		translatedTitle: string,
+	) {
+		return await dataSource
+			.createQueryBuilder()
+			.update(Reply)
+			.set({translatedContent, translatedTitle})
+			.where('id = :id', {id})
+			.execute();
 	}
 }
 

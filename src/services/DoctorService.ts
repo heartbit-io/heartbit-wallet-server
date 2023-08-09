@@ -1,7 +1,6 @@
 import {QuestionStatus, QuestionTypes, TxTypes} from '../util/enums';
 import ChatgptService from './ChatgptService';
 import {CustomError} from '../util/CustomError';
-import EventEmitter from 'events';
 import FcmService from '../services/FcmService';
 import {HttpCodes} from '../util/HttpCodes';
 import {JsonAnswerInterface} from '../domains/entities/ChatGptReply';
@@ -18,8 +17,7 @@ import ChatGptRepository from '../Repositories/ChatGptRepository';
 import DoctorQuestionRepository from '../Repositories/DoctorQuestionRepository';
 import dataSource from '../domains/repo';
 import ResponseDto from '../dto/ResponseDTO';
-
-const eventEmitter = new EventEmitter();
+import replyEventListener from '../listeners/ReplyListener';
 
 class DoctorService {
 	async createDoctorReply(
@@ -78,7 +76,7 @@ class DoctorService {
 				});
 			}
 
-			const reply = await this._updateQuestion(requestBody, doctor, question);
+			const reply = await this._createReply(requestBody, doctor, question);
 
 			FcmService.sendNotification(
 				question.userId,
@@ -86,6 +84,12 @@ class DoctorService {
 				"A human doctor's answer has arrived",
 				{type: 'DOCTOR_ANSWER'},
 			);
+			replyEventListener.emit('questionAnsweredByDoctor', {
+				language: question.rawContentLanguage,
+				replyId: reply.id,
+				title: reply.title,
+				doctorNote: reply.doctorNote,
+			});
 
 			return reply;
 		} catch (error: any) {
@@ -98,7 +102,7 @@ class DoctorService {
 		}
 	}
 
-	private async _updateQuestion(
+	private async _createReply(
 		requestBody: RepliesAttributes,
 		doctor: User,
 		question: Question,
@@ -356,7 +360,7 @@ class DoctorService {
 				token,
 			};
 
-			eventEmitter.emit('event:doctor_verified', data);
+			// this.emit('event:doctor_verified', data);
 
 			return data;
 		} catch (error: any) {

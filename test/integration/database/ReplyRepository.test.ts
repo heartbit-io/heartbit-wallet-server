@@ -221,4 +221,43 @@ describe('Replies Repository queries', () => {
 
 		expect(doctorId).to.equal(doctor.id);
 	});
+
+	it('should update a reply with translated content and title', async () => {
+		const user = newUser();
+		const createdUser = await createUser(user);
+
+		const doctorUser = newUser();
+		doctorUser.role = UserRoles.DOCTOR;
+		const doctor = await createUser(doctorUser);
+
+		const question = newQuestion();
+		question.userId = createdUser.id;
+		const createdQuestion = await createQuestion(question);
+
+		const reply = newReply();
+		reply.userId = doctor.id;
+		reply.questionId = createdQuestion.id;
+		const createdReply = await createReply(reply);
+
+		const translatedContent = {
+			translatedTitle: 'translatedTitle',
+			translatedContent: 'translatedContent',
+		};
+
+		await ReplyRepository.updateReplyTranslatedContent(
+			createdReply.id,
+			translatedContent.translatedContent,
+			translatedContent.translatedTitle,
+		);
+
+		const updatedReply = await ReplyRepository.getReplyById(createdReply.id);
+		expect(updatedReply).to.be.an('object');
+		expect(updatedReply).to.have.property('id').to.equal(createdReply.id);
+		expect(updatedReply)
+			.to.have.property('translatedTitle')
+			.to.equal(translatedContent.translatedTitle);
+		expect(updatedReply)
+			.to.have.property('translatedContent')
+			.to.equal(translatedContent.translatedContent);
+	});
 });
