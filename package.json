@@ -15,7 +15,7 @@
     "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
     "db:migrate": "npm run typeorm migration:run -- -d ./src/domains/repo/index.ts",
     "db:revert": "npm run typeorm migration:revert -- -d ./src/domains/repo/index.ts",
-    "test": "export NODE_ENV=test && mocha -r ts-node/register test/**/*.test.ts --exit",
+    "test": "export NODE_ENV=test && mocha -r ts-node/register src/test/**/*.test.ts --exit",
     "typeorm": "npx typeorm-ts-node-commonjs"
   },
   "keywords": [],

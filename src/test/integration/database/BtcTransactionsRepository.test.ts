@@ -1,8 +1,8 @@
 import {expect} from 'chai';
 import {afterEach, after, before} from 'mocha';
-import BtcTransactionsRepository from '../../../src/Repositories/BtcTransactionsRepository';
-import dataSource, {BtcTransactionDataSource} from '../../../src/domains/repo';
-import {createBtcTransaction, newBtcTransaction} from '../mocks';
+import BtcTransactionsRepository from '../../../Repositories/BtcTransactionsRepository';
+import dataSource, {BtcTransactionDataSource} from '../../../domains/repo';
+import {createBtcTransaction, newBtcTransaction} from '../../mocks';
 
 describe('BtcTransactions Repository queries', () => {
 	before(async () => {

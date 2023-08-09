@@ -1,8 +1,8 @@
 import {agent as request} from 'supertest';
 import {expect} from 'chai';
 import {afterEach, after, before} from 'mocha';
-import {HttpCodes} from '../../../src/util/HttpCodes';
-import app from '../../../src/index';
+import {HttpCodes} from '../../../util/HttpCodes';
+import app from '../../../index';
 import {
 	newUser,
 	createUser,
@@ -12,15 +12,15 @@ import {
 	newDoctorQuestion,
 	saveDoctorQuestion,
 	createReply,
-} from '../mocks';
-import {UserRoles} from '../../../src/util/enums';
+} from '../../mocks';
+import {UserRoles} from '../../../util/enums';
 import dataSource, {
 	userDataSource,
 	QuestionDataSource,
 	ReplyDataSource,
-} from '../../../src/domains/repo';
-import DoctorQuestionRepository from '../../../src/Repositories/DoctorQuestionRepository';
-import ReplyRepository from '../../../src/Repositories/ReplyRepository';
+} from '../../../domains/repo';
+import DoctorQuestionRepository from '../../../Repositories/DoctorQuestionRepository';
+import ReplyRepository from '../../../Repositories/ReplyRepository';
 
 const base_url = '/api/v1';
 

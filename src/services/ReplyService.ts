@@ -12,9 +12,7 @@ import ReplyRepository from '../Repositories/ReplyRepository';
 import {ReplyResponseInterface} from '../controllers/RepliesController';
 import {ReplyTypes} from '../util/enums';
 import UserRepository from '../Repositories/UserRepository';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-//@ts-ignore
-import {airTableDoctorDetails} from '../../test/integration/mocks';
+import {airTableDoctorDetails} from '../test/mocks';
 
 class ReplyService {
 	async createChatGPTReply(reply: RepliesAttributes) {
