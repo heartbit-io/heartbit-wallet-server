@@ -2,7 +2,7 @@ import ReplyEvent from '../events/ReplyEvent';
 import DeeplService from '../services/DeeplService';
 import {DoctorReplyEventTypes} from '../types/eventTypes';
 import ReplyRepository from '../Repositories/ReplyRepository';
-import {mockTranslatedContent} from '../test/mocks';
+import {mockTranslatedContent} from '../util/mockData';
 
 const replyEventListener = new ReplyEvent();
 

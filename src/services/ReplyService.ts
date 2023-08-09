@@ -12,7 +12,7 @@ import ReplyRepository from '../Repositories/ReplyRepository';
 import {ReplyResponseInterface} from '../controllers/RepliesController';
 import {ReplyTypes} from '../util/enums';
 import UserRepository from '../Repositories/UserRepository';
-import {airTableDoctorDetails} from '../test/mocks';
+import {airTableDoctorDetails} from '../util/mockData';
 
 class ReplyService {
 	async createChatGPTReply(reply: RepliesAttributes) {

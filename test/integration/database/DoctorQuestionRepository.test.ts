@@ -4,9 +4,9 @@ import dataSource, {
 	DoctorQuestionDataSource,
 	QuestionDataSource,
 	userDataSource,
-} from '../../../domains/repo';
+} from '../../../src/domains/repo';
 import {newDoctorQuestion, saveDoctorQuestion} from '../../mocks';
-import DoctorQuestionRepository from '../../../Repositories/DoctorQuestionRepository';
+import DoctorQuestionRepository from '../../../src/Repositories/DoctorQuestionRepository';
 
 describe('Doctor-Question Repository queries', () => {
 	before(async () => {

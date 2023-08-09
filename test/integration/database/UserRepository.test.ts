@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import {afterEach, after, before} from 'mocha';
-import dataSource, {userDataSource} from '../../../domains/repo';
-import UserRepository from '../../../Repositories/UserRepository';
+import dataSource, {userDataSource} from '../../../src/domains/repo';
+import UserRepository from '../../../src/Repositories/UserRepository';
 import {createUser, newUser} from '../../mocks';
 
 describe('User Repository queries', () => {

@@ -4,9 +4,9 @@ import dataSource, {
 	ChatGPTDataSource,
 	QuestionDataSource,
 	userDataSource,
-} from '../../../domains/repo';
-import QuestionRepository from '../../../Repositories/QuestionRepository';
-import {QuestionStatus} from '../../../util/enums';
+} from '../../../src/domains/repo';
+import QuestionRepository from '../../../src/Repositories/QuestionRepository';
+import {QuestionStatus} from '../../../src/util/enums';
 import {
 	newQuestion,
 	createQuestion,
