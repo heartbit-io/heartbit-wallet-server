@@ -3,8 +3,8 @@
 HeartBit wallet server
 
 ## API endpoint
-- DEV, TEST: https://dev-wallet-api.heartbit.io
-- PROD: (TODO)
+- TEST: (TODO)
+- PROD: https://dev-wallet-api.heartbit.io
 
 ## Getting started 🐣
 #### Dependencies
@@ -15,6 +15,7 @@ HeartBit wallet server
 First, setup Postgres on your local or remote instance and obtain the connection url.
 
 Rename `.env.example` to `.env` and populate the parameters.
+`.env` file is located in 1password. (Name: `[prod] .env file / heartbit-wallet-server`)
 
 You can use [NVM](https://github.com/nvm-sh/nvm) to install Node before proceeding to start the application by running the following commands:
 
@@ -26,12 +27,10 @@ nvm install 19.6.1
 nvm use 19.6.1
 
 # clone the codebase to a directory
-
 git clone git@github.com:heartbit-io/heartbit-wallet-server.git .
 
 # cd into the directory and run the command
 npm install
-
 
 # start the application
 npm run dev
@@ -50,25 +49,25 @@ npm run dev
 {host}:{PORT}/api/v1/documentation/
 ```
 
-## Deploy(Prod is not yet)
+## Deploy(TEST is not yet, Now only Prod phase)
 
 ### Cloud Infra
 - Cloudflare
 - AWS Elastic beanstalk
-  - DEV, TEST 
+  - PROD
     - Region: Seoul
     - t3.nano / t3.small
-  - PROD
+  - DEV, TEST 
     - (TODO)
 - AWS RDS
-  - DEV, TEST 
+  - PROD
     - Region: Seoul
     - Aurora PostgreSQL
     - db.r5.large
-  - PROD
+  - DEV, TEST 
     - (TODO)
 
-### Description
+### Description(Deployment setting files)
 - .ebextensions/proxy.config: Port forwarding 8080 to 3000.
 - .elasticbeanstalk/config.yml: elasticbeanstalk deploy config
 
@@ -78,16 +77,23 @@ npm run dev
 
 ### Process
 1. Move to heartbit-wallet-server directory
-2. Checkout develop branch for deploy
+2. Checkout branch for deploy
 3. Terminal command
 
 ```bash
+npm run build
 eb deploy [enviroment-name]
 ```
+- Replace [enviroment-name] each phase
+    - PROD: dev-heartbit-wallet-server-env
+    - DEV, TEST: (TODO)
 
-- Replace [enviroment-name] to
-    - DEV, TEST: dev-heartbit-wallet-server-env
-    - PROD: (TODO)
+e.g 
+```bash
+npm run build
+eb deploy dev-heartbit-wallet-server-env
+```
+
 
 ## 3rd parties
 
@@ -131,3 +137,7 @@ Sentry.captureMessage('[${HttpCodes.INTERNAL_SERVER_ERROR}] ${error}');
 - Admin account: contact@heartbit.io
 - Docs: https://airtable.com/developers/web
 - For pseudo-registry management
+- How to get doctor ID?
+  - Step1: Get our doctor list
+    - ```curl "https://api.airtable.com/v0/app3e1owkd49rNgQ6/tblUobsmfb6hoUiX7" -H "Authorization: Bearer [AIRTABLE_API_KEY]" ```
+  - Step2: Searching doctor in step1 response
