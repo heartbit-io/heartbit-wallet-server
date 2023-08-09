@@ -4,9 +4,9 @@ import dataSource, {
 	QuestionDataSource,
 	ReplyDataSource,
 	userDataSource,
-} from '../../../src/domains/repo';
-import ReplyRepository from '../../../src/Repositories/ReplyRepository';
-import {UserRoles} from '../../../src/util/enums';
+} from '../../../domains/repo';
+import ReplyRepository from '../../../Repositories/ReplyRepository';
+import {UserRoles} from '../../../util/enums';
 import {
 	newQuestion,
 	createQuestion,
@@ -14,7 +14,7 @@ import {
 	createUser,
 	newReply,
 	createReply,
-} from '../mocks';
+} from '../../mocks';
 
 describe('Replies Repository queries', () => {
 	before(async () => {

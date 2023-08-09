@@ -4,7 +4,7 @@ import dataSource, {
 	ChatGPTDataSource,
 	QuestionDataSource,
 	userDataSource,
-} from '../../../src/domains/repo';
+} from '../../../domains/repo';
 import {
 	createQuestion,
 	createUser,
@@ -12,8 +12,8 @@ import {
 	newUser,
 	chatGptReply,
 	createChatGptReply,
-} from '../mocks';
-import ChatGptRepository from '../../../src/Repositories/ChatGptRepository';
+} from '../../mocks';
+import ChatGptRepository from '../../../Repositories/ChatGptRepository';
 
 describe('ChaptGpt Repository queries', () => {
 	before(async () => {

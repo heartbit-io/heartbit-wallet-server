@@ -1,16 +1,16 @@
 import {expect} from 'chai';
 import {agent as request} from 'supertest';
-import {QuestionAttributes} from '../../../src/domains/entities/Question';
-import {HttpCodes} from '../../../src/util/HttpCodes';
-import app from '../../../src/index';
-import {newUser, createUser, newQuestion} from '../mocks';
+import {QuestionAttributes} from '../../../domains/entities/Question';
+import {HttpCodes} from '../../../util/HttpCodes';
+import app from '../../../index';
+import {newUser, createUser, newQuestion} from '../../mocks';
 import dataSource, {
 	ChatGPTDataSource,
 	QuestionDataSource,
 	userDataSource,
-} from '../../../src/domains/repo';
-import UserRepository from '../../../src/Repositories/UserRepository';
-import {QuestionStatus} from '../../../src/util/enums';
+} from '../../../domains/repo';
+import UserRepository from '../../../Repositories/UserRepository';
+import {QuestionStatus} from '../../../util/enums';
 
 const base_url = '/api/v1';
 

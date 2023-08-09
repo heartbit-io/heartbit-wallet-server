@@ -2,9 +2,7 @@ import ReplyEvent from '../events/ReplyEvent';
 import DeeplService from '../services/DeeplService';
 import {DoctorReplyEventTypes} from '../types/eventTypes';
 import ReplyRepository from '../Repositories/ReplyRepository';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-//@ts-ignore
-import {mockTranslatedContent} from '../../test/integration/mocks';
+import {mockTranslatedContent} from '../test/mocks';
 
 const replyEventListener = new ReplyEvent();
 
