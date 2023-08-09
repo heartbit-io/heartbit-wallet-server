@@ -1,13 +1,13 @@
 import {expect} from 'chai';
 import {agent as request} from 'supertest';
 import {afterEach, after} from 'mocha';
-import {HttpCodes} from '../../../util/HttpCodes';
-import app from '../../../index';
+import {HttpCodes} from '../../../src/util/HttpCodes';
+import app from '../../../src/index';
 import dataSource, {
 	BtcTransactionDataSource,
 	QuestionDataSource,
 	userDataSource,
-} from '../../../domains/repo';
+} from '../../../src/domains/repo';
 import {
 	newUser,
 	createUser,

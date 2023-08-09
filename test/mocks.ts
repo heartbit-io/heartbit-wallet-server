@@ -4,19 +4,19 @@ import {
 	ReplyStatus,
 	TxTypes,
 	UserRoles,
-} from '../util/enums';
-import {BtcTransactionFields} from '../domains/entities/BtcTransaction';
-import BtcTransactionsRepository from '../Repositories/BtcTransactionsRepository';
-import {ChatGptReplyAttributes} from '../domains/entities/ChatGptReply';
-import ChatGptRepository from '../Repositories/ChatGptRepository';
-import {DoctorQuestionAttributes} from '../domains/entities/DoctorQuestion';
-import DoctorQuestionRepository from '../Repositories/DoctorQuestionRepository';
-import {QuestionAttributes} from '../domains/entities/Question';
-import QuestionRepository from '../Repositories/QuestionRepository';
-import {RepliesAttributes} from '../domains/entities/Reply';
-import ReplyRepository from '../Repositories/ReplyRepository';
-import {UserAttributes} from '../domains/entities/User';
-import UserRepository from '../Repositories/UserRepository';
+} from '../src/util/enums';
+import {BtcTransactionFields} from '../src/domains/entities/BtcTransaction';
+import BtcTransactionsRepository from '../src/Repositories/BtcTransactionsRepository';
+import {ChatGptReplyAttributes} from '../src/domains/entities/ChatGptReply';
+import ChatGptRepository from '../src/Repositories/ChatGptRepository';
+import {DoctorQuestionAttributes} from '../src/domains/entities/DoctorQuestion';
+import DoctorQuestionRepository from '../src/Repositories/DoctorQuestionRepository';
+import {QuestionAttributes} from '../src/domains/entities/Question';
+import QuestionRepository from '../src/Repositories/QuestionRepository';
+import {RepliesAttributes} from '../src/domains/entities/Reply';
+import ReplyRepository from '../src/Repositories/ReplyRepository';
+import {UserAttributes} from '../src/domains/entities/User';
+import UserRepository from '../src/Repositories/UserRepository';
 import {faker} from '@faker-js/faker';
 
 export const newUser = (): UserAttributes => {

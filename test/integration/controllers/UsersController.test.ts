@@ -1,10 +1,10 @@
-import app from '../../../index';
+import app from '../../../src/index';
 import {expect} from 'chai';
 import {agent as request} from 'supertest';
 import {afterEach, after, before} from 'mocha';
-import {HttpCodes} from '../../../util/HttpCodes';
-import dataSource, {userDataSource} from '../../../domains/repo';
-import env from '../../../config/env';
+import {HttpCodes} from '../../../src/util/HttpCodes';
+import dataSource, {userDataSource} from '../../../src/domains/repo';
+import env from '../../../src/config/env';
 import {newUser, createUser} from '../../mocks';
 
 const base_url = '/api/v1';

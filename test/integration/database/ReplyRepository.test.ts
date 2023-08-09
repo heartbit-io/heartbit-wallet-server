@@ -4,9 +4,9 @@ import dataSource, {
 	QuestionDataSource,
 	ReplyDataSource,
 	userDataSource,
-} from '../../../domains/repo';
-import ReplyRepository from '../../../Repositories/ReplyRepository';
-import {UserRoles} from '../../../util/enums';
+} from '../../../src/domains/repo';
+import ReplyRepository from '../../../src/Repositories/ReplyRepository';
+import {UserRoles} from '../../../src/util/enums';
 import {
 	newQuestion,
 	createQuestion,
