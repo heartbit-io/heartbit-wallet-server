@@ -52,6 +52,11 @@ export class ChatGptReply1687254887070 implements MigrationInterface {
 						type: 'timestamp',
 						isNullable: true,
 					},
+					{
+						name: 'translated_answer',
+						type: 'text',
+						isNullable: true,
+					},
 				],
 			}),
 			true,

@@ -13,6 +13,7 @@ import {ReplyResponseInterface} from '../controllers/RepliesController';
 import {ReplyTypes} from '../util/enums';
 import UserRepository from '../Repositories/UserRepository';
 import {airTableDoctorDetails, mockTranslatedContent} from '../util/mockData';
+import ChatGptRepository from '../Repositories/ChatGptRepository';
 
 class ReplyService {
 	async createChatGPTReply(reply: RepliesAttributes) {
@@ -69,6 +70,12 @@ class ReplyService {
 				translateText,
 				rawContentLanguage,
 			);
+
+			await ChatGptRepository.updateTranslatedChatGptReply(
+				chatgptReply.id,
+				translatedReply.text,
+			);
+
 			// set response
 			const replyResponseInterface: ReplyResponseInterface = {
 				success: true,
@@ -166,28 +173,37 @@ class ReplyService {
 			const chatGptReply = await ChatgptService.getChatGptReplyByQuestionId(
 				Number(questionId),
 			);
-
 			if (!chatGptReply)
 				throw new CustomError(
 					HttpCodes.NOT_FOUND,
 					'Chatgpt reply was not found',
 				);
-
 			let translateText = chatGptReply.jsonAnswer.aiAnswer;
 			if (question.type !== QuestionTypes.GENERAL) {
 				translateText = chatGptReply.jsonAnswer.guide;
 			}
-			const translatedReply = await DeeplService.getTextTranslatedIntoEnglish(
-				translateText,
-				rawContentLanguage,
-			);
 
+			let translatedAnswer = chatGptReply.translatedAnswer;
+			if (!translatedAnswer) {
+				const translatedReply =
+					process.env.NODE_ENV === 'test'
+						? mockTranslatedContent().translatedTitle
+						: await DeeplService.getTextTranslatedIntoEnglish(
+								translateText,
+								rawContentLanguage,
+						  );
+
+				await ChatGptRepository.updateTranslatedChatGptReply(
+					chatGptReply.id,
+					translatedReply.text,
+				);
+				translatedAnswer = translatedReply.text;
+			}
 			const replyType = ReplyTypes.AI;
 			const name = 'Advice by GPT-3.5'; // TODO(david): formatting
-			const reply = translatedReply.text;
+			const reply = translatedAnswer;
 			const classification = 'Open AI';
 			const createdAt = chatGptReply.createdAt;
-
 			return {
 				replyType,
 				name,

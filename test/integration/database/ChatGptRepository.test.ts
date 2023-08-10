@@ -68,4 +68,35 @@ describe('ChaptGpt Repository queries', () => {
 			.to.equal(createdQuestion.id);
 		expect(response).to.have.property('jsonAnswer');
 	});
+
+	it('should update chatgpt reply translated answer by chaptreply id', async () => {
+		const createdUser = await createUser(newUser());
+		const question = newQuestion();
+		question.userId = createdUser.id;
+		const createdQuestion = await createQuestion(question);
+		const newChatGptReply = chatGptReply();
+		newChatGptReply.questionId = createdQuestion.id;
+		const createdChatGptReply = await createChatGptReply(newChatGptReply);
+
+		const translatedAnswer = 'translated answer';
+
+		await ChatGptRepository.updateTranslatedChatGptReply(
+			createdChatGptReply.id,
+			translatedAnswer,
+		);
+
+		const response = await ChatGptRepository.getChatGptReply(
+			createdQuestion.id,
+		);
+
+		expect(response).to.be.an('object');
+		expect(response).to.have.property('id');
+		expect(response)
+			.to.have.property('questionId')
+			.to.equal(createdQuestion.id);
+		expect(response).to.have.property('jsonAnswer');
+		expect(response)
+			.to.have.property('translatedAnswer')
+			.to.equal(translatedAnswer);
+	});
 });
