@@ -74,6 +74,27 @@ class ReplyRepository {
 			.where('id = :id', {id})
 			.execute();
 	}
+
+	async updateReplyTranslatedContentColumn(
+		id: number,
+		translatedContent: string,
+	) {
+		return await dataSource
+			.createQueryBuilder()
+			.update(Reply)
+			.set({translatedContent})
+			.where('id = :id', {id})
+			.execute();
+	}
+
+	async updateReplyTranslatedTitleColumn(id: number, translatedTitle: string) {
+		return await dataSource
+			.createQueryBuilder()
+			.update(Reply)
+			.set({translatedTitle})
+			.where('id = :id', {id})
+			.execute();
+	}
 }
 
 export default new ReplyRepository();

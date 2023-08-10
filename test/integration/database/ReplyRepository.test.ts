@@ -260,4 +260,47 @@ describe('Replies Repository queries', () => {
 			.to.have.property('translatedContent')
 			.to.equal(translatedContent.translatedContent);
 	});
+
+	it('should update a reply with translated content and title', async () => {
+		const user = newUser();
+		const createdUser = await createUser(user);
+
+		const doctorUser = newUser();
+		doctorUser.role = UserRoles.DOCTOR;
+		const doctor = await createUser(doctorUser);
+
+		const question = newQuestion();
+		question.userId = createdUser.id;
+		const createdQuestion = await createQuestion(question);
+
+		const reply = newReply();
+		reply.userId = doctor.id;
+		reply.questionId = createdQuestion.id;
+		const createdReply = await createReply(reply);
+
+		const translatedText = {
+			translatedTitle: 'translatedTitle',
+			translatedContent: 'translatedContent',
+		};
+
+		await ReplyRepository.updateReplyTranslatedContentColumn(
+			createdReply.id,
+			translatedText.translatedContent,
+		);
+
+		await ReplyRepository.updateReplyTranslatedTitleColumn(
+			createdReply.id,
+			translatedText.translatedTitle,
+		);
+
+		const updatedReply = await ReplyRepository.getReplyById(createdReply.id);
+		expect(updatedReply).to.be.an('object');
+		expect(updatedReply).to.have.property('id').to.equal(createdReply.id);
+		expect(updatedReply)
+			.to.have.property('translatedContent')
+			.to.equal(translatedText.translatedContent);
+		expect(updatedReply)
+			.to.have.property('translatedTitle')
+			.to.equal(translatedText.translatedTitle);
+	});
 });

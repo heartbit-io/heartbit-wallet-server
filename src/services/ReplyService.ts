@@ -7,12 +7,12 @@ import {HttpCodes} from '../util/HttpCodes';
 import {QuestionAttributes} from '../domains/entities/Question';
 import QuestionRepository from '../Repositories/QuestionRepository';
 import {QuestionTypes} from '../util/enums';
-import {RepliesAttributes} from '../domains/entities/Reply';
+import {RepliesAttributes, Reply} from '../domains/entities/Reply';
 import ReplyRepository from '../Repositories/ReplyRepository';
 import {ReplyResponseInterface} from '../controllers/RepliesController';
 import {ReplyTypes} from '../util/enums';
 import UserRepository from '../Repositories/UserRepository';
-import {airTableDoctorDetails} from '../util/mockData';
+import {airTableDoctorDetails, mockTranslatedContent} from '../util/mockData';
 
 class ReplyService {
 	async createChatGPTReply(reply: RepliesAttributes) {
@@ -132,6 +132,18 @@ class ReplyService {
 						HttpCodes.NOT_FOUND,
 						'Doctor detail was not found',
 					);
+				const doctorNote = doctorReply.translatedContent;
+				if (!doctorNote) {
+					await this._translateAndUpdateContent(
+						doctorReply,
+						rawContentLanguage,
+					);
+				}
+
+				const title = doctorReply.translatedTitle;
+				if (!title) {
+					await this._translateAndUpdateTitle(doctorReply, rawContentLanguage);
+				}
 
 				const replyType = ReplyTypes.DOCTOR;
 				const name =
@@ -191,6 +203,42 @@ class ReplyService {
 						'Internal Server Error',
 				  );
 		}
+	}
+
+	private async _translateAndUpdateTitle(
+		doctorReply: Reply,
+		rawContentLanguage: any,
+	) {
+		const translatedTitle =
+			process.env.NODE_ENV === 'test'
+				? mockTranslatedContent().translatedTitle
+				: await DeeplService.getTextTranslatedIntoEnglish(
+						doctorReply.title,
+						rawContentLanguage,
+				  );
+		doctorReply.translatedTitle = translatedTitle.text;
+		await ReplyRepository.updateReplyTranslatedTitleColumn(
+			doctorReply.id,
+			translatedTitle.text,
+		);
+	}
+
+	private async _translateAndUpdateContent(
+		doctorReply: Reply,
+		rawContentLanguage: any,
+	) {
+		const translatedContent =
+			process.env.NODE_ENV === 'test'
+				? mockTranslatedContent().translatedDoctorNote
+				: await DeeplService.getTextTranslatedIntoEnglish(
+						doctorReply.content,
+						rawContentLanguage,
+				  );
+		doctorReply.translatedContent = translatedContent.text;
+		await ReplyRepository.updateReplyTranslatedContentColumn(
+			doctorReply.id,
+			translatedContent.text,
+		);
 	}
 
 	async deleteReply(replyId: number, userId: number) {
