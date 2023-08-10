@@ -372,4 +372,60 @@ describe('Doctor endpoints', () => {
 			chiefComplaint: null,
 		});
 	});
+
+	it('should return questions answered by a doctor in descending order', async () => {
+		const user1 = await createUser(newUser());
+
+		const doctorUser = newUser();
+		doctorUser.role = UserRoles.DOCTOR;
+		doctorUser.email = 'testemail@heartbit.io';
+		const doctor = await createUser(doctorUser);
+
+		const question = newQuestion();
+		question.userId = user1.id;
+		const createdQuestion = await createQuestion(question);
+
+		const replyRequest = newReply();
+		replyRequest.userId = doctor.id;
+		replyRequest.questionId = createdQuestion.id;
+		await createReply(replyRequest);
+
+		const user2 = await createUser(newUser());
+
+		const question2 = newQuestion();
+		question2.userId = user2.id;
+		const createdQuestion2 = await createQuestion(question2);
+
+		const replyRequest2 = newReply();
+		replyRequest2.userId = doctor.id;
+		replyRequest2.questionId = createdQuestion2.id;
+		await createReply(replyRequest2);
+
+		const question3 = newQuestion();
+		question3.userId = user2.id;
+		const createdQuestion3 = await createQuestion(question3);
+
+		const replyRequest3 = newReply();
+		replyRequest3.userId = doctor.id;
+		replyRequest3.questionId = createdQuestion3.id;
+		await createReply(replyRequest3);
+
+		const response = await request(app)
+			.get(base_url + '/doctors/answered-questions')
+			.set('Accept', 'application/json');
+		expect(response.status).to.equal(HttpCodes.OK);
+		expect(response.body.data).to.be.an('array').to.have.lengthOf(3);
+		expect(response.body.data[0]).to.include({
+			userId: user2.id,
+			id: createdQuestion3.id,
+		});
+		expect(response.body.data[1]).to.include({
+			userId: user2.id,
+			id: createdQuestion2.id,
+		});
+		expect(response.body.data[2]).to.include({
+			userId: user1.id,
+			id: createdQuestion.id,
+		});
+	});
 });
