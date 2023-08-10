@@ -220,4 +220,39 @@ describe('Replies endpoints', () => {
 		expect(reply).to.have.property('translatedContent').to.not.be.null;
 		expect(reply).to.have.property('translatedTitle').to.not.be.null;
 	});
+
+	it('should return a question reply with translated content', async () => {
+		const user = newUser();
+		user.email = 'testemail@heartbit.io';
+
+		const createdUser = await createUser(user);
+
+		const doctorUser = newUser();
+		doctorUser.role = UserRoles.DOCTOR;
+		doctorUser.airTableRecordId = 'rec123';
+		const doctor = await createUser(doctorUser);
+
+		const question = newQuestion();
+		question.userId = createdUser.id;
+		const createdQuestion = await createQuestion(question);
+
+		const replyRequest = newReply();
+		replyRequest.userId = doctor.id;
+		replyRequest.questionId = createdQuestion.id;
+
+		await createReply(replyRequest);
+
+		const response = await request(app)
+			.get(base_url + '/questions/' + createdQuestion.id + '/replies')
+			.set('Accept', 'application/json');
+		expect(response.status).to.equal(HttpCodes.OK);
+		expect(response.body).to.include({
+			success: true,
+			statusCode: HttpCodes.OK,
+			message: 'Reply retrieved successfully',
+		});
+		expect(response.body.data).to.have.property('id');
+		expect(response.body.data).to.have.property('translatedContent').not.null;
+		expect(response.body.data).to.have.property('translatedTitle').not.null;
+	});
 });
