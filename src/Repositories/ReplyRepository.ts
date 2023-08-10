@@ -36,7 +36,7 @@ class ReplyRepository {
 			relations: {
 				question: true,
 			},
-			order: {updatedAt: 'DESC'},
+			order: {createdAt: 'DESC'},
 		});
 	}
 
