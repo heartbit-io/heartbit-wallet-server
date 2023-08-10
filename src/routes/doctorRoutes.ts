@@ -1,7 +1,5 @@
 import Auth from '../middleware/Auth';
-import DoctorAuth from '../middleware/DoctorAuth';
 import DoctorsController from '../controllers/DoctorsController';
-import RepliesValidator from '../lib/RepliesValidator';
 import DoctorsValidator from '../lib/DoctorsValidator';
 import {Router} from 'express';
 import Validation from '../middleware/Validation';

@@ -31,7 +31,13 @@ class ReplyRepository {
 	}
 
 	async getDoctorReplies(userId: number) {
-		return await ReplyDataSource.find({where: {userId}});
+		return await ReplyDataSource.find({
+			where: {userId},
+			relations: {
+				question: true,
+			},
+			order: {updatedAt: 'DESC'},
+		});
 	}
 
 	async getDoctorReply(questionId: number, userId: number) {

@@ -259,7 +259,6 @@ class DoctorService {
 					'Error getting user email',
 				);
 
-			// check that it is a doctor
 			const doctor = await UserRepository.getUserDetailsByEmail(email);
 
 			if (!doctor || doctor.role !== UserRoles.DOCTOR)
@@ -270,13 +269,7 @@ class DoctorService {
 
 			// TODO(david): Join the question and reply table
 			const replies = await ReplyRepository.getDoctorReplies(Number(doctor.id));
-			const questionIds = replies.map(
-				(reply: {questionId: any}) => reply.questionId,
-			);
-			const questions =
-				await QuestionRepository.getDoctorAnswerdQuestionsByQuestionIds(
-					questionIds,
-				);
+			const questions = replies.map((reply: any) => reply.question);
 
 			return questions;
 		} catch (error: any) {

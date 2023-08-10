@@ -43,7 +43,6 @@ export const newBtcTransaction = () => {
 		fee: Number(faker.finance.amount()),
 		type: faker.helpers.arrayElement(Object.values(TxTypes)),
 		createdAt: faker.date.past(),
-		updatedAt: faker.date.past(),
 		deletedAt: null,
 	};
 };
@@ -68,8 +67,6 @@ export const newQuestion = () => {
 		pastIllnessHistory: faker.lorem.sentence(),
 		lifestyle: faker.lorem.sentence(),
 		others: faker.lorem.sentence(),
-		createdAt: faker.date.past(),
-		updatedAt: faker.date.past(),
 		deletedAt: null,
 	};
 };
@@ -94,8 +91,6 @@ export const newReply = () => {
 		triage: faker.lorem.sentence(),
 		lifestyle: faker.lorem.sentence(),
 		doctorNote: faker.lorem.paragraph(),
-		createdAt: faker.date.past(),
-		updatedAt: faker.date.past(),
 		deletedAt: undefined,
 	};
 };
@@ -153,21 +148,4 @@ export const saveDoctorQuestion = async (
 	doctorQuestion: DoctorQuestionAttributes,
 ) => {
 	return await DoctorQuestionRepository.createDoctorQuestion(doctorQuestion);
-};
-
-export const airTableDoctorDetails = () => {
-	return {
-		fields: {
-			'First Name': 'John',
-			'Last Name': 'Doe',
-		},
-	};
-};
-
-export const mockTranslatedContent = () => {
-	return {
-		replyId: faker.number.int({min: 1, max: 50}),
-		translatedDoctorNote: faker.lorem.paragraph(),
-		translatedTitle: faker.lorem.sentence(),
-	};
 };
