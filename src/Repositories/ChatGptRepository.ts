@@ -1,4 +1,4 @@
-import {ChatGPTDataSource} from '../domains/repo';
+import dataSource, {ChatGPTDataSource} from '../domains/repo';
 import {
 	ChatGptReply,
 	ChatGptReplyAttributes,
@@ -15,6 +15,15 @@ class ChatGptRepository {
 		return await ChatGPTDataSource.findOne({
 			where: {questionId},
 		});
+	}
+
+	async updateTranslatedChatGptReply(id: number, translatedAnswer: string) {
+		return await dataSource
+			.createQueryBuilder()
+			.update(ChatGptReply)
+			.set({translatedAnswer})
+			.where('id = :id', {id})
+			.execute();
 	}
 }
 

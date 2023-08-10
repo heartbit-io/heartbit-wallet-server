@@ -12,12 +12,15 @@ import {
 	newDoctorQuestion,
 	saveDoctorQuestion,
 	createReply,
+	chatGptReply,
+	createChatGptReply,
 } from '../../mocks';
-import {UserRoles} from '../../../src/util/enums';
+import {ReplyTypes, UserRoles} from '../../../src/util/enums';
 import dataSource, {
 	userDataSource,
 	QuestionDataSource,
 	ReplyDataSource,
+	ChatGPTDataSource,
 } from '../../../src/domains/repo';
 import DoctorQuestionRepository from '../../../src/Repositories/DoctorQuestionRepository';
 import ReplyRepository from '../../../src/Repositories/ReplyRepository';
@@ -29,6 +32,7 @@ describe('Replies endpoints', () => {
 		await dataSource.initialize();
 	});
 	afterEach(async () => {
+		await ChatGPTDataSource.delete({});
 		await ReplyDataSource.delete({});
 		await QuestionDataSource.delete({});
 		await userDataSource.delete({});
@@ -254,5 +258,36 @@ describe('Replies endpoints', () => {
 		expect(response.body.data).to.have.property('id');
 		expect(response.body.data).to.have.property('translatedContent').not.null;
 		expect(response.body.data).to.have.property('translatedTitle').not.null;
+	});
+
+	it('should return chatgpt reply if no doctor reply', async () => {
+		const user = newUser();
+		user.email = 'testemail@heartbit.io';
+		const createdUser = await createUser(user);
+
+		const question = newQuestion();
+		question.userId = createdUser.id;
+		const createdQuestion = await createQuestion(question);
+
+		const chaptreply = chatGptReply();
+		chaptreply.questionId = createdQuestion.id;
+		await createChatGptReply(chaptreply);
+
+		const response = await request(app)
+			.get(base_url + '/questions/' + createdQuestion.id + '/replies')
+			.set('Accept', 'application/json');
+		expect(response.status).to.equal(HttpCodes.OK);
+		expect(response.body).to.include({
+			success: true,
+			statusCode: HttpCodes.OK,
+			message: 'Reply retrieved successfully',
+		});
+		expect(response.body.data)
+			.to.have.property('replyType')
+			.to.equal(ReplyTypes.AI);
+		expect(response.body.data).to.have.property('classification').to.not.be
+			.null;
+		expect(response.body.data).to.have.property('reply').to.not.be.null;
+		expect(response.body.data).to.have.property('createdAt').to.not.be.null;
 	});
 });
