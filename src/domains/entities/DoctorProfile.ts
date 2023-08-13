@@ -6,6 +6,7 @@ import {
 	DeleteDateColumn,
 	UpdateDateColumn,
 	OneToOne,
+	JoinColumn,
 } from 'typeorm';
 import {User} from './User';
 
@@ -24,6 +25,7 @@ export class DoctorProfile {
 	lastName: string;
 
 	@OneToOne(() => User, user => user.doctorProfile)
+	@JoinColumn({name: 'userId'})
 	user: User;
 
 	@CreateDateColumn({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})

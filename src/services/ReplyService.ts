@@ -7,12 +7,14 @@ import {HttpCodes} from '../util/HttpCodes';
 import {QuestionAttributes} from '../domains/entities/Question';
 import QuestionRepository from '../Repositories/QuestionRepository';
 import {QuestionTypes} from '../util/enums';
-import {RepliesAttributes, Reply} from '../domains/entities/Reply';
+import {RepliesAttributes} from '../domains/entities/Reply';
 import ReplyRepository from '../Repositories/ReplyRepository';
 import {ReplyResponseInterface} from '../controllers/RepliesController';
 import {ReplyTypes} from '../util/enums';
 import UserRepository from '../Repositories/UserRepository';
 import {airTableDoctorDetails, mockTranslatedContent} from '../util/mockData';
+import DoctorProfileRepository from '../Repositories/DoctorProfileRepository';
+import {User} from '../domains/entities/User';
 import ChatGptRepository from '../Repositories/ChatGptRepository';
 
 class ReplyService {
@@ -127,36 +129,10 @@ class ReplyService {
 				if (!user || !user.airTableRecordId)
 					throw new CustomError(HttpCodes.NOT_FOUND, 'Doctor was not found');
 
-				const doctorDetails =
-					process.env.NODE_ENV === 'test'
-						? airTableDoctorDetails()
-						: await AirtableService.getAirtableDoctorInfo(
-								user.airTableRecordId,
-						  );
-
-				if (!doctorDetails)
-					throw new CustomError(
-						HttpCodes.NOT_FOUND,
-						'Doctor detail was not found',
-					);
-				const doctorNote = doctorReply.translatedContent;
-				if (!doctorNote) {
-					await this._translateAndUpdateContent(
-						doctorReply,
-						rawContentLanguage,
-					);
-				}
-
-				const title = doctorReply.translatedTitle;
-				if (!title) {
-					await this._translateAndUpdateTitle(doctorReply, rawContentLanguage);
-				}
+				const name = await this._getDoctorName(user);
 
 				const replyType = ReplyTypes.DOCTOR;
-				const name =
-					doctorDetails.fields['First Name'] +
-					' ' +
-					doctorDetails.fields['Last Name'];
+
 				const classification = 'General physician'; // TODO(david): Get from user like user.classification
 
 				return {
@@ -173,16 +149,17 @@ class ReplyService {
 			const chatGptReply = await ChatgptService.getChatGptReplyByQuestionId(
 				Number(questionId),
 			);
+
 			if (!chatGptReply)
 				throw new CustomError(
 					HttpCodes.NOT_FOUND,
 					'Chatgpt reply was not found',
 				);
+
 			let translateText = chatGptReply.jsonAnswer.aiAnswer;
 			if (question.type !== QuestionTypes.GENERAL) {
 				translateText = chatGptReply.jsonAnswer.guide;
 			}
-
 			let translatedAnswer = chatGptReply.translatedAnswer;
 			if (!translatedAnswer) {
 				const translatedReply =
@@ -199,11 +176,13 @@ class ReplyService {
 				);
 				translatedAnswer = translatedReply.text;
 			}
+
 			const replyType = ReplyTypes.AI;
 			const name = 'Advice by GPT-3.5'; // TODO(david): formatting
 			const reply = translatedAnswer;
 			const classification = 'Open AI';
 			const createdAt = chatGptReply.createdAt;
+
 			return {
 				replyType,
 				name,
@@ -221,40 +200,33 @@ class ReplyService {
 		}
 	}
 
-	private async _translateAndUpdateTitle(
-		doctorReply: Reply,
-		rawContentLanguage: any,
-	) {
-		const translatedTitle =
-			process.env.NODE_ENV === 'test'
-				? mockTranslatedContent().translatedTitle
-				: await DeeplService.getTextTranslatedIntoEnglish(
-						doctorReply.title,
-						rawContentLanguage,
-				  );
-		doctorReply.translatedTitle = translatedTitle.text;
-		await ReplyRepository.updateReplyTranslatedTitleColumn(
-			doctorReply.id,
-			translatedTitle.text,
+	private async _getDoctorName(user: User): Promise<string | CustomError> {
+		const doctorProfileDetails = await DoctorProfileRepository.getDoctorProfile(
+			user.id,
 		);
-	}
 
-	private async _translateAndUpdateContent(
-		doctorReply: Reply,
-		rawContentLanguage: any,
-	) {
-		const translatedContent =
-			process.env.NODE_ENV === 'test'
-				? mockTranslatedContent().translatedDoctorNote
-				: await DeeplService.getTextTranslatedIntoEnglish(
-						doctorReply.content,
-						rawContentLanguage,
-				  );
-		doctorReply.translatedContent = translatedContent.text;
-		await ReplyRepository.updateReplyTranslatedContentColumn(
-			doctorReply.id,
-			translatedContent.text,
-		);
+		if (!doctorProfileDetails) {
+			const doctorDetails =
+				process.env.NODE_ENV === 'test'
+					? airTableDoctorDetails()
+					: await AirtableService.getAirtableDoctorInfo(user.airTableRecordId);
+
+			if (!doctorDetails)
+				throw new CustomError(
+					HttpCodes.NOT_FOUND,
+					'Doctor detail was not found',
+				);
+			const firstName = doctorDetails.fields['First Name'];
+			const lastName = doctorDetails.fields['Last Name'];
+
+			await DoctorProfileRepository.saveDoctorProfile({
+				userId: user.id,
+				firstName,
+				lastName,
+			});
+			return `${firstName} ${lastName}`;
+		}
+		return `${doctorProfileDetails.firstName} ${doctorProfileDetails.lastName}`;
 	}
 
 	async deleteReply(replyId: number, userId: number) {

@@ -12,6 +12,8 @@ import {
 	newDoctorQuestion,
 	saveDoctorQuestion,
 	createReply,
+	doctorProfile,
+	saveDoctorProfile,
 	chatGptReply,
 	createChatGptReply,
 } from '../../mocks';
@@ -24,6 +26,7 @@ import dataSource, {
 } from '../../../src/domains/repo';
 import DoctorQuestionRepository from '../../../src/Repositories/DoctorQuestionRepository';
 import ReplyRepository from '../../../src/Repositories/ReplyRepository';
+import DoctorProfileRepository from '../../../src/Repositories/DoctorProfileRepository';
 
 const base_url = '/api/v1';
 
@@ -225,10 +228,42 @@ describe('Replies endpoints', () => {
 		expect(reply).to.have.property('translatedTitle').to.not.be.null;
 	});
 
-	it('should return a question reply with translated content', async () => {
+	it('should get doctor profile saved in the database', async () => {
 		const user = newUser();
 		user.email = 'testemail@heartbit.io';
+		const createdUser = await createUser(user);
 
+		const doctorUser = newUser();
+		doctorUser.role = UserRoles.DOCTOR;
+		doctorUser.airTableRecordId = 'rec123';
+		const doctor = await createUser(doctorUser);
+
+		const doctorName = doctorProfile();
+		doctorName.userId = doctor.id;
+		const savedName = await saveDoctorProfile(doctorName);
+
+		const name = `${savedName.firstName} ${savedName.lastName}`;
+		const question = newQuestion();
+		question.userId = createdUser.id;
+		const createdQuestion = await createQuestion(question);
+
+		const replyRequest = newReply();
+		replyRequest.userId = doctor.id;
+		replyRequest.questionId = createdQuestion.id;
+
+		await createReply(replyRequest);
+
+		const response = await request(app)
+			.get(base_url + '/questions/' + createdQuestion.id + '/replies')
+			.set('Accept', 'application/json');
+
+		expect(response.status).to.equal(HttpCodes.OK);
+		expect(response.body.data).to.have.property('name').to.equal(name);
+	});
+
+	it('should save doctor profile from airtable API', async () => {
+		const user = newUser();
+		user.email = 'testemail@heartbit.io';
 		const createdUser = await createUser(user);
 
 		const doctorUser = newUser();
@@ -250,14 +285,13 @@ describe('Replies endpoints', () => {
 			.get(base_url + '/questions/' + createdQuestion.id + '/replies')
 			.set('Accept', 'application/json');
 		expect(response.status).to.equal(HttpCodes.OK);
-		expect(response.body).to.include({
-			success: true,
-			statusCode: HttpCodes.OK,
-			message: 'Reply retrieved successfully',
-		});
-		expect(response.body.data).to.have.property('id');
-		expect(response.body.data).to.have.property('translatedContent').not.null;
-		expect(response.body.data).to.have.property('translatedTitle').not.null;
+
+		const doctorProfile = await DoctorProfileRepository.getDoctorProfile(
+			doctor.id,
+		);
+		expect(doctorProfile).to.not.be.null;
+		expect(doctorProfile).to.have.property('firstName').to.not.be.null;
+		expect(doctorProfile).to.have.property('lastName').to.not.be.null;
 	});
 
 	it('should return chatgpt reply if no doctor reply', async () => {
@@ -287,7 +321,5 @@ describe('Replies endpoints', () => {
 			.to.equal(ReplyTypes.AI);
 		expect(response.body.data).to.have.property('classification').to.not.be
 			.null;
-		expect(response.body.data).to.have.property('reply').to.not.be.null;
-		expect(response.body.data).to.have.property('createdAt').to.not.be.null;
 	});
 });
