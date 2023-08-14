@@ -6,6 +6,7 @@ import {Reply} from '../entities/Reply';
 import {SnakeNamingStrategy} from 'typeorm-naming-strategies';
 import {User} from '../entities/User';
 import {DoctorQuestion} from '../entities/DoctorQuestion';
+import {DoctorProfile} from '../entities/DoctorProfile';
 import env from '../../config/env';
 
 const dataSource = new DataSource({
@@ -24,6 +25,7 @@ const dataSource = new DataSource({
 		ChatGptReply,
 		Question,
 		DoctorQuestion,
+		DoctorProfile,
 	],
 	// migrations: ['src/migrations/*.ts'],
 });
@@ -36,5 +38,6 @@ export const ChatGPTDataSource = dataSource.getRepository(ChatGptReply);
 export const QuestionDataSource = dataSource.getRepository(Question);
 export const DoctorQuestionDataSource =
 	dataSource.getRepository(DoctorQuestion);
+export const DoctorProfileDataSource = dataSource.getRepository(DoctorProfile);
 
 export default dataSource;

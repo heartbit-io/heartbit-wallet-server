@@ -1,6 +1,5 @@
 import {expect} from 'chai';
 import {agent as request} from 'supertest';
-import {QuestionAttributes} from '../../../src/domains/entities/Question';
 import {HttpCodes} from '../../../src/util/HttpCodes';
 import {QuestionStatus, UserRoles} from '../../../src/util/enums';
 import app from '../../../src/index';

@@ -4,6 +4,7 @@ import {
 	DeleteDateColumn,
 	Entity,
 	OneToMany,
+	OneToOne,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
@@ -11,6 +12,7 @@ import {
 import {Question} from './Question';
 import {Reply} from './Reply';
 import {UserRoles} from '../../util/enums';
+import {DoctorProfile} from './DoctorProfile';
 
 @Entity('users')
 export class User {
@@ -59,6 +61,9 @@ export class User {
 
 	@OneToMany(() => Reply, reply => reply.user)
 	replies: Reply[];
+
+	@OneToOne(() => DoctorProfile, doctorProfile => doctorProfile.user)
+	doctorProfile: DoctorProfile;
 
 	isDoctor() {
 		return this.role === UserRoles.DOCTOR;

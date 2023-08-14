@@ -18,6 +18,8 @@ import ReplyRepository from '../src/Repositories/ReplyRepository';
 import {UserAttributes} from '../src/domains/entities/User';
 import UserRepository from '../src/Repositories/UserRepository';
 import {faker} from '@faker-js/faker';
+import {DoctorProfileAttributes} from '../src/domains/entities/DoctorProfile';
+import DoctorProfileRepository from '../src/Repositories/DoctorProfileRepository';
 
 export const newUser = (): UserAttributes => {
 	return {
@@ -148,4 +150,35 @@ export const saveDoctorQuestion = async (
 	doctorQuestion: DoctorQuestionAttributes,
 ) => {
 	return await DoctorQuestionRepository.createDoctorQuestion(doctorQuestion);
+};
+
+export const airTableDoctorDetails = () => {
+	return {
+		fields: {
+			'First Name': 'John',
+			'Last Name': 'Doe',
+		},
+	};
+};
+
+export const mockTranslatedContent = () => {
+	return {
+		replyId: faker.number.int({min: 1, max: 50}),
+		translatedDoctorNote: faker.lorem.paragraph(),
+		translatedTitle: faker.lorem.sentence(),
+	};
+};
+
+export const doctorProfile = () => {
+	return {
+		userId: faker.number.int({min: 1, max: 50}),
+		firstName: faker.person.firstName(),
+		lastName: faker.person.lastName(),
+	};
+};
+
+export const saveDoctorProfile = async (
+	doctorProfile: DoctorProfileAttributes,
+) => {
+	return await DoctorProfileRepository.saveDoctorProfile(doctorProfile);
 };
