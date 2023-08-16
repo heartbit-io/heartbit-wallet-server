@@ -271,7 +271,11 @@ class DoctorService {
 			const replies = await ReplyRepository.getDoctorReplies(Number(doctor.id));
 			const questions = replies.map((reply: any) => reply.question);
 
-			return questions;
+			const sortedQuestions = questions.sort(
+				(currentQuestion, nextQuestion) =>
+					Number(nextQuestion.createdAt) - Number(currentQuestion.createdAt),
+			);
+			return sortedQuestions;
 		} catch (error: any) {
 			throw error.code && error.message
 				? error
