@@ -43,6 +43,11 @@ router.delete(
 
 router.get('/:questionId/replies', RepliesController.get);
 
-router.post('/chat-gpt-replies', RepliesController.createChatGPTReply);
+router.post(
+	'/chat-gpt-replies',
+	QuestionsValidator.createChaptGptReply(),
+	Validation.validate,
+	RepliesController.createChatGPTReply,
+);
 
 export {router as questionRoutes};

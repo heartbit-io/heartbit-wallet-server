@@ -21,7 +21,6 @@ class ReplyService {
 	async createChatGPTReply(reply: RepliesAttributes) {
 		try {
 			const {questionId} = reply;
-
 			const question = await QuestionRepository.getQuestion(Number(questionId));
 
 			if (!question)

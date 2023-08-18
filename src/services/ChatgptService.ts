@@ -1,5 +1,4 @@
 import * as Sentry from '@sentry/node';
-import {Configuration, OpenAIApi} from 'openai';
 import {makePrompt} from '../util/chatgpt';
 import {ChatGptReply} from '../domains/entities/ChatGptReply';
 import {QuestionAttributes} from '../domains/entities/Question';
@@ -8,6 +7,7 @@ import env from '../config/env';
 import ChatGptRepository from '../Repositories/ChatGptRepository';
 import {CustomError} from '../util/CustomError';
 import {HttpCodes} from '../util/HttpCodes';
+import OpenAI from 'openai';
 
 export interface AnswerInterface {
 	role: string;
@@ -29,10 +29,13 @@ export interface JsonAnswerInterface {
 }
 
 class ChatgptService {
-	private openai: OpenAIApi;
+	private openai: OpenAI;
 
 	constructor(apiKey: string) {
-		this.openai = new OpenAIApi(new Configuration({apiKey}));
+		// this.openai = new OpenAIApi(new Configuration({apiKey}));
+		this.openai = new OpenAI({
+			apiKey,
+		});
 	}
 
 	/**
@@ -53,13 +56,13 @@ class ChatgptService {
 		try {
 			// TODO(david): Add patient profile parameter
 
-			const completion = await this.openai.createChatCompletion({
+			const completion = await this.openai.chat.completions.create({
 				model,
 				messages: [{role: 'user', content: prompt}],
 				max_tokens: maxTokens,
 			});
 
-			const rawAnswer = completion.data.choices[0].message?.content || '';
+			const rawAnswer = completion.choices[0].message?.content || '';
 			const jsonAnswer: JsonAnswerInterface = JSON.parse(`${rawAnswer}`);
 			if (!jsonAnswer.title) {
 				jsonAnswer.title = new Date().toISOString();
@@ -80,13 +83,14 @@ class ChatgptService {
 				},
 			});
 		} catch (error: any) {
-			Sentry.captureMessage(`ChatGPT error: ${error}`);
-			throw error.code && error.message
-				? error
-				: new CustomError(
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						'Internal Server Error',
-				  );
+			if (error instanceof OpenAI.APIError) {
+				Sentry.captureMessage(`ChatGPT error: ${error}`);
+				throw error.status && error.message
+					? error
+					: new CustomError(HttpCodes.INTERNAL_SERVER_ERROR, `${error}`);
+			} else {
+				new CustomError(HttpCodes.INTERNAL_SERVER_ERROR, error);
+			}
 		}
 	}
 
@@ -99,7 +103,7 @@ class ChatgptService {
 			const chatGptReply = await ChatGptRepository.getChatGptReply(questionId);
 			return chatGptReply;
 		} catch (error: any) {
-			Sentry.captureMessage(`ChatGPT error: ${error}`);
+			Sentry.captureMessage(`Error getting chatgpt response: ${error}`);
 			throw error.code && error.message
 				? error
 				: new CustomError(

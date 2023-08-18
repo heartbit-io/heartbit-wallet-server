@@ -67,6 +67,16 @@ class QuestionsValidator {
 				.withMessage('supply question Id to delete'),
 		];
 	}
+	createChaptGptReply() {
+		return [
+			body('questionId')
+				.notEmpty()
+				.toInt()
+				.withMessage('supply question Id to get chatgpt reply')
+				.trim()
+				.escape(),
+		];
+	}
 }
 
 export default new QuestionsValidator();
