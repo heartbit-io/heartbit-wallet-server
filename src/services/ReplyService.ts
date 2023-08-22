@@ -16,12 +16,16 @@ import {airTableDoctorDetails, mockTranslatedContent} from '../util/mockData';
 import DoctorProfileRepository from '../Repositories/DoctorProfileRepository';
 import {User} from '../domains/entities/User';
 import ChatGptRepository from '../Repositories/ChatGptRepository';
+import ChatGptReplyListener from '../listeners/ChatGptReplyListener';
 
 class ReplyService {
 	async createChatGPTReply(reply: RepliesAttributes) {
 		try {
 			const {questionId} = reply;
-			const question = await QuestionRepository.getQuestion(Number(questionId));
+
+			const questionIdInt = Number(questionId);
+
+			const question = await QuestionRepository.getQuestion(questionIdInt);
 
 			if (!question)
 				throw new CustomError(HttpCodes.NOT_FOUND, 'Question not found');
@@ -29,7 +33,7 @@ class ReplyService {
 			const rawContentLanguage: any = question.rawContentLanguage;
 
 			const replyForChatGpt = await ChatgptService.getChatGptReplyByQuestionId(
-				Number(questionId),
+				questionIdInt,
 			);
 
 			if (replyForChatGpt)
@@ -59,8 +63,10 @@ class ReplyService {
 				);
 			}
 
-			if (!chatgptReply)
+			if (!chatgptReply) {
+				ChatGptReplyListener.emit('questionIdForChatGptReply', questionIdInt);
 				throw new CustomError(HttpCodes.NOT_FOUND, 'ChatGPT not replied');
+			}
 
 			const translateText =
 				question.type === QuestionTypes.GENERAL
