@@ -1,5 +1,4 @@
 import {QuestionStatus, QuestionTypes, TxTypes} from '../util/enums';
-import ChatgptService from './ChatgptService';
 import {CustomError} from '../util/CustomError';
 import FcmService from '../services/FcmService';
 import {HttpCodes} from '../util/HttpCodes';

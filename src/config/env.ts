@@ -34,6 +34,10 @@ export const env = {
 	DEEPL_API_KEY: process.env.DEEPL_API_KEY as string,
 	SENTRY_DSN: process.env.SENTRY_DSN as string,
 	API_KEY: process.env.API_KEY as string,
+	ACCESS_KEY: process.env.ACCESS_KEY as string,
+	SECRET_ACCESS_KEY: process.env.SECRET_ACCESS_KEY as string,
+	REGION: process.env.REGION as string,
+	SES_SENDER: process.env.SES_SENDER as string,
 };
 
 Object.entries(env).forEach(([key, value]) => {
