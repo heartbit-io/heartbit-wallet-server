@@ -5,7 +5,7 @@ import {TxTypes} from '../util/enums';
 import {UserAttributes} from '../domains/entities/User';
 import UserRepository from '../Repositories/UserRepository';
 import dataSource from '../domains/repo';
-
+import UserRegisteredEventListener from '../listeners/UserRegisteredListener';
 class UserService {
 	async createUser(user: UserAttributes) {
 		const emailToLowerCase = user.email.toLowerCase();
@@ -34,6 +34,9 @@ class UserService {
 				type: TxTypes.SIGN_UP_BONUS,
 				fee: 0,
 			});
+			//AWS SES
+			// UserRegisteredEventListener.emit('newUserRegistered', emailToLowerCase);
+
 			await querryRunner.commitTransaction();
 			return {
 				...createdUser,

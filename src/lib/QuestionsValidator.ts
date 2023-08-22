@@ -71,10 +71,8 @@ class QuestionsValidator {
 		return [
 			body('questionId')
 				.notEmpty()
-				.toInt()
-				.withMessage('supply question Id to get chatgpt reply')
-				.trim()
-				.escape(),
+				.isNumeric()
+				.withMessage('supply question Id to get chatgpt reply'),
 		];
 	}
 }

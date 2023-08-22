@@ -54,6 +54,7 @@
   },
   "dependencies": {
     "@sentry/node": "^7.53.1",
+    "aws-sdk": "^2.1440.0",
     "concurrently": "^8.0.1",
     "cors": "^2.8.5",
     "deepl": "^1.0.13",
