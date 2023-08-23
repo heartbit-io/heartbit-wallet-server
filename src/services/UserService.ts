@@ -35,7 +35,7 @@ class UserService {
 				fee: 0,
 			});
 			//AWS SES
-			// UserRegisteredEventListener.emit('newUserRegistered', emailToLowerCase);
+			UserRegisteredEventListener.emit('newUserRegistered', emailToLowerCase);
 
 			await querryRunner.commitTransaction();
 			return {
