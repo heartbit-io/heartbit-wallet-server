@@ -38,6 +38,10 @@ export const env = {
 	SECRET_ACCESS_KEY: process.env.SECRET_ACCESS_KEY as string,
 	REGION: process.env.REGION as string,
 	SES_SENDER: process.env.SES_SENDER as string,
+	MAILCHIMP_MARKETING_API_KEY: process.env
+		.MAILCHIMP_MARKETING_API_KEY as string,
+	MAILCHIMP_LIST_ID: process.env.MAILCHIMP_LIST_ID as string,
+	MAILCHIMP_SERVER: process.env.MAILCHIMP_SERVER as string,
 };
 
 Object.entries(env).forEach(([key, value]) => {

@@ -3,6 +3,7 @@ import * as Sentry from '@sentry/node';
 import UserRegisteredEvent from '../events/UserRegisteredEvent';
 import env from '../config/env';
 import logger from '../util/logger';
+import mailchimp from '@mailchimp/mailchimp_marketing';
 
 const UserRegisteredEventListener = new UserRegisteredEvent();
 
@@ -78,11 +79,31 @@ const sendWelcomeEmail = async (emailAddress: string) => {
 		await ses.sendEmail(params).promise();
 		logger.info(`Email sent to ${emailAddress}`);
 	} catch (error) {
-		Sentry.captureMessage(`Airtable error: ${error}`);
+		Sentry.captureMessage(`Welcome Email error: ${error}`);
 		logger.warn(error);
 	}
 };
 
-UserRegisteredEventListener.on('newUserRegistered', sendWelcomeEmail);
+const sendWelcomeEmailUsingMailChimp = async (emailAddress: string) => {
+	mailchimp.setConfig({
+		apiKey: env.MAILCHIMP_MARKETING_API_KEY,
+		server: env.MAILCHIMP_SERVER,
+	});
+
+	try {
+		await mailchimp.lists.addListMember(env.MAILCHIMP_LIST_ID, {
+			email_address: emailAddress,
+			status: 'subscribed',
+		});
+	} catch (error) {
+		Sentry.captureMessage(`Mailchimp subcription error: ${error}`);
+		logger.warn(error);
+	}
+};
+
+UserRegisteredEventListener.on(
+	'newUserRegistered',
+	sendWelcomeEmailUsingMailChimp,
+);
 
 export default UserRegisteredEventListener;
