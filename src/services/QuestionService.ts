@@ -8,6 +8,7 @@ import TransactionsRepository from '../Repositories/BtcTransactionsRepository';
 import UserRepository from '../Repositories/UserRepository';
 import dataSource from '../domains/repo';
 import {User} from '../domains/entities/User';
+import decodeContent from '../lib/DecodeText';
 class QuestionService {
 	async create(question: QuestionAttributes, email: string | undefined) {
 		const {
@@ -246,6 +247,7 @@ class QuestionService {
 	async getQuestion(questionId: number, email: string | undefined) {
 		try {
 			const question = await QuestionRepository.getQuestion(questionId);
+
 			if (!question)
 				throw new CustomError(HttpCodes.NOT_FOUND, 'Question not found');
 
@@ -263,7 +265,7 @@ class QuestionService {
 				);
 
 			const response = question;
-			response.content = response.rawContent;
+			response.content = decodeContent(response.rawContent);
 
 			return response;
 		} catch (error: any) {

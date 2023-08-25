@@ -17,6 +17,7 @@ import DoctorQuestionRepository from '../Repositories/DoctorQuestionRepository';
 import dataSource from '../domains/repo';
 import ResponseDto from '../dto/ResponseDTO';
 import replyEventListener from '../listeners/ReplyListener';
+import decodeContent from '../lib/DecodeText';
 
 class DoctorService {
 	async createDoctorReply(
@@ -158,6 +159,8 @@ class DoctorService {
 			if (openQuestion.length === 0) return null;
 
 			const selectedQuestion = openQuestion[0];
+			const decodedContent = decodeContent(selectedQuestion.content);
+			selectedQuestion.content = decodedContent;
 
 			const aiReply = await ChatGptRepository.getChatGptReply(
 				Number(selectedQuestion.id),
@@ -215,6 +218,8 @@ class DoctorService {
 					aiJsonReply.doctorNote = aiJsonReply.aiAnswer;
 				}
 			}
+			const decodedContent = decodeContent(question.content);
+			question.content = decodedContent;
 			let assignedDoctorId = null;
 			if (question.status !== QuestionStatus.OPEN) {
 				assignedDoctorId = await this._getAssignedDoctor(Number(questionId));
@@ -266,10 +271,12 @@ class DoctorService {
 					'User must be a doctor to get user questions',
 				);
 
-			// TODO(david): Join the question and reply table
 			const replies = await ReplyRepository.getDoctorReplies(Number(doctor.id));
-			const questions = replies.map((reply: any) => reply.question);
-
+			const questions = replies.map((reply: any) => {
+				const decodedContent = decodeContent(reply.question.content);
+				reply.question.content = decodedContent;
+				return reply.question;
+			});
 			const sortedQuestions = questions.sort(
 				(currentQuestion, nextQuestion) =>
 					Number(nextQuestion.createdAt) - Number(currentQuestion.createdAt),
@@ -296,13 +303,11 @@ class DoctorService {
 					'error getting user email',
 				);
 
-			// check that it is a doctor
 			const doctor = await UserRepository.getUserDetailsByEmail(email);
 
 			if (!doctor || doctor.role !== UserRoles.DOCTOR)
 				throw new CustomError(HttpCodes.UNAUTHORIZED, 'User must be a doctor');
 
-			// check that the question is answered by the doctor
 			const doctorReply = await ReplyRepository.getDoctorReply(
 				Number(questionId),
 				Number(doctor.id),
@@ -317,6 +322,9 @@ class DoctorService {
 
 			if (!question)
 				throw new CustomError(HttpCodes.NOT_FOUND, 'Question not found');
+
+			const decodedContent = decodeContent(question.content);
+			question.content = decodedContent;
 
 			return {...question, ...doctorReply};
 		} catch (error: any) {

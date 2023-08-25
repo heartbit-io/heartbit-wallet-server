@@ -17,6 +17,7 @@ import DoctorProfileRepository from '../Repositories/DoctorProfileRepository';
 import {User} from '../domains/entities/User';
 import ChatGptRepository from '../Repositories/ChatGptRepository';
 import ChatGptReplyListener from '../listeners/ChatGptReplyListener';
+import decodeContent from '../lib/DecodeText';
 
 class ReplyService {
 	async createChatGPTReply(reply: RepliesAttributes) {
@@ -43,6 +44,7 @@ class ReplyService {
 				);
 
 			const questionAttr = question as QuestionAttributes;
+			questionAttr.content = decodeContent(question.content);
 
 			// TODO(david): If bountyAmount is not 0, use gpt-4 model(currently gpt-4 is waitlist)
 			const model =
@@ -138,6 +140,8 @@ class ReplyService {
 
 				const replyType = ReplyTypes.DOCTOR;
 
+				const reply = decodeContent(doctorReply.content);
+
 				const classification = 'General physician'; // TODO(david): Get from user like user.classification
 
 				return {
@@ -145,7 +149,7 @@ class ReplyService {
 					replyType,
 					name,
 					classification,
-					reply: doctorReply.content,
+					reply,
 					doctorNote: doctorReply.translatedContent,
 					title: doctorReply.translatedTitle,
 				};

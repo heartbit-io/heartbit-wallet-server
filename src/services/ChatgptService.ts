@@ -8,6 +8,7 @@ import ChatGptRepository from '../Repositories/ChatGptRepository';
 import {CustomError} from '../util/CustomError';
 import {HttpCodes} from '../util/HttpCodes';
 import OpenAI from 'openai';
+import decodeContent from '../lib/DecodeText';
 
 export interface AnswerInterface {
 	role: string;
@@ -50,6 +51,8 @@ class ChatgptService {
 		model: string,
 		maxTokens: number,
 	): Promise<ChatGptReply | undefined> {
+		const questionContent = decodeContent(question.content);
+		question.content = questionContent;
 		const prompt = makePrompt(question);
 		const questionId = Number(question.id);
 

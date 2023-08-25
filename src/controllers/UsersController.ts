@@ -4,7 +4,6 @@ import FormatResponse from '../lib/FormatResponse';
 import {HttpCodes} from '../util/HttpCodes';
 import ResponseDto from '../dto/ResponseDTO';
 import UserService from '../services/UserService';
-import FcmService from '../services/FcmService';
 
 class UsersController {
 	async create(req: Request, res: Response): Promise<Response<FormatResponse>> {

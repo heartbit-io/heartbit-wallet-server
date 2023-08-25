@@ -27,8 +27,8 @@ describe('BtcTransactions Repository queries', () => {
 		expect(result).to.have.property('type');
 		expect(result).to.have.property('createdAt');
 		expect(result).to.have.property('updatedAt');
-		expect(result.amount).to.equal(btcTransaction.amount);
-		expect(result.fee).to.equal(btcTransaction.fee);
+		expect(Number(result.amount)).to.equal(btcTransaction.amount);
+		expect(Number(result.fee)).to.equal(btcTransaction.fee);
 		expect(result.fromUserPubkey).to.equal(btcTransaction.fromUserPubkey);
 		expect(result.toUserPubkey).to.equal(btcTransaction.toUserPubkey);
 		expect(result.type).to.equal(btcTransaction.type);
