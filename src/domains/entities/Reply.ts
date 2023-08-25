@@ -19,7 +19,7 @@ export class Reply {
 	@Column({type: 'int'})
 	userId: number;
 
-	@Column({type: 'text'})
+	@Column({type: 'text', nullable: true})
 	title: string;
 
 	@Column({type: 'text'})
@@ -31,7 +31,7 @@ export class Reply {
 	@Column({type: 'text', nullable: true})
 	majorComplaint: string;
 
-	@Column({type: 'text'})
+	@Column({type: 'text', nullable: true})
 	currentMedications: string;
 
 	@Column({type: 'text'})

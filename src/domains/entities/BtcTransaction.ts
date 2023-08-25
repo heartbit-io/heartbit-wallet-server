@@ -14,7 +14,7 @@ export class BtcTransaction {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@Column({type: 'numeric'})
+	@Column({type: 'numeric', default: 0})
 	amount: number;
 
 	@Column({
