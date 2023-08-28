@@ -74,6 +74,14 @@ class UserRepository {
 			.where('id = :id', {id})
 			.execute();
 	}
+
+	async deleteUserAccount(id: number) {
+		return await userDataSource
+			.createQueryBuilder()
+			.softDelete()
+			.where('id = :id', {id})
+			.execute();
+	}
 }
 
 export default new UserRepository();
