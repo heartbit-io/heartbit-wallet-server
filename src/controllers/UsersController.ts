@@ -122,6 +122,34 @@ class UsersController {
 				);
 		}
 	}
+
+	async deleteUserAccount(req: DecodedRequest, res: Response) {
+		try {
+			const deleted = await UserService.deleteUserAccount(req.email);
+
+			return res
+				.status(HttpCodes.OK)
+				.json(
+					new FormatResponse(
+						true,
+						HttpCodes.OK,
+						'Successfully deleted user account',
+						deleted,
+					),
+				);
+		} catch (error: any) {
+			return res
+				.status(error.code ? error.code : HttpCodes.INTERNAL_SERVER_ERROR)
+				.json(
+					new ResponseDto(
+						false,
+						error.code ? error.code : HttpCodes.INTERNAL_SERVER_ERROR,
+						error.message ? error.message : 'HTTP error',
+						null,
+					),
+				);
+		}
+	}
 }
 
 export default new UsersController();

@@ -123,4 +123,19 @@ describe('User endpoints', () => {
 			.to.have.property('fcmToken')
 			.to.equal('testtoken');
 	});
+	it('should delete user account using user email', async () => {
+		const user = newUser();
+		user.email = 'testemail@heartbit.io';
+		const createdUser = await createUser(user);
+		const response = await request(app)
+			.delete(`${base_url}/users/${createdUser.id}`)
+			.set('apiKey', env.API_KEY)
+			.set('Accept', 'application/json');
+		expect(response.status).to.equal(HttpCodes.OK);
+		expect(response.body).to.include({
+			success: true,
+			statusCode: HttpCodes.OK,
+			message: 'Successfully deleted user account',
+		});
+	});
 });

@@ -112,6 +112,22 @@ class UserService {
 			);
 		return await UserRepository.getUserDetailsByEmail(email);
 	}
+
+	async deleteUserAccount(email: string | undefined) {
+		if (!email)
+			throw new CustomError(HttpCodes.UNAUTHORIZED, 'User not logged in');
+
+		const user = await UserRepository.getUserDetailsByEmail(email);
+		if (!user) throw new CustomError(HttpCodes.NOT_FOUND, 'User not found');
+
+		const deleted = await UserRepository.deleteUserAccount(user.id);
+		if (!deleted)
+			throw new CustomError(
+				HttpCodes.BAD_REQUEST,
+				'Error deleting user account',
+			);
+		return deleted;
+	}
 }
 
 export default new UserService();
