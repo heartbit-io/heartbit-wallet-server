@@ -24,6 +24,12 @@ router.patch(
 	Auth.verifyToken,
 	UsersController.deleteFcmToken,
 );
-router.delete('/:id', Auth.verifyToken, UsersController.deleteUserAccount);
+router.delete(
+	'/:id',
+	Auth.verifyToken,
+	UsersValidator.deleteUserAccount(),
+	Validation.validate,
+	UsersController.deleteUserAccount,
+);
 
 export {router as userRoutes};

@@ -125,7 +125,9 @@ class UsersController {
 
 	async deleteUserAccount(req: DecodedRequest, res: Response) {
 		try {
-			const deleted = await UserService.deleteUserAccount(req.email);
+			const deleted = await UserService.deleteUserAccount(
+				Number(req.params.id),
+			);
 
 			return res
 				.status(HttpCodes.OK)
