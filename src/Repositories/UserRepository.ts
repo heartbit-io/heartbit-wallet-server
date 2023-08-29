@@ -82,6 +82,23 @@ class UserRepository {
 			.where('id = :id', {id})
 			.execute();
 	}
+
+	async getDeletedAccountByEmail(email: string) {
+		return await userDataSource.findOne({
+			where: {email},
+			withDeleted: true,
+		});
+	}
+
+	async restoreAndUpdateAccount(id: number, user: UserAttributes) {
+		return await userDataSource
+			.createQueryBuilder()
+			.update({
+				...user,
+			})
+			.where('id = :id', {id})
+			.execute();
+	}
 }
 
 export default new UserRepository();

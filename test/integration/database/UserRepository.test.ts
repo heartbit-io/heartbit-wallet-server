@@ -116,4 +116,21 @@ describe('User Repository queries', () => {
 		expect(updatedUserFcmToken).to.be.an('object');
 		expect(userFcmToken?.fcmToken).to.equal(newFcmToken);
 	});
+	it('should delete user account', async () => {
+		const user = newUser();
+		const result = await createUser(user);
+		await UserRepository.deleteUserAccount(result.id);
+
+		const response = await UserRepository.getDeletedAccountByEmail(
+			result.email,
+		);
+		expect(response).to.be.an('object');
+		expect(response).to.have.property('id').to.equal(result.id);
+		expect(response).to.have.property('email').to.equal(user.email);
+		expect(response).to.have.property('pubkey').to.equal(user.pubkey);
+		expect(response)
+			.to.have.property('btcBalance')
+			.to.equal(user.btcBalance.toString());
+		expect(response).to.have.property('deletedAt').to.not.equal(null);
+	});
 });

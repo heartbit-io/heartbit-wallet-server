@@ -2,7 +2,7 @@ import BtcTransactionsRepository from '../Repositories/BtcTransactionsRepository
 import {CustomError} from '../util/CustomError';
 import {HttpCodes} from '../util/HttpCodes';
 import {TxTypes} from '../util/enums';
-import {UserAttributes} from '../domains/entities/User';
+import {User, UserAttributes} from '../domains/entities/User';
 import UserRepository from '../Repositories/UserRepository';
 import dataSource from '../domains/repo';
 import UserRegisteredEventListener from '../listeners/UserRegisteredListener';
@@ -16,6 +16,20 @@ class UserService {
 		if (isExsist) {
 			return isExsist;
 		}
+
+		const checkDeletedUser = await UserRepository.getDeletedAccountByEmail(
+			emailToLowerCase,
+		);
+
+		if (checkDeletedUser) {
+			return await this.restoreAndUpdateUserAccount(
+				user,
+				pubkeyToLowerCase,
+				emailToLowerCase,
+				checkDeletedUser,
+			);
+		}
+
 		const querryRunner = dataSource.createQueryRunner();
 		await querryRunner.connect();
 		await querryRunner.startTransaction('REPEATABLE READ');
@@ -56,6 +70,38 @@ class UserService {
 		} finally {
 			await querryRunner.release();
 		}
+	}
+
+	private async restoreAndUpdateUserAccount(
+		user: UserAttributes,
+		pubkeyToLowerCase: string,
+		emailToLowerCase: string,
+		checkDeletedUser: User,
+	) {
+		const newUserDetails = {
+			...user,
+			pubkey: pubkeyToLowerCase,
+			email: emailToLowerCase,
+			deletedAt: null,
+		};
+
+		const updatedUser = await UserRepository.restoreAndUpdateAccount(
+			checkDeletedUser.id,
+			newUserDetails,
+		);
+
+		if (!updatedUser) {
+			throw new CustomError(
+				HttpCodes.INTERNAL_SERVER_ERROR,
+				'Error restoring user account',
+			);
+		}
+
+		const restoredUser = await UserRepository.getUserDetailsByEmail(
+			emailToLowerCase,
+		);
+
+		return restoredUser;
 	}
 
 	async getUser(email: string | undefined) {
@@ -113,14 +159,11 @@ class UserService {
 		return await UserRepository.getUserDetailsByEmail(email);
 	}
 
-	async deleteUserAccount(email: string | undefined) {
-		if (!email)
-			throw new CustomError(HttpCodes.UNAUTHORIZED, 'User not logged in');
-
-		const user = await UserRepository.getUserDetailsByEmail(email);
+	async deleteUserAccount(id: number) {
+		const user = await UserRepository.getUserDetailsById(id);
 		if (!user) throw new CustomError(HttpCodes.NOT_FOUND, 'User not found');
 
-		const deleted = await UserRepository.deleteUserAccount(user.id);
+		const deleted = await UserRepository.deleteUserAccount(id);
 		if (!deleted)
 			throw new CustomError(
 				HttpCodes.BAD_REQUEST,

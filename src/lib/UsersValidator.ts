@@ -1,5 +1,5 @@
 import UserRepository from '../Repositories/UserRepository';
-import {body} from 'express-validator';
+import {body, param} from 'express-validator';
 
 class UsersValidator {
 	userCreate() {
@@ -21,6 +21,12 @@ class UsersValidator {
 				.isIn(['user', 'doctor', 'admin'])
 				.withMessage('indicate the user type'),
 			body('btcBalance').isNumeric().withMessage('btcBalance is a number'),
+		];
+	}
+
+	deleteUserAccount() {
+		return [
+			param('id').notEmpty().isNumeric().withMessage('Supply a valid user id'),
 		];
 	}
 }
