@@ -78,7 +78,7 @@ class UserRepository {
 	async deleteUserAccount(id: number) {
 		return await userDataSource
 			.createQueryBuilder()
-			.softDelete()
+			.delete()
 			.where('id = :id', {id})
 			.execute();
 	}

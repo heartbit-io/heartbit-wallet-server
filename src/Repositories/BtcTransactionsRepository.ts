@@ -37,6 +37,14 @@ class BtcTransactionRepository {
 	async getUserTransactionsCount(userPubkey: string): Promise<number> {
 		return this.getTransactionBaseQuery(userPubkey).getCount();
 	}
+
+	async deleteUserTransactions(userPubkey: string) {
+		return await BtcTransactionDataSource.createQueryBuilder()
+			.delete()
+			.where('fromUserPubkey = :userPubkey', {userPubkey})
+			.orWhere('toUserPubkey = :userPubkey', {userPubkey})
+			.execute();
+	}
 }
 
 export default new BtcTransactionRepository();

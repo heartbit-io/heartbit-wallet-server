@@ -6,6 +6,8 @@ import {User, UserAttributes} from '../domains/entities/User';
 import UserRepository from '../Repositories/UserRepository';
 import dataSource from '../domains/repo';
 import UserRegisteredEventListener from '../listeners/UserRegisteredListener';
+import DoctorProfileRepository from '../Repositories/DoctorProfileRepository';
+import QuestionRepository from '../Repositories/QuestionRepository';
 class UserService {
 	async createUser(user: UserAttributes) {
 		const emailToLowerCase = user.email.toLowerCase();
@@ -162,6 +164,14 @@ class UserService {
 	async deleteUserAccount(id: number) {
 		const user = await UserRepository.getUserDetailsById(id);
 		if (!user) throw new CustomError(HttpCodes.NOT_FOUND, 'User not found');
+
+		await BtcTransactionsRepository.deleteUserTransactions(user.email);
+
+		await QuestionRepository.deleteUserQuestions(id);
+		//delete user profile
+		if (user.isDoctor()) {
+			await DoctorProfileRepository.deleteDoctorProfile(id);
+		}
 
 		const deleted = await UserRepository.deleteUserAccount(id);
 		if (!deleted)

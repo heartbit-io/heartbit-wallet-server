@@ -100,6 +100,13 @@ class QuestionRepository {
 	async countUserQuestions(userId: number): Promise<number> {
 		return await QuestionDataSource.count({where: {userId}});
 	}
+
+	async deleteUserQuestions(userId: number) {
+		return await QuestionDataSource.createQueryBuilder()
+			.softDelete()
+			.where('userId = :userId', {userId})
+			.execute();
+	}
 }
 
 export default new QuestionRepository();

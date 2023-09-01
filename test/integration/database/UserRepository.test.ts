@@ -124,13 +124,6 @@ describe('User Repository queries', () => {
 		const response = await UserRepository.getDeletedAccountByEmail(
 			result.email,
 		);
-		expect(response).to.be.an('object');
-		expect(response).to.have.property('id').to.equal(result.id);
-		expect(response).to.have.property('email').to.equal(user.email);
-		expect(response).to.have.property('pubkey').to.equal(user.pubkey);
-		expect(response)
-			.to.have.property('btcBalance')
-			.to.equal(user.btcBalance.toString());
-		expect(response).to.have.property('deletedAt').to.not.equal(null);
+		expect(response).to.be.null;
 	});
 });
