@@ -21,8 +21,8 @@ export function makePrompt(question: QuestionAttributes): string {
 				If you determine that the question is unrelated to any illness or health matter, you should ignore the above and write, "I can't answer anything but health-related questions" in 'aiAnswer'.
 				
 				Now write answers to the following patient's question:
-				- Question: ${question.content}
-				- Age, Sex, and Ethnicity: ${question.ageSexEthnicity}
+				- Question: """${question.content}"""
+				- Age, Sex, and Ethnicity: """${question.ageSexEthnicity}"""
 			`;
 		default:
 			return `
@@ -44,12 +44,12 @@ export function makePrompt(question: QuestionAttributes): string {
 				If you determine that the question is unrelated to any illness or health matter, you should ignore the above and write, "Sorry, I can't answer anything but health-related questions" in your response.
 
 				Now write an answer to the following patient's description:
-				- Current symptoms: ${question.content}
-				- Current medication: ${question.currentMedication}
-				- Medical History: ${question.pastIllnessHistory}
-				- Age, Sex, Ethnicity: ${question.ageSexEthnicity}
-				- Allergies, dietary habits, and exercise: ${question.lifestyle}
-				- Specific questions: ${question.others}
+				- Current symptoms: """${question.content}"""
+				- Current medication: """${question.currentMedication}"""
+				- Medical History: """${question.pastIllnessHistory}"""
+				- Age, Sex, Ethnicity: """${question.ageSexEthnicity}"""
+				- Allergies, dietary habits, and exercise: """${question.lifestyle}"""
+				- Specific questions: """${question.others}"""
 			`;
 	}
 }
