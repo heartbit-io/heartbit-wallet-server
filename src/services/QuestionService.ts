@@ -265,7 +265,13 @@ class QuestionService {
 				);
 
 			const response = question;
-			response.content = decodeContent(response.rawContent);
+			for (const [key, value] of Object.entries(response)) {
+				if (value !== null && typeof value === 'string') {
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
+					response[key] = decodeContent(value);
+				}
+			}
 
 			return response;
 		} catch (error: any) {

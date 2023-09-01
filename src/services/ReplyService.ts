@@ -140,9 +140,16 @@ class ReplyService {
 
 				const replyType = ReplyTypes.DOCTOR;
 
-				const reply = decodeContent(doctorReply.content);
+				for (const [key, value] of Object.entries(doctorReply)) {
+					if (value !== null && typeof value === 'string') {
+						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+						// @ts-ignore
+						doctorReply[key] = decodeContent(value);
+					}
+				}
 
-				const classification = 'General physician'; // TODO(david): Get from user like user.classification
+				const classification = 'General physician';
+				const reply = doctorReply.translatedContent;
 
 				return {
 					...doctorReply,

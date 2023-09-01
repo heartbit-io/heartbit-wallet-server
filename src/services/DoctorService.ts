@@ -78,6 +78,14 @@ class DoctorService {
 
 			const reply = await this._createReply(requestBody, doctor, question);
 
+			for (const [key, value] of Object.entries(reply)) {
+				if (value !== null && typeof value === 'string') {
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
+					reply[key] = decodeContent(value);
+				}
+			}
+
 			FcmService.sendNotification(
 				question.userId,
 				'HeartBit',
@@ -159,8 +167,13 @@ class DoctorService {
 			if (openQuestion.length === 0) return null;
 
 			const selectedQuestion = openQuestion[0];
-			const decodedContent = decodeContent(selectedQuestion.content);
-			selectedQuestion.content = decodedContent;
+			for (const [key, value] of Object.entries(selectedQuestion)) {
+				if (value !== null && typeof value === 'string') {
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
+					selectedQuestion[key] = decodeContent(value);
+				}
+			}
 
 			const aiReply = await ChatGptRepository.getChatGptReply(
 				Number(selectedQuestion.id),
@@ -218,8 +231,15 @@ class DoctorService {
 					aiJsonReply.doctorNote = aiJsonReply.aiAnswer;
 				}
 			}
-			const decodedContent = decodeContent(question.content);
-			question.content = decodedContent;
+
+			for (const [key, value] of Object.entries(question)) {
+				if (value !== null && typeof value === 'string') {
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
+					question[key] = decodeContent(value);
+				}
+			}
+
 			let assignedDoctorId = null;
 			if (question.status !== QuestionStatus.OPEN) {
 				assignedDoctorId = await this._getAssignedDoctor(Number(questionId));
@@ -323,8 +343,13 @@ class DoctorService {
 			if (!question)
 				throw new CustomError(HttpCodes.NOT_FOUND, 'Question not found');
 
-			const decodedContent = decodeContent(question.content);
-			question.content = decodedContent;
+			for (const [key, value] of Object.entries(question)) {
+				if (value !== null && typeof value === 'string') {
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
+					question[key] = decodeContent(value);
+				}
+			}
 
 			return {...question, ...doctorReply};
 		} catch (error: any) {
