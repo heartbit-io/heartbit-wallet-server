@@ -21,6 +21,13 @@ class DoctorProfileRepository {
 			},
 		});
 	}
+
+	async deleteDoctorProfile(userId: number) {
+		return await DoctorProfileDataSource.createQueryBuilder()
+			.delete()
+			.where('userId = :userId', {userId})
+			.execute();
+	}
 }
 
 export default new DoctorProfileRepository();
