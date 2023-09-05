@@ -6,7 +6,7 @@ import logger from '../util/logger';
 import mailchimp from '@mailchimp/mailchimp_marketing';
 
 const UserRegisteredEventListener = new UserRegisteredEvent();
-
+/***
 const sendWelcomeEmail = async (emailAddress: string) => {
 	const ses = new AWS.SES({
 		apiVersion: '2010-12-01',
@@ -83,7 +83,7 @@ const sendWelcomeEmail = async (emailAddress: string) => {
 		logger.warn(error);
 	}
 };
-
+***/
 const sendWelcomeEmailUsingMailChimp = async (emailAddress: string) => {
 	mailchimp.setConfig({
 		apiKey: env.MAILCHIMP_MARKETING_API_KEY,

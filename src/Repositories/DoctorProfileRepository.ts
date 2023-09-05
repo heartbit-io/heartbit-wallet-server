@@ -1,7 +1,4 @@
-import {
-	DoctorProfileDataSource,
-	DoctorQuestionDataSource,
-} from '../domains/repo';
+import {DoctorProfileDataSource} from '../domains/repo';
 import {
 	DoctorProfile,
 	DoctorProfileAttributes,
