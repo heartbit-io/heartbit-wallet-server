@@ -69,7 +69,7 @@ class ReplyService {
 				ChatGptReplyListener.emit('questionIdForChatGptReply', questionIdInt);
 				throw new CustomError(HttpCodes.NOT_FOUND, 'ChatGPT not replied');
 			}
-
+			console.log('chatgptReply', chatgptReply);
 			const translateText =
 				question.type === QuestionTypes.GENERAL
 					? chatgptReply.jsonAnswer.aiAnswer
