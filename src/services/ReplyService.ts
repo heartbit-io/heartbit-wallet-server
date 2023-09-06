@@ -44,7 +44,14 @@ class ReplyService {
 				);
 
 			const questionAttr = question as QuestionAttributes;
-			questionAttr.content = decodeContent(question.content);
+
+			for (const [key, value] of Object.entries(questionAttr)) {
+				if (value !== null && typeof value === 'string') {
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
+					questionAttr[key] = decodeContent(value);
+				}
+			}
 
 			// TODO(david): If bountyAmount is not 0, use gpt-4 model(currently gpt-4 is waitlist)
 			const model =
@@ -55,6 +62,8 @@ class ReplyService {
 				model,
 				maxTokens,
 			);
+
+			console.log('chatgptReply', chatgptReply);
 
 			// If ChatGPT reply is not created, try again.
 			if (!chatgptReply) {
