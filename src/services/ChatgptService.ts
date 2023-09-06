@@ -65,21 +65,18 @@ class ChatgptService {
 				max_tokens: maxTokens,
 			});
 			const rawAnswer = completion.choices[0].message?.content || '';
-			console.log('rawAnswer', rawAnswer);
 			// const jsonAnswer: JsonAnswerInterface = JSON.parse(`${rawAnswer}`);
 			// if (!jsonAnswer.title) {
 			// 	jsonAnswer.title = new Date().toISOString();
 			// }
 
-			const result = await ChatGptRepository.createChaptGptReply({
+			return await ChatGptRepository.createChaptGptReply({
 				questionId,
 				model,
 				maxTokens,
 				prompt,
 				rawAnswer,
 			});
-			console.log('result', result);
-			return result;
 		} catch (error: any) {
 			if (error instanceof OpenAI.APIError) {
 				Sentry.captureMessage(`ChatGPT error: ${error}`);
