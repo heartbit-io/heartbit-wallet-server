@@ -31,7 +31,7 @@ export interface ChatGptReplyAttributes {
 	maxTokens: number;
 	prompt: string;
 	rawAnswer: string;
-	jsonAnswer: JsonAnswerInterface;
+	jsonAnswer?: JsonAnswerInterface;
 }
 
 @Entity('chatgpt_replies')
@@ -51,7 +51,7 @@ export class ChatGptReply {
 	@Column({type: 'text'})
 	prompt: string;
 
-	@Column({type: 'text'})
+	@Column({type: 'text', nullable: true})
 	rawAnswer: string;
 
 	@Column('json', {nullable: false, default: {}})
