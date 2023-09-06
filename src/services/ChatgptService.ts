@@ -65,7 +65,7 @@ class ChatgptService {
 				max_tokens: maxTokens,
 			});
 			const rawAnswer = completion.choices[0].message?.content || '';
-
+			console.log('rawAnswer', rawAnswer);
 			// const jsonAnswer: JsonAnswerInterface = JSON.parse(`${rawAnswer}`);
 			// if (!jsonAnswer.title) {
 			// 	jsonAnswer.title = new Date().toISOString();

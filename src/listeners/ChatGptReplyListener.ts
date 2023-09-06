@@ -33,10 +33,11 @@ const onChatGptReplyEvent = async (questionId: number) => {
 			return;
 		}
 
-		const translateText =
-			questionAttr.type === QuestionTypes.GENERAL
-				? chatgptReply.jsonAnswer.aiAnswer
-				: chatgptReply.jsonAnswer.guide;
+		// const translateText =
+		// 	questionAttr.type === QuestionTypes.GENERAL
+		// 		? chatgptReply.jsonAnswer.aiAnswer
+		// 		: chatgptReply.jsonAnswer.guide;
+		const translateText = chatgptReply.rawAnswer;
 
 		const translatedReply = await DeeplService.getTextTranslatedIntoEnglish(
 			translateText,
