@@ -63,8 +63,6 @@ class ReplyService {
 				maxTokens,
 			);
 
-			console.log('chatgptReply', chatgptReply);
-
 			// If ChatGPT reply is not created, try again.
 			if (!chatgptReply) {
 				chatgptReply = await ChatgptService.create(
