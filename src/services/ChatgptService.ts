@@ -71,13 +71,15 @@ class ChatgptService {
 			// 	jsonAnswer.title = new Date().toISOString();
 			// }
 
-			return await ChatGptRepository.createChaptGptReply({
+			const result = await ChatGptRepository.createChaptGptReply({
 				questionId,
 				model,
 				maxTokens,
 				prompt,
 				rawAnswer,
 			});
+			console.log('result', result);
+			return result;
 		} catch (error: any) {
 			if (error instanceof OpenAI.APIError) {
 				Sentry.captureMessage(`ChatGPT error: ${error}`);
