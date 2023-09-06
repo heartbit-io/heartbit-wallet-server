@@ -69,22 +69,29 @@ class ReplyService {
 				ChatGptReplyListener.emit('questionIdForChatGptReply', questionIdInt);
 				throw new CustomError(HttpCodes.NOT_FOUND, 'ChatGPT not replied');
 			}
-			console.log('chatgptReply', chatgptReply);
-			const translateText =
-				question.type === QuestionTypes.GENERAL
-					? chatgptReply.jsonAnswer.aiAnswer
-					: chatgptReply.jsonAnswer.guide;
+			// const translateText =
+			// 	question.type === QuestionTypes.GENERAL
+			// 		? chatgptReply.jsonAnswer.aiAnswer
+			// 		: chatgptReply.jsonAnswer.guide;
 
-			const translatedReply = await DeeplService.getTextTranslatedIntoEnglish(
-				translateText,
-				rawContentLanguage,
-			);
+			const translateText = chatgptReply.rawAnswer;
 
-			await ChatGptRepository.updateTranslatedChatGptReply(
-				chatgptReply.id,
-				translatedReply.text,
-			);
+			let translationResult = translateText;
+			if (
+				question.rawContentLanguage &&
+				question.rawContentLanguage.toUpperCase() !== 'EN'
+			) {
+				const translatedReply = await DeeplService.getTextTranslatedIntoEnglish(
+					translateText,
+					rawContentLanguage,
+				);
 
+				await ChatGptRepository.updateTranslatedChatGptReply(
+					chatgptReply.id,
+					translatedReply.text,
+				);
+				translationResult = translatedReply.text;
+			}
 			// set response
 			const replyResponseInterface: ReplyResponseInterface = {
 				success: true,
@@ -94,7 +101,7 @@ class ReplyService {
 					replyType: ReplyTypes.AI,
 					name: 'Advice by GPT-3.5', // TODO(david): formatting
 					classification: 'Open AI',
-					reply: translatedReply.text,
+					reply: translationResult,
 					createdAt: chatgptReply.createdAt, // TODO(david): date formatting, 1 Apr 2023
 				},
 			};
