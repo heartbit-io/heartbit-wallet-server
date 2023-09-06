@@ -64,9 +64,11 @@ class ChatgptService {
 				messages: [{role: 'user', content: prompt}],
 				max_tokens: maxTokens,
 			});
-
+			console.log('completion', completion);
 			const rawAnswer = completion.choices[0].message?.content || '';
+			console.log('rawAnswer', rawAnswer);
 			const jsonAnswer: JsonAnswerInterface = JSON.parse(`${rawAnswer}`);
+			console.log('jsonAnswer', jsonAnswer);
 			if (!jsonAnswer.title) {
 				jsonAnswer.title = new Date().toISOString();
 			}
