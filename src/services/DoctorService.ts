@@ -168,17 +168,8 @@ class DoctorService {
 				}
 			}
 
-			const aiReply = await ChatGptRepository.getChatGptReply(
-				Number(selectedQuestion.id),
-			);
-
-			let title = null;
-			let chiefComplaint = null;
-			if (aiReply) {
-				const aiJsonReply: JsonAnswerInterface = aiReply.jsonAnswer;
-				title = aiJsonReply.title;
-				chiefComplaint = aiJsonReply.chiefComplaint;
-			}
+			const title = selectedQuestion.content.substring(0, 50) + '...';
+			const chiefComplaint = selectedQuestion.content;
 			return {
 				...selectedQuestion,
 				title,
