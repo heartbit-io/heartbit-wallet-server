@@ -5,7 +5,6 @@ import DeeplService from '../services/DeeplService';
 import {QuestionAttributes} from '../domains/entities/Question';
 import ChatGptEvent from '../events/ChatGptEvent';
 import ChatgptService from '../services/ChatgptService';
-import {QuestionTypes} from '../util/enums';
 
 const ChatGptReplyListener = new ChatGptEvent();
 
@@ -33,21 +32,22 @@ const onChatGptReplyEvent = async (questionId: number) => {
 			return;
 		}
 
-		// const translateText =
-		// 	questionAttr.type === QuestionTypes.GENERAL
-		// 		? chatgptReply.jsonAnswer.aiAnswer
-		// 		: chatgptReply.jsonAnswer.guide;
 		const translateText = chatgptReply.rawAnswer;
 
-		const translatedReply = await DeeplService.getTextTranslatedIntoEnglish(
-			translateText,
-			rawContentLanguage,
-		);
+		if (
+			question.rawContentLanguage &&
+			question.rawContentLanguage.toUpperCase() !== 'EN'
+		) {
+			const translatedReply = await DeeplService.getTextTranslatedIntoEnglish(
+				translateText,
+				rawContentLanguage,
+			);
 
-		await ChatGptRepository.updateTranslatedChatGptReply(
-			chatgptReply.id,
-			translatedReply.text,
-		);
+			await ChatGptRepository.updateTranslatedChatGptReply(
+				chatgptReply.id,
+				translatedReply.text,
+			);
+		}
 	} catch (error) {
 		Sentry.captureMessage(
 			`error creating chatgpt response in events: ${error}`,

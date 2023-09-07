@@ -29,7 +29,6 @@ class DoctorService {
 				throw new CustomError(HttpCodes.UNAUTHORIZED, 'User not logged in');
 
 			const doctor = await UserRepository.getUserDetailsByEmail(email);
-
 			if (!doctor || !doctor.isDoctor) {
 				throw new CustomError(
 					HttpCodes.UNAUTHORIZED,
@@ -44,7 +43,6 @@ class DoctorService {
 				throw new CustomError(HttpCodes.NOT_FOUND, 'Question was not found');
 
 			const user = await UserRepository.getUserDetailsById(question.userId);
-
 			if (!user) throw new CustomError(HttpCodes.NOT_FOUND, 'User not found');
 
 			if (user.id === doctor.id)
@@ -53,7 +51,6 @@ class DoctorService {
 					'User and doctor cannot be the same',
 				);
 
-			// If the bounty is 0, no bounty is calculated.
 			if (question.bountyAmount && question.bountyAmount > 0) {
 				// 100 is default sats
 				// const calulatedFee =
@@ -101,12 +98,7 @@ class DoctorService {
 
 			return reply;
 		} catch (error: any) {
-			throw error.code && error.message
-				? error
-				: new CustomError(
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						'Internal Server Error',
-				  );
+			throw new CustomError(HttpCodes.INTERNAL_SERVER_ERROR, error);
 		}
 	}
 
@@ -117,9 +109,10 @@ class DoctorService {
 	) {
 		const reply = await ReplyRepository.createReply({
 			...requestBody,
+			presentIllness: question.content,
+			pastMedicalHistory: question.pastIllnessHistory,
 			userId: doctor.id,
 		});
-
 		await QuestionRepository.updateStatus(
 			QuestionStatus.CLOSED,
 			Number(question.id),
@@ -192,12 +185,7 @@ class DoctorService {
 				chiefComplaint,
 			};
 		} catch (error: any) {
-			throw error.code && error.message
-				? error
-				: new CustomError(
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						'Internal Server Error',
-				  );
+			throw new CustomError(HttpCodes.INTERNAL_SERVER_ERROR, error);
 		}
 	}
 
@@ -250,12 +238,7 @@ class DoctorService {
 				aiJsonReply,
 			};
 		} catch (error: any) {
-			throw error.code && error.message
-				? error
-				: new CustomError(
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						'Internal Server Error',
-				  );
+			throw new CustomError(HttpCodes.INTERNAL_SERVER_ERROR, error);
 		}
 	}
 
@@ -293,8 +276,14 @@ class DoctorService {
 
 			const replies = await ReplyRepository.getDoctorReplies(Number(doctor.id));
 			const questions = replies.map((reply: any) => {
-				const decodedContent = decodeContent(reply.question.content);
-				reply.question.content = decodedContent;
+				for (const [key, value] of Object.entries(reply.question)) {
+					if (value !== null && typeof value === 'string') {
+						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+						// @ts-ignore
+						reply.question[key] = decodeContent(value);
+					}
+				}
+				reply.question.doctorNote = reply.doctorNote;
 				return reply.question;
 			});
 			const sortedQuestions = questions.sort(
@@ -303,12 +292,7 @@ class DoctorService {
 			);
 			return sortedQuestions;
 		} catch (error: any) {
-			throw error.code && error.message
-				? error
-				: new CustomError(
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						'Internal Server Error',
-				  );
+			throw new CustomError(HttpCodes.INTERNAL_SERVER_ERROR, error);
 		}
 	}
 
@@ -353,12 +337,7 @@ class DoctorService {
 
 			return {...question, ...doctorReply};
 		} catch (error: any) {
-			throw error.code && error.message
-				? error
-				: new CustomError(
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						'Internal Server Error',
-				  );
+			throw new CustomError(HttpCodes.INTERNAL_SERVER_ERROR, error);
 		}
 	}
 
@@ -393,12 +372,7 @@ class DoctorService {
 
 			return data;
 		} catch (error: any) {
-			throw error.code && error.message
-				? error
-				: new CustomError(
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						'Internal Server Error',
-				  );
+			throw new CustomError(HttpCodes.INTERNAL_SERVER_ERROR, error);
 		}
 	}
 
@@ -488,12 +462,7 @@ class DoctorService {
 			);
 		} catch (error: any) {
 			await querryRunner.rollbackTransaction();
-			throw error.code && error.message
-				? error
-				: new CustomError(
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						'Internal Server Error',
-				  );
+			throw new CustomError(HttpCodes.INTERNAL_SERVER_ERROR, error);
 		} finally {
 			await querryRunner.release();
 		}
@@ -563,12 +532,7 @@ class DoctorService {
 			return doctorQuestion;
 		} catch (error: any) {
 			await querryRunner.rollbackTransaction();
-			throw error.code && error.message
-				? error
-				: new CustomError(
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						'Internal Server Error',
-				  );
+			throw new CustomError(HttpCodes.INTERNAL_SERVER_ERROR, error);
 		} finally {
 			await querryRunner.release();
 		}
