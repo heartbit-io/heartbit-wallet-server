@@ -176,11 +176,13 @@ class ReplyService {
 				Number(questionId),
 			);
 
-			if (!chatGptReply)
+			if (!chatGptReply) {
+				ChatGptReplyListener.emit('questionIdForChatGptReply', questionId);
 				throw new CustomError(
 					HttpCodes.NOT_FOUND,
 					'Chatgpt reply was not found',
 				);
+			}
 
 			let translatedAnswer = chatGptReply.rawAnswer;
 			if (
