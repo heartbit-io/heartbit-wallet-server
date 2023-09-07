@@ -267,13 +267,8 @@ class DoctorService {
 
 			const replies = await ReplyRepository.getDoctorReplies(Number(doctor.id));
 			const questions = replies.map((reply: any) => {
-				for (const [key, value] of Object.entries(reply.question)) {
-					if (value !== null && typeof value === 'string') {
-						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-						// @ts-ignore
-						reply.question[key] = decodeContent(value);
-					}
-				}
+				const decodedContent = decodeContent(reply.question.content);
+				reply.question.content = decodedContent;
 				reply.question.doctorNote = reply.doctorNote;
 				return reply.question;
 			});
