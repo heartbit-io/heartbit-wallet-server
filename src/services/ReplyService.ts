@@ -76,10 +76,6 @@ class ReplyService {
 				ChatGptReplyListener.emit('questionIdForChatGptReply', questionIdInt);
 				throw new CustomError(HttpCodes.NOT_FOUND, 'ChatGPT not replied');
 			}
-			// const translateText =
-			// 	question.type === QuestionTypes.GENERAL
-			// 		? chatgptReply.jsonAnswer.aiAnswer
-			// 		: chatgptReply.jsonAnswer.guide;
 
 			const translateText = chatgptReply.rawAnswer;
 
@@ -186,17 +182,17 @@ class ReplyService {
 					'Chatgpt reply was not found',
 				);
 
-			let translateText = chatGptReply.jsonAnswer.aiAnswer;
-			if (question.type !== QuestionTypes.GENERAL) {
-				translateText = chatGptReply.jsonAnswer.guide;
-			}
-			let translatedAnswer = chatGptReply.translatedAnswer;
-			if (!translatedAnswer) {
+			let translatedAnswer = chatGptReply.rawAnswer;
+			if (
+				question.rawContentLanguage &&
+				question.rawContentLanguage.toUpperCase() !== 'EN' &&
+				!translatedAnswer
+			) {
 				const translatedReply =
 					process.env.NODE_ENV === 'test'
 						? mockTranslatedContent().translatedTitle
 						: await DeeplService.getTextTranslatedIntoEnglish(
-								translateText,
+								translatedAnswer,
 								rawContentLanguage,
 						  );
 
@@ -208,7 +204,7 @@ class ReplyService {
 			}
 
 			const replyType = ReplyTypes.AI;
-			const name = 'Advice by GPT-3.5'; // TODO(david): formatting
+			const name = 'Advice by GPT-3.5';
 			const reply = translatedAnswer;
 			const classification = 'Open AI';
 			const createdAt = chatGptReply.createdAt;

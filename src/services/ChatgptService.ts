@@ -2,7 +2,6 @@ import * as Sentry from '@sentry/node';
 import {makePrompt} from '../util/chatgpt';
 import {ChatGptReply} from '../domains/entities/ChatGptReply';
 import {QuestionAttributes} from '../domains/entities/Question';
-import {QuestionTypes} from '../util/enums';
 import env from '../config/env';
 import ChatGptRepository from '../Repositories/ChatGptRepository';
 import {CustomError} from '../util/CustomError';
