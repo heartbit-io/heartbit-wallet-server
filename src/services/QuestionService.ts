@@ -72,12 +72,7 @@ class QuestionService {
 			return newQuestion;
 		} catch (error: any) {
 			await querryRunner.rollbackTransaction();
-			throw error.code && error.message
-				? error
-				: new CustomError(
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						'Internal Server Error',
-				  );
+			throw new CustomError(HttpCodes.INTERNAL_SERVER_ERROR, error);
 		} finally {
 			await querryRunner.release();
 		}
@@ -158,12 +153,7 @@ class QuestionService {
 
 			return true;
 		} catch (error: any) {
-			throw error.code && error.message
-				? error
-				: new CustomError(
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						'Internal Server Error',
-				  );
+			throw new CustomError(HttpCodes.INTERNAL_SERVER_ERROR, error);
 		}
 	}
 
@@ -190,12 +180,7 @@ class QuestionService {
 
 			return questions;
 		} catch (error: any) {
-			throw error.code && error.message
-				? error
-				: new CustomError(
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						'Internal Server Error',
-				  );
+			throw new CustomError(HttpCodes.INTERNAL_SERVER_ERROR, error);
 		}
 	}
 
@@ -235,12 +220,7 @@ class QuestionService {
 
 			return {questions: formatedQuestions, hasMore};
 		} catch (error: any) {
-			throw error.code && error.message
-				? error
-				: new CustomError(
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						'Internal Server Error',
-				  );
+			throw new CustomError(HttpCodes.INTERNAL_SERVER_ERROR, error);
 		}
 	}
 
@@ -275,12 +255,7 @@ class QuestionService {
 
 			return response;
 		} catch (error: any) {
-			throw error.code && error.message
-				? error
-				: new CustomError(
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						'Internal Server Error',
-				  );
+			throw new CustomError(HttpCodes.INTERNAL_SERVER_ERROR, error);
 		}
 	}
 }

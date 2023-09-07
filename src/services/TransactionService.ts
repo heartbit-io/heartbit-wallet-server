@@ -32,12 +32,7 @@ class TransactionService {
 
 			return {transactions, hasMore};
 		} catch (error: any) {
-			throw error.code && error.message
-				? error
-				: new CustomError(
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						'Internal Server Error',
-				  );
+			throw new CustomError(HttpCodes.INTERNAL_SERVER_ERROR, error);
 		}
 	}
 }

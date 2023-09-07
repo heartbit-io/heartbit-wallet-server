@@ -6,7 +6,6 @@ import FcmService from '../services/FcmService';
 import {HttpCodes} from '../util/HttpCodes';
 import {QuestionAttributes} from '../domains/entities/Question';
 import QuestionRepository from '../Repositories/QuestionRepository';
-import {QuestionTypes} from '../util/enums';
 import {RepliesAttributes} from '../domains/entities/Reply';
 import ReplyRepository from '../Repositories/ReplyRepository';
 import {ReplyResponseInterface} from '../controllers/RepliesController';
@@ -117,12 +116,7 @@ class ReplyService {
 
 			return replyResponseInterface;
 		} catch (error: any) {
-			throw error.code && error.message
-				? error
-				: new CustomError(
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						'Internal Server Error',
-				  );
+			throw new CustomError(HttpCodes.INTERNAL_SERVER_ERROR, error);
 		}
 	}
 
@@ -219,12 +213,7 @@ class ReplyService {
 				createdAt,
 			};
 		} catch (error: any) {
-			throw error.code && error.message
-				? error
-				: new CustomError(
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						'Internal Server Error',
-				  );
+			throw new CustomError(HttpCodes.INTERNAL_SERVER_ERROR, error);
 		}
 	}
 
@@ -266,12 +255,7 @@ class ReplyService {
 
 			return true;
 		} catch (error: any) {
-			throw error.code && error.message
-				? error
-				: new CustomError(
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						'Internal Server Error',
-				  );
+			throw new CustomError(HttpCodes.INTERNAL_SERVER_ERROR, error);
 		}
 	}
 }

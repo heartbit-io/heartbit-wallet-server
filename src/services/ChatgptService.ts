@@ -64,11 +64,6 @@ class ChatgptService {
 				max_tokens: maxTokens,
 			});
 			const rawAnswer = completion.choices[0].message?.content || '';
-			// const jsonAnswer: JsonAnswerInterface = JSON.parse(`${rawAnswer}`);
-			// if (!jsonAnswer.title) {
-			// 	jsonAnswer.title = new Date().toISOString();
-			// }
-
 			return await ChatGptRepository.createChaptGptReply({
 				questionId,
 				model,
@@ -77,14 +72,8 @@ class ChatgptService {
 				rawAnswer,
 			});
 		} catch (error: any) {
-			if (error instanceof OpenAI.APIError) {
-				Sentry.captureMessage(`ChatGPT error: ${error}`);
-				throw error.status && error.message
-					? error
-					: new CustomError(HttpCodes.INTERNAL_SERVER_ERROR, `${error}`);
-			} else {
-				new CustomError(HttpCodes.INTERNAL_SERVER_ERROR, error);
-			}
+			Sentry.captureMessage(`ChatGPT error: ${error}`);
+			throw new CustomError(HttpCodes.INTERNAL_SERVER_ERROR, error);
 		}
 	}
 
@@ -98,12 +87,7 @@ class ChatgptService {
 			return chatGptReply;
 		} catch (error: any) {
 			Sentry.captureMessage(`Error getting chatgpt response: ${error}`);
-			throw error.code && error.message
-				? error
-				: new CustomError(
-						HttpCodes.INTERNAL_SERVER_ERROR,
-						'Internal Server Error',
-				  );
+			throw new CustomError(HttpCodes.INTERNAL_SERVER_ERROR, error);
 		}
 	}
 }
