@@ -168,10 +168,6 @@ class DoctorService {
 				}
 			}
 
-			const aiReply = await ChatGptRepository.getChatGptReply(
-				Number(selectedQuestion.id),
-			);
-
 			const title = selectedQuestion.content.substring(0, 50) + '...';
 			const chiefComplaint = selectedQuestion.content;
 			return {
