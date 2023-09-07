@@ -267,6 +267,7 @@ class DoctorService {
 
 			const replies = await ReplyRepository.getDoctorReplies(Number(doctor.id));
 			const questions = replies.map((reply: any) => {
+				if (!reply.question) return;
 				reply.question.doctorNote = reply.doctorNote;
 				return reply.question;
 			});
