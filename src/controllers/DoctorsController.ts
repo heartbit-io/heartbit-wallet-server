@@ -217,7 +217,6 @@ class DoctorsController {
 	async assignQuestion(req: DecodedRequest, res: Response) {
 		try {
 			const {doctorId, questionId} = req.body;
-			req.email = 'withtvpeter@gmail.com';
 			const result: FormatResponse = await DoctorService.assignQuestionToDoctor(
 				Number(doctorId),
 				Number(questionId),
