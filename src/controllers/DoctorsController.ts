@@ -175,7 +175,7 @@ class DoctorsController {
 					new ResponseDto(
 						false,
 						error.code ? error.code : HttpCodes.INTERNAL_SERVER_ERROR,
-						error.message ? error.message : 'HTTP error',
+						error,
 						null,
 					),
 				);
@@ -203,7 +203,7 @@ class DoctorsController {
 					new ResponseDto(
 						false,
 						error.code ? error.code : HttpCodes.INTERNAL_SERVER_ERROR,
-						error.message ? error.message : 'HTTP error',
+						error,
 						null,
 					),
 				);
@@ -217,7 +217,6 @@ class DoctorsController {
 	async assignQuestion(req: DecodedRequest, res: Response) {
 		try {
 			const {doctorId, questionId} = req.body;
-
 			const result: FormatResponse = await DoctorService.assignQuestionToDoctor(
 				Number(doctorId),
 				Number(questionId),
@@ -232,7 +231,7 @@ class DoctorsController {
 					new ResponseDto(
 						false,
 						error.code ? error.code : HttpCodes.INTERNAL_SERVER_ERROR,
-						error.message ? error.message : 'HTTP error',
+						error,
 						null,
 					),
 				);
@@ -266,7 +265,7 @@ class DoctorsController {
 					new ResponseDto(
 						false,
 						error.code ? error.code : HttpCodes.INTERNAL_SERVER_ERROR,
-						error.message ? error.message : 'HTTP error',
+						error,
 						null,
 					),
 				);
