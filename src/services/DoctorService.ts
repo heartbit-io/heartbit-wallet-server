@@ -2,7 +2,6 @@ import {QuestionStatus, QuestionTypes, TxTypes} from '../util/enums';
 import {CustomError} from '../util/CustomError';
 import FcmService from '../services/FcmService';
 import {HttpCodes} from '../util/HttpCodes';
-import {JsonAnswerInterface} from '../domains/entities/ChatGptReply';
 import {Question} from '../domains/entities/Question';
 import QuestionRepository from '../Repositories/QuestionRepository';
 import {RepliesAttributes} from '../domains/entities/Reply';
@@ -12,7 +11,6 @@ import {User} from '../domains/entities/User';
 import UserRepository from '../Repositories/UserRepository';
 import {UserRoles} from '../util/enums/userRoles';
 import admin from '../config/firebase-config';
-import ChatGptRepository from '../Repositories/ChatGptRepository';
 import DoctorQuestionRepository from '../Repositories/DoctorQuestionRepository';
 import dataSource from '../domains/repo';
 import ResponseDto from '../dto/ResponseDTO';
@@ -28,28 +26,10 @@ class DoctorService {
 			if (!email)
 				throw new CustomError(HttpCodes.UNAUTHORIZED, 'User not logged in');
 
-			const doctor = await UserRepository.getUserDetailsByEmail(email);
-			if (!doctor || !doctor.isDoctor) {
-				throw new CustomError(
-					HttpCodes.UNAUTHORIZED,
-					'Only doctors can reply to a question',
-				);
-			}
-			const question = await QuestionRepository.getQuestion(
-				requestBody.questionId,
+			const {question, doctor, user} = await this.checkDoctorAndQuestion(
+				email,
+				requestBody,
 			);
-
-			if (!question)
-				throw new CustomError(HttpCodes.NOT_FOUND, 'Question was not found');
-
-			const user = await UserRepository.getUserDetailsById(question.userId);
-			if (!user) throw new CustomError(HttpCodes.NOT_FOUND, 'User not found');
-
-			if (user.id === doctor.id)
-				throw new CustomError(
-					HttpCodes.BAD_REQUEST,
-					'User and doctor cannot be the same',
-				);
 
 			if (question.bountyAmount && question.bountyAmount > 0) {
 				// 100 is default sats
@@ -100,6 +80,46 @@ class DoctorService {
 		} catch (error: any) {
 			throw new CustomError(HttpCodes.INTERNAL_SERVER_ERROR, error);
 		}
+	}
+
+	private async checkDoctorAndQuestion(
+		email: string,
+		requestBody: RepliesAttributes,
+	) {
+		const doctor = await UserRepository.getUserDetailsByEmail(email);
+		if (!doctor || !doctor.isDoctor) {
+			throw new CustomError(
+				HttpCodes.UNAUTHORIZED,
+				'Only doctors can reply to a question',
+			);
+		}
+		const question = await QuestionRepository.getQuestion(
+			requestBody.questionId,
+		);
+
+		if (!question)
+			throw new CustomError(HttpCodes.NOT_FOUND, 'Question was not found');
+
+		const user = await UserRepository.getUserDetailsById(question.userId);
+		if (!user) throw new CustomError(HttpCodes.NOT_FOUND, 'User not found');
+
+		if (user.id === doctor.id)
+			throw new CustomError(
+				HttpCodes.BAD_REQUEST,
+				'User and doctor cannot be the same',
+			);
+		const doctorQuestionStatus =
+			await DoctorQuestionRepository.getDoctorQuestionStatus(
+				doctor.id,
+				question.id,
+			);
+
+		if (!doctorQuestionStatus)
+			throw new CustomError(
+				HttpCodes.BAD_REQUEST,
+				'This question is not assigned to you',
+			);
+		return {question, doctor, user};
 	}
 
 	private async _createReply(
@@ -487,22 +507,24 @@ class DoctorService {
 					questionId,
 				);
 
-			if (!doctorQuestionStatus)
+			if (!doctorQuestionStatus) {
 				throw new CustomError(
 					HttpCodes.BAD_REQUEST,
-					'Doctor is not assigned to question',
+					'Question is no longer assigned to doctor',
 				);
+			}
 
 			const doctorQuestion =
 				await DoctorQuestionRepository.deleteDoctorQuestion(
 					doctorId,
 					questionId,
 				);
-			if (!doctorQuestion)
+			if (!doctorQuestion) {
 				throw new CustomError(
 					HttpCodes.INTERNAL_SERVER_ERROR,
 					'Error removing question from doctor',
 				);
+			}
 			const updatedQuestion = await QuestionRepository.updateStatus(
 				QuestionStatus.OPEN,
 				questionId,
@@ -518,8 +540,6 @@ class DoctorService {
 		} catch (error: any) {
 			await querryRunner.rollbackTransaction();
 			throw new CustomError(HttpCodes.INTERNAL_SERVER_ERROR, error);
-		} finally {
-			await querryRunner.release();
 		}
 	}
 }
