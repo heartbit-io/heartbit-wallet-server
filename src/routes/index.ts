@@ -8,6 +8,9 @@ import {replyRoutes} from './replyRoutes';
 import swaggerUi from 'swagger-ui-express';
 import {transactionRoutes} from './transactionRoutes';
 import {userRoutes} from './userRoutes';
+import FBUtil from '../util/FBUtil';
+import {lndRoutes} from './lndroutes';
+import {ludRoutes} from './ludRoutes';
 
 const router = Router();
 
@@ -22,5 +25,9 @@ router.use(
 	swaggerUi.setup(apiDocumentation),
 );
 router.use('/coin-exchange-rates', Auth.verifyToken, coinExchangeRateRoutes);
+
+//lightning server
+router.use('/lnd', FBUtil.verifyKeyAndToken, lndRoutes);
+router.use('/lnurl', ludRoutes);
 
 export {router as routes};

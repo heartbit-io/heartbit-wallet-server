@@ -42,6 +42,19 @@ export const env = {
 		.MAILCHIMP_MARKETING_API_KEY as string,
 	MAILCHIMP_LIST_ID: process.env.MAILCHIMP_LIST_ID as string,
 	MAILCHIMP_SERVER: process.env.MAILCHIMP_SERVER as string,
+
+	// lightning server
+	LND_GRPC_URL: process.env.LND_GRPC_URL as string,
+	LND_MACAROON: process.env.LND_MACAROON as string,
+	LND_TLS: process.env.LND_TLS as string,
+	LND_HOST: process.env.LND_HOST as string,
+	LND_PORT: process.env.LND_PORT as string,
+	LUD_PORT: process.env.LUD_PORT as string,
+	SERVER_PORT: process.env.SERVER_PORT as string,
+	BASE_SERVER_URL: process.env.BASE_SERVER_URL as string,
+	LND_TLS_PATH: process.env.LND_TLS_PATH as string,
+	LND_MACAROON_PATH: process.env.LND_MACAROON_PATH as string,
+	BASE_SERVER_DOMAIN: process.env.BASE_SERVER_DOMAIN as string,
 };
 
 Object.entries(env).forEach(([key, value]) => {
