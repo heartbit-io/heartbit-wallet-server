@@ -1,7 +1,10 @@
 import * as Sentry from '@sentry/node';
 
 import express, {Application} from 'express';
-
+import {onLNDDeposit} from './events/LNDEvent';
+import {AuthenticatedLnd} from 'lightning';
+import {onLUDFail} from './events/LUDEvent';
+import {HttpCodes} from './util/HttpCodes';
 import cors from 'cors';
 import dataSource from './domains/repo';
 import env from './config/env';
@@ -9,6 +12,10 @@ import helmet from 'helmet';
 import {log} from 'console';
 import path from 'path';
 import {routes} from './routes';
+import initLND from './config/initLND';
+import initLUD from './config/initLUD';
+import NodeCache from 'node-cache';
+import logger from './util/logger';
 
 const PORT = Number(env.PORT);
 
@@ -60,14 +67,28 @@ app.use((_req, res, next) => {
 
 app.use('/api/v1', routes);
 
+const cache = new NodeCache({
+	stdTTL: 60 * 60 * 24 * 1,
+	checkperiod: 60 * 60 * 24 * 1,
+});
+
+let lnd: AuthenticatedLnd;
+let lud: any;
 app.listen(PORT, async () => {
 	try {
 		await dataSource.initialize();
 		log('connected to database');
 		log(`Listening on port ${PORT}`);
+		lnd = await initLND();
+		lud = await initLUD();
+		// init event listener for lnd and lud
+		await onLNDDeposit(lnd);
+		// await onLNDWithdrawal(lnd);
+		await onLUDFail(lud);
 	} catch (error) {
-		log(error);
+		console.error(error);
+		Sentry.captureMessage(`Server initialization error: ${error}`);
+		logger.error(error);
 	}
 });
-
-export default app;
+export {lnd, lud, cache, app};

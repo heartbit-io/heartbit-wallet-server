@@ -5,6 +5,8 @@ import {
 	CreateDateColumn,
 	DeleteDateColumn,
 	UpdateDateColumn,
+	ManyToOne,
+	JoinColumn,
 } from 'typeorm';
 import {User} from './User';
 import {TxTypes} from '../../util/enums';
@@ -31,6 +33,24 @@ export class BtcTransaction {
 
 	@Column()
 	toUserPubkey: string;
+
+	@ManyToOne(() => User, {
+		createForeignKeyConstraints: false,
+	})
+	@JoinColumn({
+		name: 'from_user_pubkey',
+		referencedColumnName: 'pubkey',
+	})
+	FromUser: User;
+
+	@ManyToOne(() => User, {
+		createForeignKeyConstraints: false,
+	})
+	@JoinColumn({
+		name: 'to_user_pubkey',
+		referencedColumnName: 'pubkey',
+	})
+	ToUser: User;
 
 	@CreateDateColumn({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
 	createdAt: Date;
