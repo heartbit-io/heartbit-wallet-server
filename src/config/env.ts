@@ -50,7 +50,6 @@ export const env = {
 	LND_HOST: process.env.LND_HOST as string,
 	LND_PORT: process.env.LND_PORT as string,
 	LUD_PORT: process.env.LUD_PORT as string,
-	SERVER_PORT: process.env.SERVER_PORT as string,
 	BASE_SERVER_URL: process.env.BASE_SERVER_URL as string,
 	LND_TLS_PATH: process.env.LND_TLS_PATH as string,
 	LND_MACAROON_PATH: process.env.LND_MACAROON_PATH as string,
