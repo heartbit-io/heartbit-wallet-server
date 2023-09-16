@@ -11,6 +11,7 @@ import {userRoutes} from './userRoutes';
 import FBUtil from '../util/FBUtil';
 import {lndRoutes} from './lndroutes';
 import {ludRoutes} from './ludRoutes';
+import {healthcheck} from './healthcheck';
 
 const router = Router();
 
@@ -29,5 +30,6 @@ router.use('/coin-exchange-rates', Auth.verifyToken, coinExchangeRateRoutes);
 //lightning server
 router.use('/lnd', FBUtil.verifyKeyAndToken, lndRoutes);
 router.use('/lnurl', ludRoutes);
+router.use('/healthcheck', healthcheck);
 
 export {router as routes};
