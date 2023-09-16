@@ -4,7 +4,6 @@ import express, {Application} from 'express';
 import {onLNDDeposit} from './events/LNDEvent';
 import {AuthenticatedLnd} from 'lightning';
 import {onLUDFail} from './events/LUDEvent';
-import {HttpCodes} from './util/HttpCodes';
 import cors from 'cors';
 import dataSource from './domains/repo';
 import env from './config/env';
