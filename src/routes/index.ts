@@ -9,9 +9,9 @@ import swaggerUi from 'swagger-ui-express';
 import {transactionRoutes} from './transactionRoutes';
 import {userRoutes} from './userRoutes';
 import FBUtil from '../util/FBUtil';
-import {lndRoutes} from './lndroutes';
 import {ludRoutes} from './ludRoutes';
 import {healthcheck} from './healthcheck';
+import {lndRoutes} from './lndRoutes';
 
 const router = Router();
 
