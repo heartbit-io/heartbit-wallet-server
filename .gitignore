@@ -8,6 +8,8 @@ logs/
 # OS
 .DS_Store
 files
+admin.macaroon
+tls.cert
 
 # Config
 src/config/secrets
