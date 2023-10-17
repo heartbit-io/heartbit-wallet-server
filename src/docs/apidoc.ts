@@ -64,7 +64,7 @@ const apiDocumentation = {
 			description: 'Local Server',
 		},
 		{
-			url: `https://dev-wallet-api.heartbit.io/${apiVersion}`,
+			url: `https://wallet-api.heartbit.io/${apiVersion}`,
 			description: 'Deveploment Server',
 		},
 		{
