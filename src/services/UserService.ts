@@ -1,10 +1,8 @@
 import BtcTransactionsRepository from '../Repositories/BtcTransactionsRepository';
 import {CustomError} from '../util/CustomError';
 import {HttpCodes} from '../util/HttpCodes';
-import {TxTypes} from '../util/enums';
 import {User, UserAttributes} from '../domains/entities/User';
 import UserRepository from '../Repositories/UserRepository';
-import dataSource from '../domains/repo';
 import UserRegisteredEventListener from '../listeners/UserRegisteredListener';
 import DoctorProfileRepository from '../Repositories/DoctorProfileRepository';
 import QuestionRepository from '../Repositories/QuestionRepository';
@@ -32,28 +30,34 @@ class UserService {
 			);
 		}
 
-		const querryRunner = dataSource.createQueryRunner();
-		await querryRunner.connect();
-		await querryRunner.startTransaction('REPEATABLE READ');
+		/**
+		 * const querryRunner = dataSource.createQueryRunner();
+			await querryRunner.connect();
+			await querryRunner.startTransaction('REPEATABLE READ');
+			**/
 
 		try {
 			const createdUser = await UserRepository.createUser({
 				...user,
 				pubkey: pubkeyToLowerCase,
 				email: emailToLowerCase,
-				promotionBtcBalance: 1000, // SIGN_UP_BONUS
+				promotionBtcBalance: 0, // SIGN_UP_BONUS
 			});
-			await BtcTransactionsRepository.createTransaction({
-				amount: 1000, // SIGN_UP_BONUS
+
+			/**
+			 * await BtcTransactionsRepository.createTransaction({
+				amount: 0, // SIGN_UP_BONUS
 				toUserPubkey: pubkeyToLowerCase,
 				fromUserPubkey: pubkeyToLowerCase, // Initial transcation
 				type: TxTypes.SIGN_UP_BONUS,
 				fee: 0,
 			});
+			**/
+
 			//AWS SES
 			UserRegisteredEventListener.emit('newUserRegistered', emailToLowerCase);
 
-			await querryRunner.commitTransaction();
+			// await querryRunner.commitTransaction();
 			return {
 				...createdUser,
 				btcBalance:
@@ -62,11 +66,12 @@ class UserService {
 				withdrawableBtcBalance: createdUser.btcBalance,
 			};
 		} catch (error: any) {
-			await querryRunner.rollbackTransaction();
+			// await querryRunner.rollbackTransaction();
 			throw new CustomError(HttpCodes.INTERNAL_SERVER_ERROR, error);
-		} finally {
-			await querryRunner.release();
 		}
+		//finally {
+		// await querryRunner.release();
+		//}
 	}
 
 	private async restoreAndUpdateUserAccount(
