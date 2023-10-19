@@ -1,6 +1,8 @@
-import {createLogger, format, transports} from 'winston';
+import {createLogger, format, level, transports} from 'winston';
 
 const logger = createLogger({
+	level: 'error',
+	format: format.json(),
 	transports: [
 		new transports.File({
 			filename: 'logs/logs.log',
